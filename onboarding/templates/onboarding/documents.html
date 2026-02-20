@@ -1,0 +1,53 @@
+{% extends 'onboarding/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block onboarding_content %}
+<h2 class="text-center mb-4">Base de Conocimiento</h2>
+<p class="text-center text-muted mb-4">Sube documentos para entrenar a tu bot (opcional)</p>
+
+<div class="alert alert-warning mb-4">
+    <i class="bi bi-lightbulb"></i> 
+    <strong>Tip:</strong> Puedes subir manuales de productos, FAQs, políticas de empresa, etc.
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="mb-4">
+        <label class="form-label fw-bold">Archivos</label>
+        <div class="border rounded p-4 text-center" style="border-style: dashed !important;">
+            <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #667eea;"></i>
+            <p class="mt-3 mb-2">Arrastra archivos aquí o haz clic para seleccionar</p>
+            <input type="file" name="files" id="id_files" multiple accept=".pdf,.docx,.txt" 
+                   class="form-control mt-2">
+            <small class="text-muted">Formatos: PDF, DOCX, TXT (máx. 10MB por archivo)</small>
+        </div>
+    </div>
+
+    <div id="file-list" class="mb-3"></div>
+
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-check-circle"></i> Finalizar Configuración
+        </button>
+        <a href="{% url 'onboarding:complete' %}" class="btn btn-outline-secondary">
+            Omitir por ahora
+        </a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('id_files').addEventListener('change', function(e) {
+    const fileList = document.getElementById('file-list');
+    const files = Array.from(e.target.files);
+    
+    if (files.length > 0) {
+        fileList.innerHTML = '<div class="alert alert-success"><strong>Archivos seleccionados:</strong><ul class="mb-0 mt-2">' +
+            files.map(f => `<li>${f.name} (${(f.size / 1024 / 1024).toFixed(2)} MB)</li>`).join('') +
+            '</ul></div>';
+    }
+});
+</script>
+{% endblock %}

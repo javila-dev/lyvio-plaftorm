@@ -1,0 +1,2410 @@
+{% load static %}{% load humanize %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyvio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    
+    <!-- Nueva Fuente: Figtree (de Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Íconos (Font Awesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- SCRIPTS DE TRACKING Y ANÁLISIS -->
+
+    <!-- 1. Google Tag Manager -->
+    <!-- Reemplaza GTM-XXXXXXX con tu ID de Contenedor de GTM. -->
+    <!-- Google Analytics, Hotjar, etc., se gestionan desde aquí. -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WFDZLSRG');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1778961709388376');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1778961709388376&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- 3. Microsoft Clarity -->
+    <!-- Reemplaza YOUR_CLARITY_ID con tu ID de Proyecto de Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "tt82l1k491");
+    </script>
+    <!-- End Microsoft Clarity -->
+
+
+    <style>
+        /* --- 1. Paleta de Colores Profesional y Reseteo --- */
+        :root {
+            --primary-gradient: linear-gradient(110deg, #6e8efb, #a777e3);
+            --primary-color: #6e8efb;
+            --secondary-color: #a777e3;
+            
+            /* Paleta de colores refinada */
+            --text-dark: #111827;      /* Gris oscuro (casi negro) */
+            --text-light: #6B7280;     /* Gris medio */
+            --bg-light: #F9FAFB;       /* Blanco hueso */
+            --white: #ffffff;
+            --border-color: #E5E7EB;   /* Gris claro */
+            
+            /* Paleta Retro Arcade - Colores Neón */
+            --neon-pink: #FF006E;
+            --neon-cyan: #00F5FF;
+            --neon-purple: #8B00FF;
+            --neon-yellow: #FFD60A;
+            --neon-green: #00FF41;
+            --neon-orange: #FF6B35;
+            
+            /* Gradientes tipo arcade */
+            --arcade-gradient-1: linear-gradient(135deg, #FF006E 0%, #8B00FF 100%);
+            --arcade-gradient-2: linear-gradient(135deg, #00F5FF 0%, #8B00FF 100%);
+            --arcade-gradient-3: linear-gradient(135deg, #FFD60A 0%, #FF6B35 100%);
+            
+            --border-radius: 16px;     /* Más redondeado, más moderno */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+            --shadow-color: 0 10px 30px -5px rgba(110, 142, 251, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            color: var(--text-light);
+            line-height: 1.7;
+            background: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            --bg-shapes-y: 0px;
+            --bg-shapes-x: 0px;
+            --bg-shapes-rotate: 0deg;
+        }
+        
+        /* Global patterns: handle all decorative shapes from the body (single source of truth) */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            opacity: 0.14;
+            transform: translateY(var(--bg-shapes-y)) translateX(var(--bg-shapes-x)) rotate(var(--bg-shapes-rotate));
+            will-change: transform;
+            pointer-events: none;
+            background-image:
+                url("{% static 'img/patterns/burbuja_chat.png' %}"),
+                url("{% static 'img/patterns/whatsapp.png' %}"),
+                url("{% static 'img/patterns/instagram.png' %}"),
+                url("{% static 'img/patterns/gmail.png' %}"),
+                url("{% static 'img/patterns/bot.png' %}"),
+                url("{% static 'img/patterns/avion.png' %}"),
+                url("{% static 'img/patterns/circulo.png' %}"),
+                url("{% static 'img/patterns/corazon.png' %}"),
+                url("{% static 'img/patterns/rayo.png' %}"),
+                url("{% static 'img/patterns/whatsapp.png' %}");
+            background-size:
+                84px auto, 72px auto, 72px auto, 64px auto, 68px auto,
+                64px auto, 58px auto, 56px auto, 60px auto, 72px auto;
+            background-position:
+                6% 8%, 86% 12%, 50% 6%, 18% 78%, 82% 74%,
+                44% 92%, 24% 46%, 74% 60%, 60% 84%, 36% 70%;
+            background-repeat: no-repeat;
+            z-index: -2;
+            filter: hue-rotate(var(--bg-shapes-rotate));
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.11;
+            transform: translateY(calc(var(--bg-shapes-y) * -0.7)) translateX(calc(var(--bg-shapes-x) * -0.5)) rotate(calc(var(--bg-shapes-rotate) * -1));
+            will-change: transform;
+            pointer-events: none;
+            background-image:
+                url("{% static 'img/patterns/avion.png' %}"),
+                url("{% static 'img/patterns/bot.png' %}"),
+                url("{% static 'img/patterns/gmail.png' %}"),
+                url("{% static 'img/patterns/instagram.png' %}"),
+                url("{% static 'img/patterns/whatsapp.png' %}"),
+                url("{% static 'img/patterns/burbuja_chat.png' %}");
+            background-size:
+                76px auto, 92px auto, 72px auto, 86px auto, 78px auto, 66px auto;
+            background-position:
+                16% 26%, 76% 14%, 8% 70%, 56% 66%, 32% 6%, 88% 90%;
+            background-repeat: no-repeat;
+            z-index: -1;
+            filter: hue-rotate(calc(var(--bg-shapes-rotate) * -1.9));
+        }
+
+        /* Global override: disable section-level decorative container pseudo-elements
+           We rely on body::before / body::after for decorative patterns to avoid stacking issues */
+        #hero .container::before, #hero .container::after,
+        #channels .container::before, #channels .container::after,
+        #features .container::before, #features .container::after,
+        #ai-assistant .container::before, #ai-assistant .container::after,
+        #testimonial .container::before, #testimonial .container::after,
+        #pricing .container::before, #pricing .container::after,
+        #differentiator .container::before, #differentiator .container::after,
+        #cta .container::before, #cta .container::after,
+        footer .container::before, footer .container::after {
+            content: none !important;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Figtree', sans-serif;
+            color: var(--text-dark);
+            font-weight: 700; /* Un poco más de peso para titulares */
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 60px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--arcade-gradient-1);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 110, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Animación de entrada para secciones */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 2. Navegación Limpia --- */
+        header {
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            background: rgba(249, 250, 251, 0.8); /* Coincide con el bg-light */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { max-height: 60px; }
+        .nav-links { display: flex; list-style: none; gap: 35px; }
+        .nav-links a { text-decoration: none; color: var(--text-light); font-weight: 600; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .nav-buttons { display: flex; gap: 15px; align-items: center; }
+        .nav-buttons .login-btn { text-decoration: none; color: var(--text-dark); font-weight: 600; }
+        .mobile-menu-toggle { display: none; font-size: 24px; cursor: pointer; color: var(--text-dark); }
+
+        /* --- 3. Sección Hero con Foco en el Beneficio (Estilo Wati: 2 columnas) --- */
+        #hero {
+            padding-top: 80px;
+            padding-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        #hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            max-width: 1400px; /* Más ancho para permitir imagen más grande */
+        }
+        
+        /* Mover patterns dentro del container para evitar problemas de stacking */
+        #hero::before, #hero::after { content: none !important; }
+        #hero .container { position: relative; z-index: 2; }
+        #hero .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            background-size: 80px auto;
+            width: 100px;
+            height: 100px;
+            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(180deg) saturate(1.5);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(var(--shape-rotate));
+            will-change: transform;
+        }
+        #hero .container::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            left: 8%;
+            background-size: 70px auto;
+            width: 90px;
+            height: 90px;
+            background: url("{% static 'img/patterns/whatsapp.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(45deg) saturate(1.3);
+            transform: translateY(calc(var(--shape-y) * -0.8)) translateX(calc(var(--shape-x) * -0.7)) rotate(calc(var(--shape-rotate) * 2 - 8deg));
+            will-change: transform;
+        }
+        
+        .hero-text {
+            text-align: left;
+            order: 2; /* Texto a la derecha */
+        }
+        
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        
+        /* Palabras destacadas con gradiente arcade */
+        .hero-text h1 .highlight {
+            background: var(--arcade-gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: var(--text-light);
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        /* Banner imagen izquierda */
+        .hero-animation {
+            order: 1; /* Imagen a la izquierda */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hero-animation img {
+            width: 100%;
+            max-width: 650px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* --- 4. Prueba Social (Logos) --- */
+        #channels {
+            padding-top: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Formas irregulares dentro del container para evitar stacking issues */
+        #channels::before, #channels::after { content: none !important; }
+        #channels .container { text-align: center; position: relative; z-index: 2; }
+        #channels .container::before {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            background-size: 65px auto;
+            width: 150px;
+            height: 150px;
+            background: url("{% static 'img/patterns/instagram.png' %}") center/contain no-repeat;
+            border-radius: 50%;
+            transform: rotate(-25deg);
+            z-index: 0;
+            pointer-events: none;
+        }
+        #channels .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            right: 15%;
+            background-size: 60px auto;
+            width: 110px;
+            height: 110px;
+            background: url("{% static 'img/patterns/gmail.png' %}") center/contain no-repeat;
+            border-radius: 50%;
+            transform: rotate(20deg);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .channels-title { font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 30px; }
+        
+        /* Grid de iconos con animación de convergencia */
+        .channel-icons { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 40px;
+            position: relative;
+        }
+        
+        /* Burbujas de chat decorativas detrás de iconos */
+        .channel-icons::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(110, 142, 251, 0.05);
+            border-radius: 50%;
+            top: -10px;
+            left: 20%;
+            z-index: -1;
+        }
+        
+        .channel-icons::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(167, 119, 227, 0.05);
+            border-radius: 50%;
+            bottom: -5px;
+            right: 25%;
+            z-index: -1;
+        }
+        
+        .channel-icons i { 
+            font-size: 36px; 
+            color: #9ca3af; 
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .channel-icons i:hover {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+        }
+        
+        .channel-icons i.fa-whatsapp:hover { color: #25D366; }
+        .channel-icons i.fa-instagram:hover { color: #E4405F; }
+        .channel-icons i.fa-facebook-messenger:hover { color: #00B2FF; }
+        .channel-icons i.fa-telegram:hover { color: #229ED9; }
+        .channel-icons i.fa-globe:hover { color: var(--secondary-color); }
+        
+        /* --- 5. Sección de Beneficios (Features) --- */
+        #features {
+            position: relative;
+            background: transparent;
+            /* allow decorations and neighboring elements to overflow instead of being clipped */
+            overflow: visible;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        /* Mover patterns dentro del container para evitar stacking problems */
+        #features::before, #features::after { content: none !important; }
+        #features .container { position: relative; z-index: 2; }
+        #features .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 8%;
+            background-size: 70px auto;
+            width: 95px;
+            height: 95px;
+            background: url("{% static 'img/patterns/bot.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(270deg) saturate(1.4);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 12deg));
+            will-change: transform;
+        }
+        #features .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            left: 15%;
+            background-size: 60px auto;
+            width: 110px;
+            height: 110px;
+            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(45deg) saturate(1.2);
+            transform: translateY(calc(var(--shape-y) * -0.7)) translateX(calc(var(--shape-x) * -0.8)) rotate(calc(var(--shape-rotate) * -1 - 15deg));
+            will-change: transform;
+        }
+        
+        /* Forma orgánica de fondo (blob shape) */
+        #features .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-header { text-align: center; max-width: 600px; margin: 0 auto 60px auto; }
+        .section-header h2 { font-size: 42px; margin-bottom: 15px; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .feature-card { 
+            background: var(--white);
+            border: 1px solid rgba(110, 142, 251, 0.1);
+            border-radius: var(--border-radius); 
+            padding: 30px; 
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Patrón de líneas sutil dentro de cada card */
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(110, 142, 251, 0.03) 0%, transparent 100%);
+            border-radius: 0 var(--border-radius) 0 100%;
+            z-index: 0;
+        }
+        
+        .feature-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: var(--shadow-color);
+            border-color: rgba(110, 142, 251, 0.2);
+        }
+        
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card .icon { 
+            font-size: 24px; 
+            width: 50px; 
+            height: 50px; 
+            display: grid; 
+            place-items: center; 
+            border-radius: 12px; 
+            background: var(--primary-gradient); 
+            color: var(--white); 
+            box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
+            flex-shrink: 0;
+        }
+        
+        .feature-card h3 { 
+            font-size: 20px; 
+            margin: 0;
+        }
+        
+        .feature-card p {
+            flex-grow: 1;
+        }
+        
+        /* Métricas destacadas tipo Wati */
+        .metric-highlight {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(110, 142, 251, 0.1) 0%, rgba(167, 119, 227, 0.1) 100%);
+            border-left: 3px solid var(--primary-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0 0 0;
+            margin-top: auto;
+        }
+        
+        .metric-highlight strong {
+            font-size: 32px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .metric-highlight span {
+            color: var(--text-light);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* --- 5.5. Sección Chatbot 24/7 Destacado --- */
+        #ai-assistant {
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            padding: 100px 0;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        #ai-assistant .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ai-content h2 {
+            font-size: 44px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+        
+        .ai-content h2 .highlight {
+            color: var(--primary-color);
+        }
+        
+        .ai-content .subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: var(--text-medium);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        
+        /* Visual derecho con ilustración y burbujas flotantes */
+        .ai-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 550px;
+        }
+        
+        .ai-illustration {
+            position: relative;
+            width: 100%;
+            max-width: 750px;
+            z-index: 2;
+        }
+        
+        .ai-illustration img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Burbujas flotantes estilo glassmorphism */
+        .ai-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15), 
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+            z-index: 3;
+            animation: float-bubble 4s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-bubble::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            filter: blur(8px);
+        }
+        
+        .ai-bubble:hover {
+            transform: scale(1.12);
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 12px 48px rgba(102, 126, 234, 0.3),
+                        inset 0 0 25px rgba(255, 255, 255, 0.4);
+        }
+        
+        .ai-bubble i {
+            font-size: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ai-bubble span {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #1F2937;
+            text-align: center;
+            line-height: 1.2;
+            padding: 0 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Distribución alrededor de la imagen */
+        .ai-bubble-1 {
+            top: 0%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .ai-bubble-1 i {
+            color: #6366F1;
+        }
+        
+        .ai-bubble-2 {
+            top: -5%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0.8s;
+        }
+        
+        .ai-bubble-2 i {
+            color: #8B5CF6;
+        }
+        
+        .ai-bubble-3 {
+            top: 5%;
+            right: 0%;
+            animation-delay: 1.6s;
+        }
+        
+        .ai-bubble-3 i {
+            color: #10B981;
+        }
+        
+        .ai-bubble-4 {
+            bottom: 5%;
+            left: 0%;
+            animation-delay: 2.4s;
+        }
+        
+        .ai-bubble-4 i {
+            color: #F59E0B;
+        }
+        
+        .ai-bubble-5 {
+            bottom: 0%;
+            right: 3%;
+            animation-delay: 3.2s;
+        }
+        
+        .ai-bubble-5 i {
+            color: #EC4899;
+        }
+        
+        @keyframes float-bubble {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+        
+        /* Mover patterns dentro del container de AI Assistant */
+        #ai-assistant::before, #ai-assistant::after { content: none !important; }
+        #ai-assistant .container { position: relative; z-index: 2; }
+        #ai-assistant .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.12;
+            background-image: 
+                url("{% static 'img/patterns/burbuja_chat.png' %}"),
+                url("{% static 'img/patterns/bot.png' %}");
+            background-size:
+                80px auto, 70px auto, 60px auto, 65px auto, 60px auto;
+            background-position:
+                15% 20%, 85% 75%, 50% 50%, 30% 80%, 70% 30%;
+            background-repeat: no-repeat;
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(var(--shape-rotate));
+            filter: hue-rotate(180deg);
+            pointer-events: none;
+            will-change: transform;
+        }
+        #ai-assistant .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
+            background-image: 
+                url("{% static 'img/patterns/whatsapp.png' %}"),
+                url("{% static 'img/patterns/instagram.png' %}");
+            background-size:
+                70px auto, 60px auto, 65px auto, 60px auto, 70px auto;
+            background-position:
+                75% 15%, 25% 80%, 50% 90%, 10% 60%, 80% 40%;
+            background-repeat: no-repeat;
+            transform: translateY(calc(var(--shape-y) * -0.6)) translateX(calc(var(--shape-x) * -0.8)) rotate(calc(var(--shape-rotate) * -1));
+            filter: hue-rotate(270deg);
+            pointer-events: none;
+            will-change: transform;
+        }
+        
+        .ai-stat span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* --- 6. Sección Marcas que Confían (Carrusel de Logos) --- */
+        #testimonial {
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 0;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        /* Testimonial patterns moved into container */
+        #testimonial::before, #testimonial::after { content: none !important; }
+        #testimonial .container { position: relative; z-index: 2; }
+        #testimonial .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 12%;
+            background-size: 70px auto;
+            width: 85px;
+            height: 85px;
+            background: url("{% static 'img/patterns/gmail.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(180deg) saturate(1.5);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 48deg));
+            will-change: transform;
+        }
+        #testimonial .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            left: 20%;
+            background-size: 60px auto;
+            width: 80px;
+            height: 80px;
+            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(330deg) saturate(1.3);
+            transform: translateY(calc(var(--shape-y) * -0.9)) translateX(calc(var(--shape-x) * -0.6)) rotate(calc(var(--shape-rotate) * -2 - 35deg));
+            will-change: transform;
+        }
+        
+        #testimonial .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        #testimonial .section-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        /* --- Nueva sección: Integra las herramientas que ya amas --- */
+        #integrations { padding: 50px 0; background: var(--bg-light); position: relative; overflow: visible; }
+    #integrations .container { position: relative; z-index: 5; }
+        #integrations .section-header { text-align: center; margin-bottom: 30px; }
+        #integrations .section-header h2 { font-size: 30px; color: var(--text-dark); }
+        .integrations-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; align-items: center; justify-items: center; }
+        .integration-item { background: var(--white); padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 160px; box-shadow: 0 6px 18px rgba(24,24,24,0.04); }
+        .integration-item img { max-width: 100%; max-height: 48px; object-fit: contain; display: block; }
+
+        @media (max-width: 992px) {
+            .integrations-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .integrations-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .integration-item { max-width: 120px; padding: 8px; }
+        }
+        
+        #testimonial .section-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        
+        /* Contenedor del carrusel */
+        .logo-carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        
+        .logo-carousel {
+            display: flex;
+            gap: 60px;
+            animation: scroll-logos 30s linear infinite;
+            width: max-content;
+        }
+        
+        .logo-carousel:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scroll-logos {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* Item individual del logo */
+        .logo-item {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            padding: 0 20px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            filter: grayscale(100%);
+        }
+        
+        .logo-item:hover {
+            opacity: 1;
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+        
+        .logo-item img {
+            max-height: 80px;
+            max-width: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* --- 7. NUEVA Sección de Precios (con Carrusel) --- */
+        #pricing {
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        /* Pricing patterns moved into container */
+        #pricing::before, #pricing::after { content: none !important; }
+        #pricing .container { position: relative; z-index: 2; }
+        #pricing .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            background-size: 70px auto;
+            width: 105px;
+            height: 105px;
+            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(270deg) saturate(1.6);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) - 8deg));
+            will-change: transform;
+        }
+        #pricing .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            right: 20%;
+            background-size: 60px auto;
+            width: 75px;
+            height: 75px;
+            background: url("{% static 'img/patterns/whatsapp.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(120deg) saturate(1.4);
+            transform: translateY(calc(var(--shape-y) * -0.85)) translateX(calc(var(--shape-x) * -0.75)) rotate(calc(var(--shape-rotate) * 1.5 + 32deg));
+            will-change: transform;
+        }
+        
+        #pricing .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px; /* Contenedor más ancho para pricing */
+        }
+        
+        /* Contenedor que rompe el límite del container para carrusel */
+        .pricing-slider-container {
+            position: relative;
+            padding: 0 60px;
+        }
+        
+        .pricing-slider-container.has-carousel {
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding: 0 max(60px, calc((100vw - 1400px) / 2));
+            overflow: hidden;
+        }
+        
+        .pricing-slider-container.has-carousel .pricing-grid {
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 0 40px;
+        }
+        
+        .pricing-slider-container.has-carousel .pricing-grid::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Gradientes laterales con blur para efecto de desvanecimiento */
+        .pricing-slider-container.has-carousel::before,
+        .pricing-slider-container.has-carousel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 120px;
+            z-index: 10;
+            pointer-events: none;
+            backdrop-filter: blur(2px);
+        }
+        
+        .pricing-slider-container.has-carousel::before {
+            left: 0;
+            background: linear-gradient(to right, 
+                rgba(248, 250, 252, 0.95) 0%, 
+                rgba(248, 250, 252, 0.7) 40%,
+                rgba(248, 250, 252, 0) 100%);
+        }
+        
+        .pricing-slider-container.has-carousel::after {
+            right: 0;
+            background: linear-gradient(to left, 
+                rgba(248, 250, 252, 0.95) 0%, 
+                rgba(248, 250, 252, 0.7) 40%,
+                rgba(248, 250, 252, 0) 100%);
+        }
+        
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 28px;
+            flex-wrap: wrap;
+            max-width: 100%;
+            padding: 0 20px;
+        }
+        
+        .pricing-slider-container.has-carousel .pricing-grid {
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+        }
+        
+        @media (min-width: 768px) {
+            .pricing-grid {
+                flex-wrap: nowrap;
+            }
+        }
+        
+        .pricing-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            transition: all 0.3s ease;
+            border-top: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+            flex: 1 1 300px;
+            max-width: 360px;
+            min-width: 300px;
+        }
+        
+        .pricing-slider-container.has-carousel .pricing-card {
+            flex: 0 0 320px;
+        }
+        
+        /* Pequeña forma decorativa en esquina */
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: rgba(110, 142, 251, 0.03);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .pricing-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-color);
+            border-color: rgba(110, 142, 251, 0.2);
+        }
+        .pricing-card .plan-name { font-size: 22px; font-weight: 600; color: var(--text-dark); margin-bottom: 10px; }
+        .pricing-card .price { 
+            font-size: 40px; 
+            font-weight: 700; 
+            color: var(--text-dark); 
+            margin-bottom: 5px; 
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+        .pricing-card .price span { font-size: 18px; color: var(--text-light); font-weight: 400; }
+        .pricing-card .price-yearly { font-size: 14px; color: var(--text-light); margin-bottom: 15px; display: block; }
+        .pricing-card .description { margin-bottom: 10px; min-height: 60px; line-height: 1.5; }
+        .pricing-card .features { list-style: none; margin: 25px 0; padding-top: 25px; border-top: 1px solid var(--border-color); flex-grow: 1;}
+        .pricing-card .features li { margin-bottom: 10px; display: flex; align-items: flex-start; }
+        .pricing-card .features i { margin-right: 10px; color: var(--primary-color); margin-top: 5px; }
+        .pricing-card .btn { width: 100%; text-align: center; }
+
+        .pricing-card.highlight {
+            border-top: 4px solid var(--primary-color);
+            position: relative;
+            background: linear-gradient(to bottom, var(--white), rgba(249, 250, 251, 0.3));
+            box-shadow: var(--shadow-color);
+            border: 1px solid rgba(110, 142, 251, 0.2);
+        }
+        
+        .pricing-card.highlight::before {
+            background: rgba(110, 142, 251, 0.05);
+        }
+        .highlight .btn {
+            background: var(--primary-gradient);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
+        }
+        .popular-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--primary-gradient);
+            color: var(--white);
+            padding: 8px 40px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transform: rotate(45deg) translate(30%, -50%);
+            transform-origin: top right;
+            box-shadow: 0 2px 8px rgba(110, 142, 251, 0.4);
+            z-index: 5;
+        }
+
+        .carousel-nav {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+        }
+        
+        .pricing-slider-container.has-carousel .carousel-nav {
+            display: flex;
+        }
+        
+        .carousel-nav.prev {
+            left: 10px;
+        }
+        
+        .carousel-nav.next {
+            right: 10px;
+        }
+        
+        .carousel-nav button {
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .carousel-nav button:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .carousel-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .carousel-nav button:disabled:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: scale(1);
+        }
+
+        .slider-nav {
+            display: none;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 15px;
+        }
+        .slider-nav button {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .slider-nav button:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        @media (min-width: 1100px) {
+            .slider-nav {
+                display: flex;
+            }
+        }
+
+
+        /* Tabla Comparativa */
+        .comparison-table-wrapper { 
+            margin-top: 80px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .comparison-title { 
+            font-size: 28px; 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .table-container {
+            overflow-x: auto;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 900px; 
+        }
+        th, td { 
+            padding: 12px 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #F3F4F6; 
+            vertical-align: middle;
+            font-size: 14px;
+        }
+        th { 
+            color: var(--text-dark); 
+            font-weight: 600; 
+            font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.3px;
+            background-color: #FAFBFC;
+        }
+        td { 
+            color: var(--text-light); 
+            font-size: 13px;
+        }
+        thead th:first-child { 
+            text-align: left; 
+            width: 35%;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        .feature-name { 
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        .feature-group { 
+            font-weight: 600; 
+            color: var(--text-dark); 
+            background-color: #F9FAFB;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 16px;
+        }
+        .check-icon, .dash-icon { 
+            text-align: center;
+            font-size: 16px;
+        }
+        .check-icon { 
+            color: #10B981;
+        }
+        .check-icon i {
+            font-size: 18px;
+        }
+        .dash-icon { 
+            color: #D1D5DB;
+            font-size: 18px;
+        }
+        .value-cell {
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        th.plan-col { 
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        /* --- 8. Sección Diferenciador (DIAN) --- */
+        #differentiator {
+            background: transparent;
+            position: relative;
+            overflow: visible;
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        /* Differentiator patterns inside container */
+        #differentiator::before, #differentiator::after { content: none !important; }
+        #differentiator .container { position: relative; z-index: 2; }
+        #differentiator .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            background-size: 70px auto;
+            width: 85px;
+            height: 85px;
+            background: url("{% static 'img/patterns/bot.png' %}") center/contain no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(180deg) saturate(1.5);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) - 18deg));
+            will-change: transform;
+        }
+        #differentiator .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            left: 15%;
+            background-size: 60px auto, 55px auto;
+            background-image:
+                url("{% static 'img/patterns/instagram.png' %}"),
+                url("{% static 'img/patterns/whatsapp.png' %}");
+            background-position:
+                30% 80%, 80% 95%;
+            width: 95px;
+            height: 95px;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            filter: hue-rotate(25deg) saturate(1.6);
+            transform: translateY(calc(var(--shape-y) * -1.1)) translateX(calc(var(--shape-x) * -0.9)) rotate(calc(var(--shape-rotate) * 1.8 + 18deg));
+            will-change: transform;
+        }
+        
+        #differentiator .container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            align-items: center; 
+            gap: 60px;
+            position: relative;
+            z-index: 1;
+        }
+        .differentiator-text .tag { 
+            display: inline-block; 
+            background-image: var(--primary-gradient); 
+            color: var(--white); 
+            padding: 6px 14px; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
+        }
+        .differentiator-text h2 { font-size: 42px; margin-bottom: 20px; }
+        .differentiator-visual { 
+            background: var(--white);
+            border-radius: var(--border-radius); 
+            padding: 40px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid rgba(110, 142, 251, 0.1); 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Círculo decorativo dentro del visual */
+        .differentiator-visual::before {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(167, 119, 227, 0.04);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .differentiator-visual img {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- 9. CTA Final --- */
+        /* CTA as a full-width banner */
+        #cta {
+            background: linear-gradient(135deg, #FF6B91 0%, #7F3EB8 100%);
+            color: var(--white);
+            text-align: center;
+            width: 100%;
+            padding: 60px 0; /* vertical padding for the banner */
+            position: relative;
+            overflow: visible;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shape-y: 0px;
+            --shape-x: 0px;
+            --shape-rotate: 0deg;
+        }
+        
+        /* CTA patterns moved into container */
+        #cta::before, #cta::after { content: none !important; }
+        #cta { overflow: visible; }
+        #cta::before { content: none !important; }
+    /* keep content centered inside a constrained container */
+    #cta .container { position: relative; z-index: 2; max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+        #cta .container::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            background-size: 70px auto;
+            width: 80px;
+            height: 80px;
+            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+            /* tone down extreme brightness/saturation */
+            filter: saturate(0.7) brightness(0.95);
+            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 28deg));
+            will-change: transform;
+        }
+        #cta .container::after {
+            content: '';
+            position: absolute;
+            bottom: 30%;
+            left: 20%;
+            background-size: 60px auto, 55px auto;
+            background-image:
+                url("{% static 'img/patterns/bot.png' %}"),
+                url("{% static 'img/patterns/gmail.png' %}");
+            background-position:
+                20% 90%, 75% 95%;
+            width: 90px;
+            height: 90px;
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+            filter: saturate(0.7) brightness(0.95);
+            transform: translateY(calc(var(--shape-y) * -0.95)) translateX(calc(var(--shape-x) * -0.85)) rotate(calc(var(--shape-rotate) * -1.5 + 42deg));
+            will-change: transform;
+        }
+        
+    #cta h2, #cta p, #cta .btn { position: relative; z-index: 1; }
+    #cta h2 { color: var(--white); font-size: 42px; margin-bottom: 15px; }
+        #cta p { font-size: 18px; margin-bottom: 30px; opacity: 0.95; max-width: 500px; margin-left: auto; margin-right: auto; }
+        
+        /* --- 10. Footer --- */
+    footer { padding-top: 100px; padding-bottom: 40px; position: relative; overflow: visible; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
+        .footer-col h4 { color: var(--text-dark); font-size: 16px; margin-bottom: 15px; font-weight: 600; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 10px; }
+        .footer-col a { text-decoration: none; color: var(--text-light); transition: color 0.3s ease; }
+        .footer-col a:hover { color: var(--primary-color); }
+        .social-icons { display: flex; gap: 15px; }
+        .social-icons a { font-size: 20px; color: var(--text-light); }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding-top: 30px; text-align: center; font-size: 14px; position: relative; }
+        /* Footer: move decorative patterns into the inner container so content stacks above */
+        footer::before, footer::after { content: none !important; }
+        footer { padding-top: 100px; padding-bottom: 40px; position: relative; overflow: visible; }
+        footer .container { position: relative; z-index: 2; }
+        footer .container::before {
+            content: '';
+            position: absolute;
+            left: 10%;
+            bottom: 10px;
+            width: 55px;
+            height: 55px;
+            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
+            opacity: 0.18;
+            z-index: 0;
+            pointer-events: none;
+        }
+        footer .container::after {
+            content: '';
+            position: absolute;
+            right: 8%;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
+            opacity: 0.18;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* --- 11. Responsividad --- */
+        @media (max-width: 1100px) {
+            /* .pricing-grid no longer needs changes here, it's handled by auto-columns */
+        }
+
+        @media (max-width: 992px) {
+            .features-grid { grid-template-columns: 1fr 1fr; }
+            #differentiator .container { grid-template-columns: 1fr; }
+            .differentiator-visual { margin-top: 40px; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            
+            /* Hero en tablets: mantener 2 columnas pero más compacto */
+            #hero .container {
+                gap: 40px;
+            }
+            
+            .hero-text h1 { font-size: 42px; }
+            .hero-animation img { max-width: 400px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 81px; left: 0; width: 100%; background: var(--bg-light); padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; border-bottom: 1px solid var(--border-color); }
+            .nav-links.active { display: flex; }
+            .nav-buttons .btn-primary { display: none; }
+            .mobile-menu-toggle { display: block; }
+            
+            /* Hero responsive: columna única */
+            #hero .container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .hero-text {
+                order: 2; /* Texto abajo en móvil */
+                text-align: center;
+            }
+            
+            .hero-animation {
+                order: 1;
+            }
+            
+            .hero-animation img {
+                max-width: 350px;
+                margin: 0 auto;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-text h1 { font-size: 36px; }
+            .hero-text p { font-size: 16px; }
+            .section-header h2, #differentiator h2, #cta h2, #pricing .section-header h2 { font-size: 32px; }
+            section { padding: 60px 0; }
+            
+            .features-grid { grid-template-columns: 1fr; }
+            
+            /* AI Assistant responsive */
+            #ai-assistant .container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .ai-content {
+                order: 2;
+            }
+            
+            .ai-visual {
+                order: 1;
+            }
+            
+            .ai-content h2 {
+                font-size: 32px;
+                text-align: center;
+            }
+            
+            .ai-content .subtitle {
+                font-size: 17px;
+                text-align: center;
+            }
+            
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .social-icons, .footer-col ul { justify-content: center; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- WhatsApp Floating Button -->
+    <style>
+        .whatsapp-fab {
+            position: fixed;
+            right: 22px;
+            bottom: 82px;
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            background: #25D366;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 2000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            /* prevent link underline or any decoration */
+            text-decoration: none !important;
+            -webkit-text-decoration: none !important;
+            outline: none;
+            border: none;
+            background-clip: padding-box;
+        }
+        .whatsapp-fab:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.18); }
+        .whatsapp-fab, .whatsapp-fab * { text-decoration: none !important; text-decoration-color: transparent !important; }
+        .whatsapp-fab .fab-icon { color: white; font-size: 22px; display: block; line-height: 1; }
+        @media (max-width: 520px) { .whatsapp-fab { right: 14px; bottom: 14px; width: 48px; height: 48px; } }
+    </style>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WFDZLSRG"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <header>
+        <div class="container">
+            <img src="{% static 'img/logo_long.png' %}" alt="Lyvio Logo" class="logo" onerror="this.onerror=null;this.src='https://placehold.co/150x40/000000/FFFFFF?text=Lyvio&font=figtree';">
+            <nav>
+                <ul class="nav-links" id="nav-menu">
+                    <li><a href="#features">Beneficios</a></li>
+                    <li><a href="#pricing">Precios</a></li>
+                    <li><a href="https://app.lyvio.io/hc/help/es_CO" target="_blank
+                        ">Ayuda</a></li>
+                </ul>
+            </nav>
+            <div class="nav-buttons">
+                <a href="https://app.lyvio.io" class="login-btn">Ingresar</a>
+                <a href="/onboarding" class="btn btn-primary">Prueba Gratis</a>
+                <i class="fas fa-bars mobile-menu-toggle" id="mobile-menu-btn"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <section id="hero">
+            <div class="container">
+                <!-- Imagen banner izquierda -->
+                <div class="hero-animation reveal">
+                    <img src="{% static 'img/banner.png' %}" alt="Lyvio - Centraliza tus chats">
+                </div>
+                
+                <!-- Texto derecha -->
+                <div class="hero-text reveal">
+                    <h1><span class="highlight">La calma</span> de tener todos tus chats en un solo lugar.</h1>
+                    <p>Lyvio centraliza tu WhatsApp, Instagram, Messengery muchos mas para que tu equipo responda más rápido, colabore mejor y nunca deje escapar una oportunidad de venta.</p>
+                    <div class="hero-buttons">
+                        <a href="/onboarding" class="btn btn-primary">Empieza tu prueba gratis de 14 días</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="channels" class="reveal">
+            <div class="container">
+                <div class="channels-title">INTEGRA LAS HERRAMIENTAS QUE YA AMAS Y USAS A DIARIO</div>
+                <div class="channel-icons">
+                    <i class="fab fa-whatsapp" title="WhatsApp"></i>
+                    <i class="fab fa-instagram" title="Instagram"></i>
+                    <i class="fab fa-facebook-messenger" title="Messenger"></i>
+                    <i class="fab fa-telegram" title="Telegram"></i>
+                    <i class="fas fa-globe" title="Chat Web"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="reveal">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Diseñado para la eficiencia y la colaboración</h2>
+                    <p>Menos caos, más control. Herramientas pensadas para que tu equipo brille y tus clientes se sientan escuchados.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-header">
+                            <div class="icon"><i class="fas fa-inbox"></i></div>
+                            <h3>Tu Centro de Comando</h3>
+                        </div>
+                        <p>Visualiza y responde cada mensaje, sin importar el canal. Todo fluye en una sola pantalla, en tiempo real.</p>
+                        <div class="metric-highlight">
+                            <strong>-60%</strong>
+                            <span>Tiempo de Respuesta</span>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-header">
+                            <div class="icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+                            <h3>Inteligencia que Asiste</h3>
+                        </div>
+                        <p>Ahorra tiempo con respuestas sugeridas por IA, resúmenes automáticos y chatbots que califican leads por ti.</p>
+                        <div class="metric-highlight">
+                            <strong>3X</strong>
+                            <span>Más Conversiones</span>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-header">
+                            <div class="icon"><i class="fas fa-users"></i></div>
+                            <h3>Colaboración sin Fricción</h3>
+                        </div>
+                        <p>Asigna chats, deja notas internas y ve quién responde en tiempo real. Adiós a las respuestas duplicadas.</p>
+                        <div class="metric-highlight">
+                            <strong>+85%</strong>
+                            <span>Satisfacción del Equipo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="ai-assistant" class="reveal">
+            <div class="container">
+                <!-- Contenido izquierda -->
+                <div class="ai-content">
+                    <h2><span class="highlight">Tu asistente inteligente</span> que nunca descansa</h2>
+                    <p class="subtitle">Como tener un experto disponible 24/7 que conoce cada detalle de tu negocio y atiende a todos tus clientes al mismo tiempo.</p>
+                </div>
+                
+                <!-- Visual derecha con burbujas flotantes -->
+                <div class="ai-visual">
+                    <div class="ai-illustration">
+                        <img src="{% static 'img/chatbot-img.png' %}" alt="Chatbot Inteligente 24/7">
+                    </div>
+                    
+                    <!-- Burbujas flotantes -->
+                    <div class="ai-bubble ai-bubble-1">
+                        <i class="fas fa-clock"></i>
+                        <span>Disponible 24/7</span>
+                    </div>
+                    <div class="ai-bubble ai-bubble-2">
+                        <i class="fas fa-brain"></i>
+                        <span>Aprende tu negocio</span>
+                    </div>
+                    <div class="ai-bubble ai-bubble-3">
+                        <i class="fas fa-infinity"></i>
+                        <span>Escala sin esfuerzo</span>
+                    </div>
+                    <div class="ai-bubble ai-bubble-4">
+                        <i class="fas fa-bolt"></i>
+                        <span>Responde al instante</span>
+                    </div>
+                    <div class="ai-bubble ai-bubble-5">
+                        <i class="fas fa-rocket"></i>
+                        <span>No pierdas oportunidades</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        
+        <section id="testimonial" class="reveal">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Marcas que confían en nosotros</h2>
+                    <p>Empresas líderes que han optimizado su comunicación con Lyvio</p>
+                </div>
+                
+                <div class="logo-carousel-wrapper">
+                    <div class="logo-carousel">
+                        <!-- Primer set de logos -->
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/LOGO-MERAKI.png' %}" alt="Meraki">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/logo-alttum-collection.png' %}" alt="Alttum">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/Andina-Conceptos.png' %}" alt="Andina Conceptos">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/casas-de-verano450x.png' %}" alt="Casas de Verano">
+                        </div>
+                        
+                        <!-- Duplicado para efecto infinito -->
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/LOGO-MERAKI.png' %}" alt="Meraki">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/logo-alttum-collection.png' %}" alt="Alttum">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/Andina-Conceptos.png' %}" alt="Andina Conceptos">
+                        </div>
+                        <div class="logo-item">
+                            <img src="{% static 'img/marcas-confian/casas-de-verano450x.png' %}" alt="Casas de Verano">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="reveal">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Planes para cada etapa de tu negocio</h2>
+                    <p>Comienza y escala a medida que creces. Sin contratos a largo plazo, cancela cuando quieras.</p>
+                </div>
+                <div class="pricing-slider-container {% if plans|length > 3 %}has-carousel{% endif %}" id="pricingContainer">
+                    {% if plans %}
+                    
+                    <!-- Botones de navegación (solo si hay más de 3 planes) -->
+                    {% if plans|length > 3 %}
+                    <div class="carousel-nav prev">
+                        <button id="prevPlanBtn" aria-label="Plan anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    </div>
+                    <div class="carousel-nav next">
+                        <button id="nextPlanBtn" aria-label="Siguiente plan">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="pricing-grid" id="pricingGrid">
+                        {% for plan in plans %}
+                        <div class="pricing-card {% if forloop.counter == 2 %}highlight{% endif %}">
+                            {% if forloop.counter == 2 %}
+                            <div class="popular-badge">MÁS POPULAR</div>
+                            {% endif %}
+                            <h3 class="plan-name">{{ plan.name }}</h3>
+                            <div class="price">${{ plan.price_monthly|floatformat:0|intcomma }}<span>/mes</span></div>
+                            <span class="price-yearly">o ${{ plan.price_yearly|floatformat:0|intcomma }}/año</span>
+                            <p class="description">{{ plan.description|default:"Plan diseñado para tu negocio" }}</p>
+                            <ul class="features">
+                                <li><i class="fa-solid fa-check"></i> {{ plan.max_users }} Usuario{{ plan.max_users|pluralize }}</li>
+                                <li><i class="fa-solid fa-check"></i> {% if plan.max_inboxes >= 999 %}Bandejas Ilimitadas{% else %}{{ plan.max_inboxes }} Bandeja{{ plan.max_inboxes|pluralize:" de Entrada,s de Entrada" }}{% endif %}</li>
+                                <li><i class="fa-solid fa-check"></i> {{ plan.max_documents }} Documento{{ plan.max_documents|pluralize }} de Conocimiento</li>
+                                {% for feature in plan.summary_features %}
+                                <li><i class="fa-solid fa-check"></i> {{ feature }}</li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{% url 'onboarding:company-registration' %}?plan={{ plan.id }}" class="btn {% if forloop.counter == 2 %}btn-primary{% else %}btn-secondary{% endif %}">
+                                {% if forloop.counter == 2 %}Prueba {{ plan.name }}{% else %}Empieza con {{ plan.name }}{% endif %}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <i class="fas fa-box-open" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
+                        <h3 style="font-size: 24px; color: #334155; margin-bottom: 12px;">Planes en preparación</h3>
+                        <p style="font-size: 16px; color: #64748b; margin-bottom: 24px;">Estamos configurando nuestros planes. Vuelve pronto para conocer nuestras opciones.</p>
+                        <a href="mailto:contacto@lyvio.com" class="btn btn-primary">
+                            <i class="fas fa-envelope"></i> Contáctanos
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="comparison-table-wrapper reveal">
+                    <h3 class="comparison-title">Comparación de Planes</h3>
+                    <div class="table-container">
+                        {% if plans %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Característica</th>
+                                    {% for plan in plans %}
+                                    <th class="plan-col">{{ plan.name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Límites básicos -->
+                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Capacidad y Límites</td></tr>
+                                <tr>
+                                    <td class="feature-name">Usuarios agentes</td>
+                                    {% for plan in plans %}
+                                    <td class="value-cell">{{ plan.max_users }}</td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Bandejas de entrada</td>
+                                    {% for plan in plans %}
+                                    <td class="value-cell">{{ plan.max_inboxes }}</td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Documentos de conocimiento</td>
+                                    {% for plan in plans %}
+                                    <td class="value-cell">{{ plan.max_documents }}</td>
+                                    {% endfor %}
+                                </tr>
+                                
+                                <!-- Features de Chatwoot -->
+                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Canales de Comunicación</td></tr>
+                                <tr>
+                                    <td class="feature-name">Widget de sitio web</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.website_channel %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.website_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Email</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.email_channel %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.email_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Facebook Messenger</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.facebook_channel %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.facebook_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Instagram</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.instagram_channel %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.instagram_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">WhatsApp</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.channel_whatsapp %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.channel_whatsapp %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                
+                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Automatización e IA</td></tr>
+                                <tr>
+                                    <td class="feature-name">Bots inteligentes</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.agent_bots %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.agent_bots %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Automatizaciones</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.automations %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.automations %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Respuestas predefinidas</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.canned_responses %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.canned_responses %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Macros</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.macros %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.macros %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                
+                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Gestión y Colaboración</td></tr>
+                                <tr>
+                                    <td class="feature-name">Gestión de equipos</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.team_management %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.team_management %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Gestión de agentes</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.agent_management %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.agent_management %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Centro de ayuda</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.help_center %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.help_center %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Reportes</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.reports %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.reports %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                
+                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Marketing y CRM</td></tr>
+                                <tr>
+                                    <td class="feature-name">Campañas</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.campaigns %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.campaigns %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Campañas de WhatsApp</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.whatsapp_campaign %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.whatsapp_campaign %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">CRM</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.crm %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.crm %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    <td class="feature-name">Integraciones</td>
+                                    {% for plan in plans %}
+                                    <td class="{% if plan.features.integrations %}check-icon{% else %}dash-icon{% endif %}">
+                                        {% if plan.features.integrations %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <p>No hay planes disponibles en este momento.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="differentiator" class="reveal">
+            <div class="container">
+                <div class="differentiator-text">
+                    <span class="tag">HECHO PARA COLOMBIA</span>
+                    <h2>Facturación Electrónica DIAN, sin complicaciones.</h2>
+                    <p>En Lyvio entendemos lo importante que es tener tus cuentas claras y al día.
+Por eso, cada vez que realizas una suscripción o pago, generamos automáticamente tu factura electrónica y la reportamos ante la DIAN, sin que tengas que hacer nada más.
+Todo queda en regla, sin correos de soporte, sin formularios ni esperas.<br><br>
+
+Con Lyvio, atender a tus clientes y mantener tu contabilidad al día es igual de fácil.</p>
+                </div>
+                <div class="differentiator-visual">
+                     <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&h=400&fit=crop&q=80" alt="Diagrama de facturación Lyvio a DIAN">
+                </div>
+            </div>
+        </section>
+
+        <section id="cta" class="reveal">
+            <div class="container">
+                <div>
+                    <h2>Prueba la nueva era de la comunicación con clientes.</h2>
+                    <p>14 días gratis. Todas las funciones. Sin necesidad de tarjeta de crédito.</p>
+                    <a href="/onboarding" class="btn btn-primary">Reclama tu prueba gratuita</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="logo.png" alt="Lyvio Logo" class="logo" style="margin-bottom: 15px;" onerror="this.onerror=null;this.src='https://placehold.co/150x40/000000/FFFFFF?text=Lyvio&font=figtree';">
+                    <p>Convierte conversaciones en clientes.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Producto</h4>
+                    <ul>
+                        <li><a href="#features">Beneficios</a></li>
+                        <li><a href="#pricing">Precios</a></li>
+                        <li><a href="#differentiator">Facturación (DIAN)</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Sobre nosotros</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contáctanos</h4>
+                     <div class="social-icons">
+                        <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Lyvio. Hecho con ❤️ en Colombia.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Script para el menú móvil y animaciones ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const navMenu = document.getElementById('nav-menu');
+            if (menuBtn && navMenu) {
+                menuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            // --- Script para animación en scroll ---
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 // Se activa cuando el 10% del elemento es visible
+            });
+
+            revealElements.forEach(elem => {
+                revealObserver.observe(elem);
+            });
+
+            // --- NUEVO Script para el carrusel de precios ---
+            const slider = document.querySelector('.pricing-grid');
+            const prevButton = document.getElementById('prev-slide');
+            const nextButton = document.getElementById('next-slide');
+
+            if (slider && prevButton && nextButton) {
+                const scrollAmount = () => {
+                    // Desplazarse el ancho de una tarjeta + el gap
+                    const card = slider.querySelector('.pricing-card');
+                    if (card) {
+                        return card.offsetWidth + 20;
+                    }
+                    return 300; // fallback
+                };
+
+                nextButton.addEventListener('click', () => {
+                    slider.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
+                });
+
+                prevButton.addEventListener('click', () => {
+                    slider.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+                });
+            }
+            
+            // --- Script para efecto parallax en formas con scroll ---
+            let ticking = false;
+            
+            function updateParallax() {
+                const scrolled = window.pageYOffset;
+                const windowHeight = window.innerHeight;
+                
+                // Formas de fondo (body::before y body::after)
+                const bgShapes = document.body;
+                if (bgShapes) {
+                    const bgTranslateY = scrolled * 0.3;
+                    const bgTranslateX = Math.sin(scrolled * 0.001) * 20;
+                    const bgRotate = scrolled * 0.02;
+                    
+                    // Aplicar transformación al body::before usando CSS custom properties
+                    bgShapes.style.setProperty('--bg-shapes-y', `${bgTranslateY}px`);
+                    bgShapes.style.setProperty('--bg-shapes-x', `${bgTranslateX}px`);
+                    bgShapes.style.setProperty('--bg-shapes-rotate', `${bgRotate}deg`);
+                }
+                
+                // Formas de las secciones
+                const sections = [
+                    { id: '#hero', speedY: 0.2, speedX: 0.15, rotate: 0.03 },
+                    { id: '#features', speedY: 0.25, speedX: -0.12, rotate: -0.025 },
+                    { id: '#ai-assistant', speedY: 0.2, speedX: 0.13, rotate: 0.022 },
+                    { id: '#testimonial', speedY: 0.18, speedX: 0.1, rotate: 0.02 },
+                    { id: '#pricing', speedY: 0.22, speedX: -0.15, rotate: -0.03 },
+                    { id: '#differentiator', speedY: 0.28, speedX: 0.18, rotate: 0.025 },
+                    { id: '#cta', speedY: 0.15, speedX: -0.1, rotate: -0.02 }
+                ];
+                
+                sections.forEach(section => {
+                    const element = document.querySelector(section.id);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        const elementTop = rect.top + scrolled;
+                        const elementCenter = elementTop + (rect.height / 2);
+                        const distanceFromCenter = scrolled + (windowHeight / 2) - elementCenter;
+                        
+                        // Calcular transformaciones basadas en la posición de scroll
+                        const translateY = distanceFromCenter * section.speedY;
+                        const translateX = distanceFromCenter * section.speedX;
+                        const rotate = distanceFromCenter * section.rotate;
+                        
+                        // Aplicar transformaciones usando CSS custom properties
+                        element.style.setProperty('--shape-y', `${translateY}px`);
+                        element.style.setProperty('--shape-x', `${translateX}px`);
+                        element.style.setProperty('--shape-rotate', `${rotate}deg`);
+                    }
+                });
+                
+                ticking = false;
+            }
+            
+            function requestTick() {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }
+            
+            window.addEventListener('scroll', requestTick, { passive: true });
+            updateParallax(); // Llamar una vez al cargar
+        });
+    </script>
+    
+    <!-- Pricing Carousel Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pricingGrid = document.getElementById('pricingGrid');
+            const prevBtn = document.getElementById('prevPlanBtn');
+            const nextBtn = document.getElementById('nextPlanBtn');
+            const container = document.getElementById('pricingContainer');
+            
+            if (!pricingGrid || !container.classList.contains('has-carousel')) return;
+            
+            let currentScroll = 0;
+            const cardWidth = 320; // Ancho de cada card + gap
+            const scrollAmount = cardWidth + 28; // Card width + gap
+            
+            function updateButtons() {
+                const maxScroll = pricingGrid.scrollWidth - pricingGrid.clientWidth;
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentScroll <= 0;
+                }
+                
+                if (nextBtn) {
+                    nextBtn.disabled = currentScroll >= maxScroll;
+                }
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    currentScroll = Math.max(0, currentScroll - scrollAmount);
+                    pricingGrid.scrollTo({
+                        left: currentScroll,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(updateButtons, 300);
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    const maxScroll = pricingGrid.scrollWidth - pricingGrid.clientWidth;
+                    currentScroll = Math.min(maxScroll, currentScroll + scrollAmount);
+                    pricingGrid.scrollTo({
+                        left: currentScroll,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(updateButtons, 300);
+                });
+            }
+            
+            // Actualizar botones al hacer scroll manualmente
+            pricingGrid.addEventListener('scroll', function() {
+                currentScroll = pricingGrid.scrollLeft;
+                updateButtons();
+            });
+            
+            // Inicializar estado de botones
+            updateButtons();
+        });
+    </script>
+    
+    <script>
+    window.chatwootSettings = {"position":"right","type":"expanded_bubble","launcherTitle":"Habla con nosotros"};
+    (function(d,t) {
+        var BASE_URL="https://app.lyvio.io";
+        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=BASE_URL+"/packs/js/sdk.js";
+        g.async = true;
+        s.parentNode.insertBefore(g,s);
+        g.onload=function(){
+        window.chatwootSDK.run({
+            websiteToken: '6F3iE6tZwzPZxEhSv4bEbMat',
+            baseUrl: BASE_URL
+        })
+        }
+    })(document,"script");
+    </script>
+
+
+
+</body>
+</html>
+
+<!-- Floating WhatsApp button -->
+<a href="https://wa.me/message/ZTGSCYT5ET3KJ1" class="whatsapp-fab" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
+    <i class="fab fa-whatsapp fab-icon" aria-hidden="true"></i>
+</a>
+

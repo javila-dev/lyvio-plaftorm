@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurar Bot - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-2xl font-bold">Configuración del Bot</h1>
+            <p class="text-gray-500">{{ company.name }}</p>
+        </div>
+        {% if not from_onboarding %}
+        <div>
+            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left mr-2"></i>Volver al Dashboard
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+            {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                            {% if message.tags == 'error' or message.tags == 'danger' %}
+                                showToast('error', '{{ message|escapejs }}');
+                            {% else %}
+                                showToast('success', '{{ message|escapejs }}');
+                            {% endif %}
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="lg:col-span-2">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-robot mr-2"></i>
+                                {% if is_editing %}Editar Configuración{% else %}Configurar Nuevo Bot{% endif %}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.specialty.id_for_label }}" class="form-label font-semibold">
+                                        <i class="fas fa-building mr-1"></i>{{ form.specialty.label }}
+                                    </label>
+                                    {{ form.specialty }}
+                                    <div class="text-sm text-gray-500">Describe a qué se dedica tu empresa</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.tone.id_for_label }}" class="form-label font-semibold">
+                                        <i class="fas fa-comment-alt mr-1"></i>{{ form.tone.label }}
+                                    </label>
+                                    {{ form.tone }}
+                                    <div class="text-sm text-gray-500">Define cómo debe comunicarse el bot</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.language.id_for_label }}" class="form-label font-semibold">
+                                        <i class="fas fa-globe mr-1"></i>{{ form.language.label }}
+                                    </label>
+                                    {{ form.language }}
+                                    <div class="text-sm text-gray-500">Idioma principal del bot</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.bot_type.id_for_label }}" class="form-label font-semibold">
+                                        <i class="fas fa-brain mr-1"></i>Tipo de Bot
+                                    </label>
+                                    {{ form.bot_type }}
+                                    <div class="text-sm text-gray-500">Define la personalidad y especialización del bot</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.files.id_for_label }}" class="form-label font-semibold">
+                                        <i class="fas fa-file-upload mr-1"></i>Documentos de Entrenamiento
+                                    </label>
+                                    {{ form.files }}
+                                    <div class="text-sm text-gray-500">
+                                        Sube documentos para entrenar al bot con información específica de tu empresa
+                                        {% if trial %}
+                                            <br><small class="text-muted">Límite del trial: {{ trial.max_documents }} documentos</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Integración de Calendly -->
+                                <div class="divider my-6">Integraciones Opcionales</div>
+                                
+                                <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-slate-50">
+                                    <div class="form-control mb-3">
+                                        <label class="label cursor-pointer justify-start gap-3">
+                                            {{ form.enable_calendly }}
+                                            <div>
+                                                <span class="label-text font-semibold flex items-center gap-2">
+                                                    <i class="fas fa-calendar-alt text-blue-600"></i>
+                                                    Habilitar Calendly
+                                                </span>
+                                                <span class="label-text-alt text-gray-500">Permite que el bot agende citas automáticamente</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div id="calendly-fields" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="{{ form.calendly_token.id_for_label }}" class="form-label text-sm font-medium">
+                                                {{ form.calendly_token.label }}
+                                            </label>
+                                            {{ form.calendly_token }}
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                {{ form.calendly_token.help_text|safe }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="{{ form.calendly_organization_uri.id_for_label }}" class="form-label text-sm font-medium">
+                                                {{ form.calendly_organization_uri.label }}
+                                            </label>
+                                            {{ form.calendly_organization_uri }}
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                {{ form.calendly_organization_uri.help_text|safe }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="{{ form.calendly_usage_description.id_for_label }}" class="form-label text-sm font-medium">
+                                                {{ form.calendly_usage_description.label }}
+                                            </label>
+                                            {{ form.calendly_usage_description }}
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                {{ form.calendly_usage_description.help_text|safe }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="alert alert-info mt-3">
+                                            <i class="fas fa-info-circle mr-2"></i>
+                                            <div>
+                                                <p class="text-sm font-semibold mb-1">¿Cómo obtener estos datos?</p>
+                                                <ol class="text-xs ml-4 list-decimal">
+                                                    <li>Ve a <a href="https://calendly.com/integrations/api_webhooks" target="_blank" class="link link-primary">Configuración de API de Calendly</a></li>
+                                                    <li>Genera un Personal Access Token</li>
+                                                    <li>Copia tu Organization URI desde la misma página</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if existing_documents %}
+                                <div class="mb-4">
+                                    <label class="form-label font-semibold">
+                                        <i class="fas fa-folder mr-1"></i>Documentos Existentes
+                                    </label>
+                                    <div class="border rounded p-3 bg-base-200">
+                                        {% for doc in existing_documents %}
+                                        <div class="flex justify-between items-center py-1">
+                                            <span><i class="fas fa-file mr-2"></i>{{ doc.filename }}</span>
+                                            <small class="text-muted">{{ doc.file_size_bytes|filesizeformat }}</small>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="flex justify-between">
+                                    {% if from_onboarding %}
+                                    <a href="{% url 'onboarding:company-registration' %}" class="btn btn-outline">
+                                        <i class="fas fa-arrow-left mr-2"></i>Anterior
+                                    </a>
+                                    {% else %}
+                                    <div></div>
+                                    {% endif %}
+                                    
+                                    <div>
+                                        {% if not from_onboarding and bot %}
+                                        <a href="{% url 'bot_builder:flow-builder' %}" class="btn btn-outline mr-2">
+                                            <i class="fas fa-project-diagram mr-2"></i>Constructor de Flujos
+                                        </a>
+                                        {% endif %}
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save mr-2"></i>
+                                            {% if is_editing %}Actualizar Bot{% else %}Crear Bot{% endif %}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-info-circle mr-2"></i>Información del Trial
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            {% if trial %}
+                            <div class="mb-3">
+                                <small class="text-muted">Documentos</small>
+                                {% widthratio existing_documents|length trial.max_documents 100 as progress_docs %}
+                                <progress class="progress w-full" value="{{ progress_docs }}" max="100"></progress>
+                                <small>{{ existing_documents|length }}/{{ trial.max_documents }}</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Mensajes este mes</small>
+                                {% widthratio trial.current_messages trial.max_messages 100 as progress_msgs %}
+                                <progress class="progress progress-success w-full" value="{{ progress_msgs }}" max="100"></progress>
+                                <small>{{ trial.current_messages }}/{{ trial.max_messages }}</small>
+                            </div>
+                            
+                            <div class="text-center">
+                                <small class="text-muted">{{ trial.days_remaining }} días restantes</small>
+                            </div>
+                            {% else %}
+                            <p class="text-muted">No hay información de trial disponible.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if bot %}
+                    <div class="card shadow-sm mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-eye mr-2"></i>Vista Previa
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline btn-primary btn-sm w-full" onclick="previewBot()">
+                                <i class="fas fa-play mr-2"></i>Probar Bot
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewBot() {
+    // Implementar vista previa del bot
+    alert('Vista previa del bot - Por implementar');
+}
+
+// Toggle de campos de Calendly
+document.addEventListener('DOMContentLoaded', function() {
+    const enableCalendlyCheckbox = document.getElementById('enable_calendly');
+    const calendlyFields = document.getElementById('calendly-fields');
+    
+    if (enableCalendlyCheckbox) {
+        // Mostrar campos si el checkbox está marcado al cargar
+        if (enableCalendlyCheckbox.checked) {
+            calendlyFields.style.display = 'block';
+        }
+        
+        // Toggle al cambiar el checkbox
+        enableCalendlyCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                calendlyFields.style.display = 'block';
+            } else {
+                calendlyFields.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

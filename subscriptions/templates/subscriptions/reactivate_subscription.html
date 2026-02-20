@@ -1,0 +1,137 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Reactivar Suscripción - Lyvio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-base-content mb-4">
+            ¿Quieres reactivar tu suscripción?
+        </h1>
+        <p class="text-lg text-base-content/70">
+            Todavía estás dentro del período de gracia
+        </p>
+    </div>
+
+    <!-- Card Principal -->
+    <div class="max-w-2xl mx-auto">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-8">
+                <!-- Alert Informativo -->
+                <div class="alert alert-info mb-6">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <h3 class="font-bold">¡Buenas noticias!</h3>
+                            <div class="text-sm mt-1">
+                                <p>Tu suscripción fue cancelada pero todavía tienes <span class="font-semibold">{{ days_remaining }} días</span> de acceso restantes.</p>
+                                <p class="mt-1">Puedes reactivarla <strong>sin costo adicional</strong> y seguir disfrutando de tu plan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info del Plan -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-base-200 rounded-lg p-4">
+                        <div class="text-sm text-base-content/60 mb-1">Plan Actual</div>
+                        <div class="text-lg font-semibold">{{ subscription.plan.name }}</div>
+                    </div>
+                    <div class="bg-base-200 rounded-lg p-4">
+                        <div class="text-sm text-base-content/60 mb-1">Ciclo de Facturación</div>
+                        <div class="text-lg font-semibold">
+                            {% if subscription.billing_cycle == 'monthly' %}Mensual{% else %}Anual{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Beneficios que recuperas -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Al reactivar recuperas:</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Acceso completo a tu cuenta de Chatwoot</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Todos los bots y configuraciones intactas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Sin interrupciones en tu servicio</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span><strong>Sin costo adicional</strong> - Ya pagaste por este período</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Formulario de Reactivación -->
+                <form method="POST" class="space-y-4" id="reactivateForm">
+                    {% csrf_token %}
+                    
+                    <div class="divider my-6"></div>
+                    
+                    <!-- Botones de Acción -->
+                    <div class="flex gap-3 justify-end">
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-neutral" id="cancelBtn">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success flex items-center gap-2" id="reactivateBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" id="checkIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="loading loading-spinner loading-sm hidden" id="loadingSpinner"></span>
+                            <span id="btnText">Sí, Reactivar Mi Suscripción</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Nota al pie -->
+                <div class="text-sm text-base-content/60 text-center mt-6">
+                    <p>Tu suscripción se reactivará inmediatamente y continuará hasta {{ subscription.current_period_end|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('reactivateForm').addEventListener('submit', function(e) {
+        // Obtener referencias a los elementos
+        const btn = document.getElementById('reactivateBtn');
+        const checkIcon = document.getElementById('checkIcon');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const btnText = document.getElementById('btnText');
+        const cancelBtn = document.getElementById('cancelBtn');
+        
+        // Deshabilitar el botón
+        btn.disabled = true;
+        
+        // Ocultar el icono de check
+        checkIcon.classList.add('hidden');
+        
+        // Mostrar el spinner
+        loadingSpinner.classList.remove('hidden');
+        
+        // Cambiar el texto del botón
+        btnText.textContent = 'Reactivando...';
+        
+        // Deshabilitar el botón de cancelar
+        cancelBtn.classList.add('opacity-50', 'pointer-events-none');
+    });
+</script>
+
+{% endblock %}

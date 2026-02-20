@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Dashboard - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="flex flex-wrap mb-4">
+        <div class="w-full">
+            <h1>Bienvenido, {{ user.first_name|default:user.email }}</h1>
+            <p class="text-muted">{{ company.name }}</p>
+        </div>
+    </div>
+
+    <!-- Trial/Subscription Status -->
+    <div class="flex flex-wrap mb-4">
+        <div class="w-full">
+            {% if is_trial and trial %}
+            <div class="card border-info">
+                <div class="card-body">
+                    <div class="flex items-center">
+                        <div class="md:w-2/3">
+                            <h5 class="card-title">
+                                <i class="fas fa-gift mr-2 text-info"></i>Trial Gratuito
+                                <span class="badge bg-info">{{ trial.status|title }}</span>
+                            </h5>
+                            <p class="mb-0">
+                                <strong>{{ trial.days_remaining }} días restantes</strong> de tu trial gratuito<br>
+                                <small class="text-muted">Termina el {{ trial.end_date|date:"d M Y" }}</small>
+                            </p>
+                        </div>
+                        <div class="md:w-1/3 text-right">
+                            <a href="/billing/upgrade/" class="btn btn-primary">
+                                <i class="fas fa-rocket mr-2"></i>Actualizar Plan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif subscription %}
+            <div class="card border-success">
+                <div class="card-body">
+                    <div class="flex items-center">
+                        <div class="md:w-2/3">
+                            <h5 class="card-title">
+                                Plan {{ subscription.plan.name }}
+                                <span class="badge bg-success">Activo</span>
+                            </h5>
+                            <p class="mb-0">
+                                Próximo pago: {{ subscription.current_period_end|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                        <div class="md:w-1/3 text-right">
+                            <a href="{% url 'dashboard:settings' %}" class="btn btn-outline btn-primary">
+                                <i class="fas fa-cog mr-2"></i>Gestionar Plan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>No hay plan activo
+                    </h5>
+                    <p class="mb-3">Parece que tu trial ha expirado o no tienes un plan activo.</p>
+                    <a href="/billing/plans/" class="btn btn-warning">
+                        <i class="fas fa-shopping-cart mr-2"></i>Elegir Plan
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Usage Metrics -->
+    {% if is_trial and trial %}
+    <div class="flex flex-wrap mb-4">
+        <div class="md:w-1/3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-comments mr-1"></i>Mensajes
+                    </h6>
+                    <h3 class="mb-2">{{ limits.messages }}</h3>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if usage_percent.messages > 80 %}bg-danger{% elif usage_percent.messages > 60 %}bg-warning{% else %}bg-info{% endif %}" 
+                             style="width: {{ usage_percent.messages }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ usage_percent.messages|floatformat:0 }}% usado en trial</small>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-users mr-1"></i>Conversaciones
+                    </h6>
+                    <h3 class="mb-2">{{ limits.conversations }}</h3>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if usage_percent.conversations > 80 %}bg-danger{% elif usage_percent.conversations > 60 %}bg-warning{% else %}bg-info{% endif %}" 
+                             style="width: {{ usage_percent.conversations }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ usage_percent.conversations|floatformat:0 }}% usado en trial</small>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-file mr-1"></i>Documentos
+                    </h6>
+                    <h3 class="mb-2">{{ limits.documents }}</h3>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if usage_percent.documents > 80 %}bg-danger{% elif usage_percent.documents > 60 %}bg-warning{% else %}bg-info{% endif %}" 
+                             style="width: {{ usage_percent.documents }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ usage_percent.documents|floatformat:0 }}% usado en trial</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif subscription %}
+    <div class="flex flex-wrap mb-4">
+        <div class="md:w-1/2 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Documentos</h6>
+                    <h3 class="mb-2">{{ total_documents }}</h3>
+                    <small class="text-muted">Subidos y procesados</small>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/2 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Plan</h6>
+                    <h3 class="mb-2">{{ subscription.plan.name }}</h3>
+                    <small class="text-muted">Suscripción activa</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bots List -->
+    <div class="flex flex-wrap">
+        <div class="w-full">
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h5 class="mb-0">Mis Bots</h5>
+                    {% if bots.count < subscription.plan.max_inboxes %}
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle mr-1"></i> Nuevo Bot
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if bots %}
+                    <div class="overflow-x-auto">
+                        <table class="table table-compact w-full">
+                            <thead>
+                                <tr>
+                                    <th>Inbox ID</th>
+                                    <th>Idioma</th>
+                                    <th>Documentos</th>
+                                    <th>Estado</th>
+                                    <th>Creado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bot in bots %}
+                                <tr>
+                                    <td><code>{{ bot.inbox_id }}</code></td>
+                                    <td>{{ bot.get_language_display }}</td>
+                                    <td>{{ bot.documents.count }}</td>
+                                    <td>
+                                        <span class="badge {% if bot.is_active %}badge-success{% else %}badge-outline{% endif %}">
+                                            {% if bot.is_active %}Activo{% else %}Inactivo{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ bot.created_at|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{{ settings.CHATWOOT_API_URL }}/app/accounts/{{ company.chatwoot_account_id }}/inbox/{{ bot.inbox_id }}" 
+                                           target="_blank" class="btn btn-sm btn-outline">
+                                            <i class="bi bi-box-arrow-up-right mr-1"></i> Abrir
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-robot text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">No tienes bots configurados aún</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row mt-4">
+    <div class="md:w-1/3 mb-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-book text-primary" style="font-size: 2rem;"></i>
+                    <h6 class="mt-2">Documentación</h6>
+                    <a href="#" class="stretched-link">Ver guías</a>
+                </div>
+            </div>
+        </div>
+    <div class="md:w-1/3 mb-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-chat-dots text-primary" style="font-size: 2rem;"></i>
+                    <h6 class="mt-2">Soporte</h6>
+                    <a href="#" class="stretched-link">Contactar</a>
+                </div>
+            </div>
+        </div>
+    <div class="md:w-1/3 mb-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-whatsapp text-primary" style="font-size: 2rem;"></i>
+                    <h6 class="mt-2">Chatwoot</h6>
+                    <a href="{{ settings.CHATWOOT_API_URL }}/app/accounts/{{ company.chatwoot_account_id }}" 
+                       target="_blank" class="stretched-link">Abrir plataforma</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

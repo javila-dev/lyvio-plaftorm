@@ -1,0 +1,62 @@
+{% extends 'onboarding/base.html' %}
+
+{% block onboarding_content %}
+<h2 class="text-center mb-4">Método de Pago</h2>
+
+<div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>{{ plan.name }}</h4>
+                <div class="display-4 text-primary mb-3">
+                    ${{ plan.price_monthly|floatformat:0 }} COP
+                    <small class="fs-6 text-muted">/mes</small>
+                </div>
+                <p class="text-muted">o ${{ plan.price_yearly|floatformat:0 }} COP/año (ahorra 20%)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post" id="payment-form">
+    {% csrf_token %}
+    
+    <div class="mb-4">
+        <label class="form-label fw-bold">Ciclo de facturación</label>
+        <div class="btn-group w-100" role="group">
+            <input type="radio" class="btn-check" name="billing_cycle" id="monthly" 
+                   value="monthly" checked>
+            <label class="btn btn-outline-primary" for="monthly">
+                Mensual - ${{ plan.price_monthly|floatformat:0 }} COP
+            </label>
+            
+            <input type="radio" class="btn-check" name="billing_cycle" id="yearly" 
+                   value="yearly">
+            <label class="btn btn-outline-primary" for="yearly">
+                Anual - ${{ plan.price_yearly|floatformat:0 }} COP (ahorra 20%)
+            </label>
+        </div>
+    </div>
+
+    <div class="alert alert-info mb-4">
+        <i class="bi bi-shield-check"></i> 
+        Pago seguro procesado por Wompi (Bancolombia)
+        <ul class="mb-0 mt-2">
+            <li>Tarjetas de crédito/débito</li>
+            <li>PSE (Débito bancario)</li>
+            <li>Nequi</li>
+            <li>Cuotas sin tarjeta</li>
+        </ul>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg w-100">
+        <i class="bi bi-credit-card"></i> Continuar al Pago
+    </button>
+</form>
+
+<div class="text-center mt-4">
+    <img src="https://wompi.com/assets/images/logo-wompi.svg" 
+         alt="Wompi" style="height: 40px;">
+    <p class="text-muted mt-2 small">Powered by Bancolombia</p>
+</div>
+{% endblock %}

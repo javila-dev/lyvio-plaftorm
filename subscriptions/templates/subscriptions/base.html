@@ -1,0 +1,831 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portal de Billing - Lyvio{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Tailwind CDN (prototipo) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- DaisyUI compiled CSS via CDN (themes incluidas) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@2.57.0/dist/full.css">
+    <!-- Fallback minimal styles for daisyUI form classes to ensure visible controls if CDN doesn't apply immediately -->
+    <style>
+        /* Basic visible styling for daisyUI utility classes (input/select/textarea/file-input)
+           This is a small fallback so forms don't render como plain HTML if the CDN CSS isn't loaded yet. */
+        .input, .select, .textarea, .file-input {
+            display: inline-block;
+            width: 100%;
+            padding: .5rem .75rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: .5rem;
+            background: #ffffff;
+            color: #0f172a; /* gray-900 */
+            box-sizing: border-box;
+            font-size: 0.9375rem; /* 15px approx */
+        }
+        .input:focus, .select:focus, .textarea:focus, .file-input:focus {
+            outline: none;
+            border-color: #6366f1; /* indigo */
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.06);
+        }
+        .textarea { min-height: 3rem; }
+    </style>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Sidebar: collapsed (thin) by default, expands on hover. 
+           Icons centered when collapsed; left-aligned content when expanded. */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 64px; /* thin state */
+            background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden; /* prevent horizontal scroll from children */
+            transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms ease;
+            box-sizing: border-box;
+            padding-top: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* keep centered when collapsed */
+        }
+        /* Ensure predictable sizing inside the sidebar to avoid children overflowing */
+        .sidebar *, .sidebar *::before, .sidebar *::after { box-sizing: inherit; }        .sidebar .logo-section {
+            /* stacked logo: icon above title when collapsed/expanded; centered in collapsed */
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+    .sidebar .logo-section .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 0 0 auto;
+        }
+
+        /* logo-section already configured above (stacked, centered) */
+        
+        .sidebar .logo-section .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+            filter: brightness(0) invert(1);
+        }
+
+            /* Ensure nav container ignores external .nav / .flex-column bootstrap classes */
+            .sidebar nav, .sidebar .nav {
+                width: calc(100% - 10px);
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* centered when collapsed */
+                padding: 8px 0;
+                box-sizing: border-box;
+            }
+            body.sidebar-open .sidebar nav, body.sidebar-open .sidebar .nav {
+                align-items: flex-start; /* left align when expanded */
+            }
+        
+        .sidebar .logo-section .logo-text {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            text-align: left;
+            transition: max-height 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 50ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-4px);
+        }
+                .sidebar .logo-section .logo-text h4 {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin: 0;
+            white-space: nowrap;
+        }
+        .sidebar .logo-section .logo-text small {
+            color: #64748b;
+            font-size: 0.7rem;
+            display: block;
+            margin-top: 2px;
+        }
+        
+                .sidebar .nav-link {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 12px;
+            margin: 4px 6px;
+            border-radius: 10px;
+            transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* center icons when collapsed */
+            gap: 8px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative; /* for tooltip */
+            box-sizing: border-box;
+            padding-right: 6px;
+            width: auto; /* auto in collapsed state so the icon area centers correctly */
+        }
+
+        /* Collapsed (thin) specific: center the pill and icon visually */
+        .sidebar:not(.sidebar-open) .nav-link {
+            width: 48px; /* tight pill matching icon area */
+            padding: 8px 6px;
+            margin: 8px auto; /* center horizontally inside sidebar */
+            justify-content: center;
+            border-radius: 10px;
+        }
+        .sidebar:not(.sidebar-open) .nav-link i {
+            margin-right: 0; /* no gap in collapsed */
+            display: block;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            min-width: 20px;
+            flex: 0 0 20px; /* fixed slot so icon stays visible and doesn't shrink */
+            text-align: center;
+            font-size: 1.05rem;
+            display: inline-block;
+            color: inherit; /* make sure icon follows link color */
+            opacity: 1; /* explicitly visible */
+            margin-right: 0; /* margin applied when expanded */
+            transition: margin 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* nav text hidden when collapsed by shrinking its max-width so it doesn't occupy space;
+           this prevents invisible text from pushing icons off-center. Animate max-width + opacity. */
+        .sidebar .nav-text {
+            display: inline-block;
+            max-width: 0;
+            opacity: 0;
+            transform: translateX(-6px);
+            overflow: hidden;
+            transition: max-width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 50ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        /* Tooltip for collapsed labels (native-like) */
+        body:not(.sidebar-open) .sidebar .nav-link[data-title]:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            left: 72px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15,23,42,0.95);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            box-shadow: 0 6px 18px rgba(2,6,23,0.12);
+            z-index: 1200;
+        }
+        
+        .sidebar .nav-link.active i {
+            color: #ffffff;
+        }
+        
+        .logout-section {
+            position: absolute;
+            bottom: 16px;
+            left: 8px;
+            right: 8px;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .user-info {
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* In collapsed (thin) sidebar center the avatar inside the user box */
+        .sidebar .logout-section .user-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+        }
+        
+        .user-info .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Hide user details when sidebar is collapsed (thin) */
+        /* User details animate in/out to avoid abrupt appearance */
+        .sidebar .user-info .user-details {
+            max-width: 0;
+            opacity: 0;
+            transform: translateX(-6px);
+            overflow: hidden;
+            transition: max-width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 50ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Show user details when sidebar is expanded */
+        body.sidebar-open .user-info .user-details {
+            max-width: calc(100% - 56px);
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0ms, 50ms, 0ms;
+        }
+        
+        /* Colores de texto para el user-info en sidebar oscuro */
+        .sidebar .user-info .user-name {
+            color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        .sidebar .user-info .company-name {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        
+        /* When expanded, show avatar next to name */
+        body.sidebar-open .logout-section .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            justify-content: flex-start;
+        }
+        /* expand logout-section horizontal inset when sidebar-open to match padding */
+        body.sidebar-open .logout-section { left: 12px; right: 12px; }
+        body.sidebar-open .user-info .user-avatar {
+            margin-bottom: 0;
+            margin-right: 6px;
+        }
+
+        /* Show logo text when sidebar is expanded */
+        body.sidebar-open .sidebar .logo-section .logo-text {
+            display: inline-block;
+        }
+        
+        .logout-btn {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        /* Hide logout text when collapsed */
+        .logout-btn .nav-text {
+            max-width: 0;
+            opacity: 0;
+            transform: translateX(-6px);
+            overflow: hidden;
+            transition: max-width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 50ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            white-space: nowrap;
+        }
+        
+        /* Show logout text when expanded */
+        body.sidebar-open .logout-btn {
+            justify-content: flex-start;
+            padding-left: 12px;
+        }
+        
+        body.sidebar-open .logout-btn .nav-text {
+            max-width: 150px;
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0ms, 50ms, 0ms;
+        }
+        
+        .main-content {
+            margin-left: 64px;
+            min-height: 100vh;
+            background: #f8f9fc;
+            overflow-y: auto;
+            overflow-x: hidden; /* prevent horizontal scrolling caused by sidebar artifacts */
+            height: 100vh;
+            padding: 24px 40px;
+            max-width: 100%;
+            box-sizing: border-box;
+            transition: none; /* No transition, content doesn't move */
+        }
+        
+        /* Overlay para oscurecer el contenido cuando el sidebar está expandido */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body.sidebar-open::before {
+            opacity: 1;
+            pointer-events: auto;
+        }        .page-header {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 17px;
+            padding: 20px 0;
+            margin-bottom: 24px;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .page-header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        
+        .page-header .subtitle {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            border-radius: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            transform: translateY(-1px);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            border-radius: 16px 16px 0 0 !important;
+            padding: 20px 24px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-active { 
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status-trial { 
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .status-cancelled { 
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .status-expired { 
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .status-pending { 
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .status-past_due { 
+            background: #fed7aa;
+            color: #9a3412;
+            border: 1px solid #fdba74;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+        }
+        
+        .metric-primary { 
+            background: #f1f5f9; 
+            color: #6366f1; 
+            border: 2px solid #6366f1;
+        }
+        .metric-success { 
+            background: #f0fdf4; 
+            color: #16a34a; 
+            border: 2px solid #16a34a;
+        }
+        .metric-warning { 
+            background: #fffbeb; 
+            color: #d97706; 
+            border: 2px solid #d97706;
+        }
+        .metric-info { 
+            background: #f0f9ff; 
+            color: #0284c7; 
+            border: 2px solid #0284c7;
+        }
+        
+        .progress-custom {
+            height: 8px;
+            border-radius: 8px;
+            background-color: #f1f5f9;
+            overflow: hidden;
+        }
+        
+        .progress-bar-custom {
+            background: #6366f1;
+            border-radius: 8px;
+            transition: width 0.6s ease;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            border: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid #6366f1;
+            background: white;
+            color: #6366f1;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+        
+        .welcome-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #6366f1;
+            color: #334155;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .welcome-section h2 {
+            color: #1e293b;
+        }
+
+    /* Expanded state when body has class sidebar-open */
+    body.sidebar-open .sidebar { width: 240px; box-shadow: 0 6px 24px rgba(2,6,23,0.06); align-items: flex-start; padding-left: 12px; overflow-x: visible; }
+    body.sidebar-open .main-content { margin-left: 240px; transition: margin-left 180ms ease; }
+    /* When expanded, allow nav links to show text and align items to the left */
+    body.sidebar-open .sidebar .nav-link { justify-content: flex-start; padding-left: 12px; padding-right: 12px; overflow: visible; width: calc(100% - 4px); margin: 6px 0; }
+    body.sidebar-open .sidebar .nav-link i { margin-right: 12px; }
+        body.sidebar-open .sidebar .nav-text { max-width: calc(100% - 60px); opacity: 1; transform: translateX(0); }
+    body.sidebar-open .sidebar .logo-section { flex-direction: row; align-items: center; padding: 12px 12px; gap: 12px; }
+    body.sidebar-open .sidebar .logo-section .logo-icon { margin-right: 8px!important; margin-left: 0px!important; transform: scale(1.06); width:56px; height:56px; }
+    body.sidebar-open .sidebar .logo-section .logo-text { max-height: 200px; opacity:1; transform: none; margin-top: 0; }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <!-- Sidebar -->
+    <div class="sidebar" aria-expanded="false" tabindex="0">
+                <!-- Logo Section -->
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <img src="{% static 'img/logo.png' %}" alt="Lyvio Logo">
+                    </div>
+                    <div class="logo-text">
+                        <h4>Lyvio</h4>
+                        <small>Portal de facturación</small>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="nav flex-column" role="navigation" aria-label="Sidebar Navigation">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                       href="{% url 'dashboard:dashboard' %}" data-title="Dashboard" aria-label="Dashboard link">
+                        <i class="fas fa-home" aria-hidden="true"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'configure' %}active{% endif %}" 
+                       href="{% url 'bot_builder:configure' %}" data-title="Configurar Bot IA" aria-label="Configurar Bot IA">
+                        <i class="fas fa-robot" aria-hidden="true"></i>
+                        <span class="nav-text">Configurar Bot IA</span>
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'payment_history' %}active{% endif %}" 
+                       href="{% url 'dashboard:payment_history' %}" data-title="Historial de Pagos" aria-label="Historial de Pagos">
+                        <i class="fas fa-credit-card" aria-hidden="true"></i>
+                        <span class="nav-text">Historial de Pagos</span>
+                    </a>
+                    {% if user.is_staff %}
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin' %}active{% endif %}" 
+                       href="{% url 'admin_dashboard:admin' %}" data-title="Admin Dashboard" aria-label="Admin Dashboard">
+                        <i class="fas fa-chart-line" aria-hidden="true"></i>
+                        <span class="nav-text">Admin</span>
+                    </a>
+                    {% endif %}
+                    {% if user.company and user.company.chatwoot_account_id %}
+                    <a class="nav-link" 
+                       href="https://app.lyvio.io/app/accounts/{{ user.company.chatwoot_account_id }}/inbox-view" data-title="Volver a Lyvio" aria-label="Volver a Lyvio">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        <span class="nav-text">Volver a chats</span>
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <!-- User & Logout Section -->
+                <div class="logout-section">
+                    <div class="user-info">
+                        <!-- Avatar always visible in thin mode; details shown when expanded -->
+                        <div class="user-avatar" aria-hidden="true">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name text-dark mb-1 fw-bold">{{ user.first_name|default:user.email }}</div>
+                            <div class="company-name text-xs text-muted truncate" style="max-width: 160px;">{{ company.name }}</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'dashboard:logout' %}" class="logout-btn" aria-label="Cerrar sesión">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span class="nav-text">Cerrar Sesión</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Messages convertidos a Toasts -->
+                {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                            {% if message.tags == 'error' or message.tags == 'danger' %}
+                                showToast('error', '{{ message|escapejs }}');
+                            {% else %}
+                                showToast('success', '{{ message|escapejs }}');
+                            {% endif %}
+                        {% endfor %}
+                    });
+                </script>
+                {% endif %}
+
+                <!-- Page Content -->
+                {% block content %}
+                {% endblock %}
+            </div>
+            {% else %}
+            <!-- Sin autenticar -->
+            <!-- Removed legacy .form-control/.form-select CSS to avoid conflicts with django-formify and daisyUI.
+                 Forms should use daisyUI classes (input/select/textarea + -bordered + w-full) or django-formify components. -->
+
+            <div class="container mx-auto px-4">
+                <!-- Messages convertidos a Toasts -->
+                {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                            {% if message.tags == 'error' or message.tags == 'danger' %}
+                                showToast('error', '{{ message|escapejs }}');
+                            {% else %}
+                                showToast('success', '{{ message|escapejs }}');
+                            {% endif %}
+                        {% endfor %}
+                    });
+                </script>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+    <!-- Toast Containers (daisyUI) -->
+    <script>
+        // Compatibility helper: if legacy templates still render elements with .form-control/.form-select,
+        // add equivalent daisyUI classes at runtime so they look consistent without touching every template.
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                document.querySelectorAll('.form-control').forEach(function(el) {
+                    if (el.tagName === 'SELECT') {
+                        if (!el.classList.contains('select')) el.classList.add('select', 'select-bordered');
+                    } else if (el.tagName === 'TEXTAREA') {
+                        if (!el.classList.contains('textarea')) el.classList.add('textarea', 'textarea-bordered');
+                    } else {
+                        if (!el.classList.contains('input')) el.classList.add('input', 'input-bordered');
+                    }
+                });
+                document.querySelectorAll('.form-select').forEach(function(el) {
+                    if (!el.classList.contains('select')) el.classList.add('select', 'select-bordered');
+                });
+            } catch (e) {
+                // defensive: ignore in older browsers
+                console.warn('form-control compatibility helper failed', e);
+            }
+        });
+    </script>
+    <div class="fixed top-4 right-4 z-50 space-y-2">
+        <div id="successToast" class="alert alert-success shadow-lg hidden backdrop-blur-md bg-opacity-80 border border-success/30">
+            <div>
+                <i class="fas fa-check-circle mr-2"></i>
+                <span id="successToastMessage">Operación exitosa</span>
+            </div>
+        </div>
+        <div id="errorToast" class="alert alert-error shadow-lg hidden backdrop-blur-md bg-opacity-80 border border-error/30">
+            <div>
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span id="errorToastMessage">Error en la operación</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función global para mostrar toasts (daisyUI)
+        function showToast(type, message) {
+            const successEl = document.getElementById('successToast');
+            const errorEl = document.getElementById('errorToast');
+            if(type === 'success' && successEl){
+                const msg = document.getElementById('successToastMessage');
+                if(msg) msg.textContent = message;
+                successEl.classList.remove('hidden');
+                setTimeout(()=> successEl.classList.add('hidden'), 4000);
+            }
+            if(type !== 'success' && errorEl){
+                const msg = document.getElementById('errorToastMessage');
+                if(msg) msg.textContent = message;
+                errorEl.classList.remove('hidden');
+                setTimeout(()=> errorEl.classList.add('hidden'), 4000);
+            }
+        }
+    </script>
+    <script>
+        // Sidebar expand/collapse on hover (adds class to body)
+        (function(){
+            const sidebar = document.querySelector('.sidebar');
+            if(!sidebar) return;
+            function setNavTextHidden(hidden) {
+                const navTexts = sidebar.querySelectorAll('.nav-text');
+                navTexts.forEach(el => {
+                    if(hidden) {
+                        el.setAttribute('aria-hidden','true');
+                    } else {
+                        el.removeAttribute('aria-hidden');
+                    }
+                });
+            }
+            function openSidebar(){
+                document.body.classList.add('sidebar-open');
+                sidebar.setAttribute('aria-expanded','true');
+                setNavTextHidden(false);
+            }
+            function closeSidebar(){
+                document.body.classList.remove('sidebar-open');
+                sidebar.setAttribute('aria-expanded','false');
+                setNavTextHidden(true);
+            }
+            sidebar.addEventListener('mouseenter', openSidebar);
+            sidebar.addEventListener('mouseleave', closeSidebar);
+            // keyboard accessibility: expand when focused
+            sidebar.addEventListener('focusin', openSidebar);
+            sidebar.addEventListener('focusout', closeSidebar);
+            // Close sidebar when clicking on overlay
+            document.body.addEventListener('click', function(e) {
+                // Check if click is outside sidebar and sidebar is open
+                if (document.body.classList.contains('sidebar-open') && 
+                    !sidebar.contains(e.target)) {
+                    closeSidebar();
+                }
+            });
+            // initialize hidden state for nav text
+            setNavTextHidden(true);
+        })();
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

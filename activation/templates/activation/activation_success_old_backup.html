@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Cuenta activada! - Lyvio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            animation: bounce 1s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -8px, 0);
+            }
+            70% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -4px, 0);
+            }
+        }
+
+        .success-title {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-text {
+            color: #4a5568;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .redirect-info {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #234e52;
+        }
+
+        .btn-dashboard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .next-steps {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .step-icon {
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            color: #4a5568;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                ✓
+            </div>
+            
+            <h1 class="success-title">¡Cuenta activada!</h1>
+            
+            <p class="success-text">
+                ¡Excelente! Tu cuenta ha sido activada correctamente y tu asistente de IA está siendo configurado.
+            </p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="redirect-info" id="redirectInfo">
+                <div class="loading-spinner"></div>
+                <strong>Configurando tu asistente...</strong><br>
+                Serás redirigido automáticamente a tu dashboard en unos segundos.
+            </div>
+
+            <div class="next-steps">
+                <h5 style="color: #2d3748; margin-bottom: 1rem;">¿Qué sigue?</h5>
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <div class="step-content">
+                        <strong>Configurar tu bot:</strong> Personaliza las respuestas y comportamiento
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <div class="step-content">
+                        <strong>Subir documentos:</strong> Entrena tu asistente con información de tu empresa
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <div class="step-content">
+                        <strong>Integrar canales:</strong> Conecta WhatsApp, web chat y más
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'dashboard:dashboard' %}" class="btn-dashboard" id="dashboardBtn">
+                    Ir a mi dashboard
+                </a>
+            </div>
+
+            <div class="mt-4">
+                <small class="text-muted">
+                    Tu periodo de prueba de 14 días ha comenzado. ¡Explora todas las funciones!
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect si hay SSO URL con mensajes animados
+        const ssoLink = "{{ request.session.chatwoot_sso_url|default:'' }}";
+        
+        const loadingMessages = [
+            { emoji: '🚀', text: 'Activando tus superpoderes...' },
+            { emoji: '🎨', text: 'Configurando tu espacio de trabajo...' },
+            { emoji: '🤖', text: 'Preparando tu asistente IA...' },
+            { emoji: '✨', text: 'Personalizando tu experiencia...' },
+            { emoji: '🔧', text: 'Ajustando los últimos detalles...' },
+            { emoji: '🎯', text: 'Casi listo para despegar...' }
+        ];
+        
+        let messageIndex = 0;
+        
+        function updateLoadingMessage() {
+            const redirectInfo = document.getElementById('redirectInfo');
+            if (ssoLink && messageIndex < loadingMessages.length) {
+                const msg = loadingMessages[messageIndex];
+                redirectInfo.innerHTML = `
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">${msg.emoji}</div>
+                    <div class="loading-spinner"></div>
+                    <strong>${msg.text}</strong>
+                `;
+                messageIndex++;
+            } else if (!ssoLink) {
+                redirectInfo.innerHTML = `
+                    <div class="loading-spinner"></div>
+                    <strong>Configuración completa!</strong><br>
+                    Puedes acceder a tu dashboard haciendo clic en el botón.
+                `;
+            }
+        }
+        
+        if (ssoLink) {
+            // Mostrar primer mensaje inmediatamente
+            updateLoadingMessage();
+            
+            // Cambiar mensaje cada 1.2 segundos
+            const messageTimer = setInterval(() => {
+                if (messageIndex < loadingMessages.length) {
+                    updateLoadingMessage();
+                } else {
+                    clearInterval(messageTimer);
+                }
+            }, 1200);
+            
+            // Redirigir después de 7 segundos
+            setTimeout(() => {
+                window.location.href = ssoLink;
+            }, 7000);
+        } else {
+            updateLoadingMessage();
+            // Si no hay SSO link, redirigir al dashboard normal después de 3 segundos
+            setTimeout(() => {
+                window.location.href = "{% url 'dashboard:dashboard' %}";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

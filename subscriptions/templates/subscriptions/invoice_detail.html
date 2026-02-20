@@ -1,0 +1,258 @@
+{% extends 'subscriptions/base.html' %}
+{% load humanize %}
+
+{% block title %}Factura #{{ invoice.id|stringformat:"05d" }} - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-800 mb-1">Factura #{{ invoice.id|stringformat:"05d" }}</h1>
+        <p class="text-slate-500 text-sm">{{ invoice.created_at|date:"j F Y" }}</p>
+    </div>
+    
+    <div class="flex gap-2">
+        <a href="{% url 'dashboard:payment_history' %}" class="btn btn-sm btn-ghost gap-2">
+            <i class="fas fa-arrow-left text-xs"></i>
+            <span>Volver</span>
+        </a>
+        
+        {% if invoice.invoice_pdf_url %}
+        <a href="{{ invoice.invoice_pdf_url }}" class="btn btn-sm btn-primary gap-2" target="_blank">
+            <i class="fas fa-download text-xs"></i>
+            <span>Descargar PDF</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Información Principal de la Factura -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Facturado a:</h3>
+                    <div class="space-y-1">
+                        <div class="font-semibold text-slate-800">{{ company.name }}</div>
+                        <div class="text-slate-600 text-sm">{{ company.email }}</div>
+                        {% if company.address %}
+                            <div class="text-slate-600 text-sm">{{ company.address }}</div>
+                        {% endif %}
+                        {% if company.phone %}
+                            <div class="text-slate-600 text-sm">{{ company.phone }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Información de la factura:</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-600">Número:</span>
+                            <span class="font-medium text-slate-800">#{{ invoice.id|stringformat:"05d" }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-600">Fecha:</span>
+                            <span class="font-medium text-slate-800">{{ invoice.created_at|date:"j M Y" }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm items-center">
+                            <span class="text-slate-600">Estado:</span>
+                            <span>
+                                {% if invoice.status == 'paid' %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                                        <i class="fas fa-check-circle"></i>Pagada
+                                    </span>
+                                {% elif invoice.status == 'pending' %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-medium">
+                                        <i class="fas fa-clock"></i>Pendiente
+                                    </span>
+                                {% elif invoice.status == 'failed' %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
+                                        <i class="fas fa-times-circle"></i>Fallida
+                                    </span>
+                                {% elif invoice.status == 'voided' %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                                        <i class="fas fa-ban"></i>Anulada
+                                    </span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if invoice.paid_at %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-600">Pagada el:</span>
+                            <span class="font-medium text-slate-800">{{ invoice.paid_at|date:"j M Y H:i" }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles del Servicio -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
+                <h3 class="text-sm font-semibold text-slate-700">Detalles del Servicio</h3>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="text-left text-xs font-semibold text-slate-600 pb-3">Descripción</th>
+                                <th class="text-left text-xs font-semibold text-slate-600 pb-3">Período</th>
+                                <th class="text-right text-xs font-semibold text-slate-600 pb-3">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-4">
+                                    <div class="font-medium text-slate-800 text-sm">{{ subscription.plan.name }}</div>
+                                    <div class="text-slate-500 text-xs">
+                                        Plan {{ subscription.plan.plan_type|title }}
+                                        {% if subscription.billing_cycle == 'yearly' %}
+                                            - Facturación Anual
+                                        {% else %}
+                                            - Facturación Mensual
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="py-4">
+                                    <div class="text-slate-600 text-sm">{{ subscription.current_period_start|date:"j M" }} - {{ subscription.current_period_end|date:"j M Y" }}</div>
+                                </td>
+                                <td class="py-4 text-right">
+                                    <div class="font-semibold text-slate-800">${{ invoice.amount|floatformat:0 }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="border-t border-slate-200 mt-4 pt-4">
+                    <div class="flex justify-end">
+                        <div class="text-right">
+                            <div class="text-slate-600 text-sm mb-1">Total</div>
+                            <div class="text-2xl font-bold text-indigo-600">${{ invoice.amount|floatformat:0|intcomma }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Pago -->
+        {% if invoice.wompi_transaction_id %}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
+                <h3 class="text-sm font-semibold text-slate-700">Información de Pago</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Método de pago:</h4>
+                        <div class="flex items-center gap-2">
+                            {% if invoice.subscription.card_brand %}
+                                {% if invoice.subscription.card_brand == 'VISA' %}
+                                    <i class="fab fa-cc-visa text-indigo-600 text-xl"></i>
+                                {% elif invoice.subscription.card_brand == 'MASTERCARD' %}
+                                    <i class="fab fa-cc-mastercard text-indigo-600 text-xl"></i>
+                                {% elif invoice.subscription.card_brand == 'AMEX' %}
+                                    <i class="fab fa-cc-amex text-indigo-600 text-xl"></i>
+                                {% elif invoice.subscription.card_brand == 'DINERS' %}
+                                    <i class="fab fa-cc-diners-club text-indigo-600 text-xl"></i>
+                                {% else %}
+                                    <i class="fas fa-credit-card text-indigo-600 text-xl"></i>
+                                {% endif %}
+                                <span class="text-slate-700 text-sm">{{ invoice.subscription.card_brand|title }}</span>
+                            {% else %}
+                                <i class="fas fa-credit-card text-indigo-600 text-xl"></i>
+                                <span class="text-slate-700 text-sm">Tarjeta de Crédito/Débito</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Referencia de transacción:</h4>
+                        <div class="mb-2">
+                            <code class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700">{{ invoice.wompi_transaction_id }}</code>
+                        </div>
+                        {% if invoice.wompi_reference %}
+                        <div>
+                            <span class="text-xs text-slate-500">Ref: {{ invoice.wompi_reference }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Estado Actual -->
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            {% if invoice.status == 'paid' %}
+                <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-green-700 mb-2">Factura Pagada</h3>
+                <p class="text-slate-600 text-sm">Esta factura ha sido pagada exitosamente.</p>
+            {% elif invoice.status == 'pending' %}
+                <div class="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clock text-yellow-600 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-yellow-700 mb-2">Pago Pendiente</h3>
+                <p class="text-slate-600 text-sm">Esta factura está esperando el pago.</p>
+            {% elif invoice.status == 'failed' %}
+                <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-times-circle text-red-600 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-red-700 mb-2">Pago Fallido</h3>
+                <p class="text-slate-600 text-sm">El pago de esta factura falló.</p>
+            {% endif %}
+        </div>
+
+        <!-- Acciones -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-sm font-semibold text-slate-700 mb-4">Acciones</h3>
+            
+            {% if invoice.invoice_pdf_url %}
+            <a href="{{ invoice.invoice_pdf_url }}" class="btn btn-sm w-full mb-2 gap-2" target="_blank">
+                <i class="fas fa-download text-xs"></i>
+                <span>Descargar PDF</span>
+            </a>
+            {% endif %}
+            
+            {% if invoice.status == 'failed' or invoice.status == 'pending' %}
+            <button class="btn btn-sm btn-disabled w-full mb-2 gap-2">
+                <i class="fas fa-credit-card text-xs"></i>
+                <span>Reintentar Pago</span>
+            </button>
+            <p class="text-xs text-slate-500 text-center">Próximamente disponible</p>
+            {% endif %}
+        </div>
+
+        <!-- Soporte -->
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <div class="w-12 h-12 mx-auto mb-3 bg-slate-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-question-circle text-slate-600 text-xl"></i>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-700 mb-2">¿Necesitas ayuda?</h3>
+            <p class="text-xs text-slate-600 mb-4">
+                Si tienes preguntas sobre esta factura o tu pago
+            </p>
+            <a href="mailto:facturacion@lyvio.io?subject=Consulta sobre Factura #{{ invoice.id|stringformat:"05d" }}" 
+               class="btn btn-sm btn-outline gap-2 w-full">
+                <i class="fas fa-envelope text-xs"></i>
+                <span>Contactar Soporte</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+{% endblock %}

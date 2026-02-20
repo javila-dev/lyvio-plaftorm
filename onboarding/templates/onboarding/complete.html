@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Listo! - Lyvio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.57.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);
+        }
+        
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .success-icon {
+            animation: successPulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-3xl">
+            <div class="card bg-white shadow-2xl border border-slate-200">
+                <div class="card-body p-8 text-center">
+                    <!-- Success Icon -->
+                    <div class="mb-8">
+                        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center success-icon shadow-lg">
+                            <i class="fas fa-check text-white text-3xl"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-slate-800 mb-2">¡Felicidades {{ user.first_name }}!</h1>
+                        <p class="text-slate-600 text-lg">Tu bot de IA está configurado y listo para funcionar</p>
+                    </div>
+
+                    <!-- Progress Steps -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex-1 flex items-center gap-2">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm font-semibold text-emerald-600">Registro</span>
+                            </div>
+                            <div class="flex-1 h-1 bg-emerald-500 mx-2"></div>
+                            <div class="flex-1 flex items-center gap-2">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm font-semibold text-emerald-600">Configuración</span>
+                            </div>
+                            <div class="flex-1 h-1 bg-emerald-500 mx-2"></div>
+                            <div class="flex-1 flex items-center gap-2">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm font-semibold text-emerald-600">¡Listo!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="grid md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                            <div class="flex items-center gap-2 text-indigo-600 mb-2">
+                                <i class="fas fa-building"></i>
+                                <h3 class="font-semibold">Tu Empresa</h3>
+                            </div>
+                            <p class="font-semibold text-slate-800 mb-1">{{ company.name }}</p>
+                            <p class="text-sm text-slate-500">{{ company.email }}</p>
+                        </div>
+                        
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                            <div class="flex items-center gap-2 text-indigo-600 mb-2">
+                                <i class="fas fa-robot"></i>
+                                <h3 class="font-semibold">Tu Bot</h3>
+                            </div>
+                            <p class="font-semibold text-slate-800 mb-1">{{ bot_config.bot_type.name|default:"Bot IA" }}</p>
+                            <p class="text-sm text-slate-500">{{ bot_config.specialty|default:"Asistente virtual" }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Trial Status -->
+                    {% if trial %}
+                    <div class="alert alert-success mb-8 shadow-sm">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fas fa-gift text-xl"></i>
+                            <h3 class="font-bold text-lg">Tu Trial Gratuito</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-emerald-600">{{ trial.days_remaining }}</div>
+                                <div class="text-sm text-slate-600">Días restantes</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-emerald-600">{{ trial.max_messages }}</div>
+                                <div class="text-sm text-slate-600">Mensajes/mes</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-emerald-600">{{ documents_count|default:0 }}</div>
+                                <div class="text-sm text-slate-600">Docs subidos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <p class="text-center text-sm">
+                            Trial termina el <strong>{{ trial.end_date|date:"d M Y" }}</strong>
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Next Steps -->
+                    <div class="text-left mb-8">
+                        <div class="flex items-center gap-2 text-indigo-600 mb-4">
+                            <i class="fas fa-list-check"></i>
+                            <h3 class="font-semibold text-lg text-slate-800">¿Qué sigue ahora?</h3>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                    1
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-800 mb-1">Configuración de Chatwoot</h4>
+                                    <p class="text-sm text-slate-600">Estamos preparando tu cuenta de chat (puede tomar unos minutos)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                    2
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-800 mb-1">Procesamiento de documentos</h4>
+                                    <p class="text-sm text-slate-600">Tu bot está aprendiendo de los {{ documents_count|default:0 }} documentos subidos</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                    3
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-800 mb-1">Notificación por email</h4>
+                                    <p class="text-sm text-slate-600">Te avisaremos cuando todo esté listo en {{ company.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-3 mb-8">
+                        <a href="/dashboard/" class="btn btn-primary btn-lg w-full gap-2">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Ir al Dashboard
+                        </a>
+                        <a href="mailto:soporte@lyvio.com" class="btn btn-outline btn-lg w-full gap-2">
+                            <i class="fas fa-headset"></i>
+                            Contactar Soporte
+                        </a>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center">
+                        <p class="text-sm text-slate-600 mb-2">
+                            ¿Necesitas ayuda? Nuestro equipo está disponible 24/7
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 text-sm">
+                            <a href="mailto:soporte@lyvio.com" class="link link-primary">
+                                <i class="fas fa-envelope mr-1"></i>
+                                soporte@lyvio.com
+                            </a>
+                            <a href="https://wa.me/573001234567" class="link link-primary">
+                                <i class="fab fa-whatsapp mr-1"></i>
+                                +57 300 123 4567
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

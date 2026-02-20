@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Onboarding - Lyvio{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.57.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);">
+    <div class="min-h-screen py-8 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-medium text-slate-600">
+                        Paso {{ step|default:1 }} de {{ total_steps|default:6 }}
+                    </span>
+                    <span class="text-sm font-medium text-slate-600">
+                        {{ progress|default:16 }}% completado
+                    </span>
+                </div>
+                <progress 
+                    class="progress progress-primary w-full" 
+                    value="{{ step|default:1 }}" 
+                    max="{{ total_steps|default:6 }}">
+                </progress>
+            </div>
+
+            <!-- Main Card -->
+            <div class="card bg-white shadow-lg border border-slate-200">
+                <div class="card-body p-8">
+                    {% block onboarding_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

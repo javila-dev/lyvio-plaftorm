@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email enviado • Lyvio</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --lv-primary: #6d5ef7;
+      --lv-primary-600: #5a49f2;
+      --lv-primary-700: #4936ea;
+      --lv-bg: #0b1020;
+      --lv-card: #ffffff;
+      --lv-muted: #6b7280;
+      --lv-success: #22c55e;
+      --lv-danger: #ef4444;
+      --lv-radius: 16px;
+      --lv-shadow: 0 10px 30px rgba(0, 0, 0, .09);
+    }
+
+    * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(109, 94, 247, .22), transparent),
+                  radial-gradient(800px 500px at 90% 10%, rgba(73, 54, 234, .18), transparent),
+                  linear-gradient(180deg, #0e1326 0%, #0b1020 100%);
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .card-wrap {
+      border-radius: var(--lv-radius);
+      background: var(--lv-card);
+      box-shadow: var(--lv-shadow);
+      overflow: hidden;
+      max-height: 90vh;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Left panel (benefits) */
+    .left-panel {
+      background: radial-gradient(800px 400px at 0% 0%, rgba(109, 94, 247, .12), transparent),
+                  linear-gradient(160deg, rgba(109, 94, 247, .08) 0%, rgba(109, 94, 247, 0) 100%),
+                  linear-gradient(135deg, var(--lv-primary-700) 0%, var(--lv-primary) 100%);
+      color: #ffffff;
+      position: relative;
+      isolation: isolate;
+      max-height: 90vh;
+      overflow-y: auto;
+      min-width: 400px;
+    }
+    
+    .right-panel {
+      max-height: 90vh;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .left-panel .logo-img {
+      max-width: 120px; 
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .left-panel .headline {
+      font-weight: 800; 
+      letter-spacing: -0.015em;
+      font-size: 1.5rem;
+    }
+
+    .left-panel .step-item {
+      backdrop-filter: blur(6px);
+      background: #ffffff12;
+      border: 1px solid #ffffff24;
+      border-radius: 12px; 
+      padding: 14px 16px; 
+      color: #eef2ff;
+    }
+    
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffffff25;
+      border: 2px solid #ffffff40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .step-item .fw-semibold {
+      font-size: 14px;
+    }
+    
+    .step-item small {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .badge-soft { 
+      background: #fff2; 
+      border: 1px solid #fff3; 
+      color: #fff; 
+      border-radius: 999px; 
+      padding: 8px 14px; 
+      font-weight: 600; 
+      font-size: 13px; 
+    }
+
+    /* Content */
+    .brand-title { color: var(--lv-primary-700); }
+    .h1-tight    { font-weight: 800; letter-spacing: -0.02em; }
+
+    .email-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--lv-primary-700) 0%, var(--lv-primary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-size: 2rem;
+      color: white;
+      box-shadow: 0 12px 32px rgba(109, 94, 247, .3);
+    }
+
+    .info-box {
+      background: #f0f4ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .btn-primary {
+      --bs-btn-bg: var(--lv-primary);
+      --bs-btn-border-color: var(--lv-primary);
+      --bs-btn-hover-bg: var(--lv-primary-700);
+      --bs-btn-hover-border-color: var(--lv-primary-700);
+      --bs-btn-active-bg: var(--lv-primary-700);
+      --bs-btn-active-border-color: var(--lv-primary-700);
+      border-radius: 10px; 
+      font-weight: 700; 
+      letter-spacing: .2px; 
+      box-shadow: 0 8px 24px rgba(109,94,247,.35);
+      padding: 12px 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+      .left-panel { 
+        min-height: 240px;
+        min-width: auto;
+      }
+      .card-wrap {
+        max-width: 100%;
+      }
+    }
+    
+    @media (min-width: 1400px) {
+      .card-wrap {
+        max-width: 1400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container shell">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+          <div class="row card-wrap g-0 mx-auto">
+          <!-- Left side: steps -->
+          <div class="col-lg-4 left-panel p-4 d-flex flex-column gap-3">
+
+            <!-- Logo centrado -->
+            <div class="text-center mb-2">
+              <img src="{% static 'img/logo.png' %}" alt="Lyvio" class="logo-img">
+            </div>
+
+            <div class="text-center mb-1">
+              <h2 class="headline mb-2">Revisa tu email</h2>
+              <p class="mb-0" style="opacity:.92; font-size: 15px;">Sigue estos pasos para activar tu cuenta</p>
+            </div>
+
+            <div class="d-flex flex-column gap-3 mt-2">
+              <div class="step-item d-flex align-items-center gap-3">
+                <span class="step-number">1</span>
+                <div>
+                  <div class="fw-semibold">Abre el email</div>
+                  <small class="d-block" style="opacity:.9">Te lo acabamos de enviar</small>
+                </div>
+              </div>
+              <div class="step-item d-flex align-items-center gap-3">
+                <span class="step-number">2</span>
+                <div>
+                  <div class="fw-semibold">Haz clic en "Activar mi cuenta"</div>
+                  <small class="d-block" style="opacity:.9">Encontrarás un botón en el email</small>
+                </div>
+              </div>
+              <div class="step-item d-flex align-items-center gap-3">
+                <span class="step-number">3</span>
+                <div>
+                  <div class="fw-semibold">Crea tu contraseña</div>
+                  <small class="d-block" style="opacity:.9">Y completa la activación</small>
+                </div>
+              </div>
+              <div class="step-item d-flex align-items-center gap-3">
+                <span class="step-number">4</span>
+                <div>
+                  <div class="fw-semibold">¡Listo!</div>
+                  <small class="d-block" style="opacity:.9">Podrás acceder a tu cuenta de Lyvio</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right side: content -->
+          <div class="col-lg-8 right-panel p-4 p-lg-5 bg-white d-flex flex-column justify-content-center">
+            <div class="text-center mb-4">
+              <div class="email-icon mb-4">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+              
+              <h1 class="h1-tight fs-3 mb-3">¡Email enviado!</h1>
+              <p class="text-muted fs-5">Te hemos enviado un email con las instrucciones<br>para activar tu cuenta.</p>
+            </div>
+
+            <div class="info-box mb-4">
+              <div class="d-flex align-items-start gap-3">
+                <i class="fa-solid fa-circle-info text-primary fs-4"></i>
+                <div>
+                  <h6 class="fw-bold text-dark mb-2">Revisa tu bandeja de entrada</h6>
+                  <p class="mb-2 small text-muted">
+                    El email puede tardar unos minutos en llegar.<br>
+                    Si no lo ves, revisa tu carpeta de spam o correo no deseado.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid mb-3">
+              <a href="/onboarding/" class="btn btn-primary">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver al inicio
+              </a>
+            </div>
+
+            <div class="text-center small text-muted">
+              ¿Problemas? Contáctanos en <a href="mailto:soporte@lyvio.com" class="text-decoration-none fw-semibold">soporte@lyvio.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

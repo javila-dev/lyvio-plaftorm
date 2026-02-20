@@ -1,0 +1,854 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Configurar Bot IA - Lyvio{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+        
+        <!-- Page Header -->
+        <div class="mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
+                        <i class="fas fa-robot text-indigo-600 text-2xl"></i>
+                        Configuración del Bot IA
+                    </h1>
+                    <p class="text-slate-600 mt-1 text-sm">Personaliza tu asistente virtual para que se adapte perfectamente a tu negocio</p>
+                </div>
+            </div>
+        </div>
+
+<style>
+    /* Animaciones y transiciones */
+    @keyframes fadeOutScale {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+    }
+    
+    .document-item.removing {
+        animation: fadeOutScale 0.3s ease forwards;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .modal-content {
+        animation: modalFadeIn 0.3s ease;
+    }
+</style>
+
+<form id="botConfigForm" method="POST" enctype="multipart/form-data" action="{% url 'bot_builder:configure' %}">
+    {% csrf_token %}
+    
+    <!-- Paso 1: Tipo de Bot -->
+    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+                1
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Selecciona el tipo de bot</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for bot_type in bot_types %}
+            {% if bot_type.name != "Recursos Humanos" %}
+            <div class="relative group">
+                <input type="radio" 
+                       name="bot_type" 
+                       value="{{ bot_type.id }}" 
+                       id="bot_type_{{ bot_type.id }}"
+                       {% if bot_config.bot_type.id == bot_type.id %}checked{% endif %} 
+                       required
+                       class="peer hidden">
+                <label for="bot_type_{{ bot_type.id }}" 
+                       class="block h-full min-h-[220px] border-2 border-slate-200 rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-indigo-500 hover:-translate-y-1 hover:shadow-lg peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:shadow-lg relative overflow-hidden flex flex-col">
+                    <div class="absolute top-2 right-2 w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center peer-checked:border-indigo-500 peer-checked:bg-indigo-500 transition-all">
+                        <i class="fas fa-check text-white text-xs opacity-0 peer-checked:opacity-100"></i>
+                    </div>
+                    
+                    <!-- Imagen del Bot -->
+                    <div class="mb-3 flex justify-center flex-shrink-0">
+                        <img src="{% static 'img/bots/' %}{{ bot_type.icon }}" alt="{{ bot_type.name }}" class="w-20 h-20 object-contain">
+                    </div>
+                    
+                    <div class="font-semibold text-slate-800 mb-1 text-center text-sm">{{ bot_type.name }}</div>
+                    <div class="text-slate-600 text-xs text-center leading-relaxed flex-grow">{{ bot_type.description }}</div>
+                </label>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Paso 2: Tono y Sector -->
+    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+                2
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Configuración del bot</h2>
+        </div>
+        
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                <label for="name" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <i class="fas fa-robot mr-1 text-indigo-500 text-xs"></i>Nombre del bot
+                </label>
+                <input type="text" 
+                       name="name" 
+                       id="name" 
+                       class="input input-bordered input-sm w-full focus:input-primary transition-all text-sm" 
+                       value="{{ bot_config.name }}"
+                       placeholder="Ej: Asistente de Ventas"
+                       maxlength="200">
+                <p class="text-slate-500 text-xs mt-1">Dale un nombre único a tu bot</p>
+            </div>
+                <div>
+                    <label for="tone" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <i class="fas fa-comment-dots mr-1 text-indigo-500 text-xs"></i>Tono del bot
+                    </label>
+                    <select name="tone" id="tone" class="select select-bordered select-sm w-full focus:select-primary transition-all text-sm" required>
+                        <option value="">-- selecciona un tono --</option>
+                        {% for tone in tone_options %}
+                        <option value="{{ tone }}" {% if bot_config.tone == tone %}selected{% endif %}>
+                            {{ tone }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="industry_sector" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <i class="fas fa-industry mr-1 text-indigo-500 text-xs"></i>Sector industrial
+                    </label>
+                    <select name="industry_sector" id="industry_sector" class="select select-bordered select-sm w-full focus:select-primary transition-all text-sm" required>
+                        <option value="">-- selecciona un sector --</option>
+                        {% for sector in industry_sectors %}
+                        <option value="{{ sector }}" {% if bot_config.industry_sector == sector %}selected{% endif %}>
+                            {{ sector }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Paso 3: Contexto de la Empresa -->
+    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+                3
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Contexto de tu empresa</h2>
+        </div>
+        
+        <div>
+            <label for="company_context" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                <i class="fas fa-building mr-1 text-indigo-500 text-xs"></i>Describe tu empresa y servicios
+                <span class="float-right text-slate-500 font-normal text-xs">
+                    <span id="charCount">0</span>/500
+                </span>
+            </label>
+            <textarea name="company_context" 
+                      id="company_context" 
+                      class="textarea textarea-bordered textarea-sm w-full focus:textarea-primary transition-all min-h-24 text-sm" 
+                      maxlength="500"
+                      oninput="updateCharCount()"
+                      placeholder="Ejemplo: Somos una agencia de marketing digital especializada..."
+                      required>{{ bot_config.company_context }}</textarea>
+            <div class="bg-blue-50 border-l-2 border-blue-400 p-2.5 rounded-r-lg mt-2">
+                <p class="text-blue-800 text-xs">
+                    <i class="fas fa-info-circle mr-1 text-xs"></i>
+                    Esta información ayudará al bot a entender mejor tu negocio.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Paso 4: Integración de Cal.com -->
+    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+                4
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Integración de Calendario</h2>
+        </div>
+        
+        <div class="space-y-4">
+            <!-- Toggle de Cal.com con logo -->
+            <div id="calendar-header" class="flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                <div class="flex-shrink-0 w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center p-2">
+                    <img src="https://cal.com/logo.svg" alt="Cal.com" class="w-full h-full object-contain">
+                </div>
+                <div class="flex-grow">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold text-slate-800">
+                                Habilitar agendamiento con <a href="https://cal.com" target="_blank" class="text-indigo-600 hover:text-indigo-700 underline decoration-2 underline-offset-2 font-bold">Cal.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                            </h3>
+                            <span class="badge badge-success badge-sm text-xs font-semibold">
+                                <i class="fas fa-gift mr-1"></i>¡100% GRATIS!
+                            </span>
+                            <span id="required-badge" class="badge badge-error badge-sm text-xs font-semibold" style="display: none;">
+                                <i class="fas fa-exclamation-circle mr-1"></i>OBLIGATORIO
+                            </span>
+                        </div>
+                        <input type="checkbox" 
+                               name="enable_calendar" 
+                               id="enable_calendar" 
+                               class="toggle toggle-primary"
+                               {% if company.calendar_api_key %}checked{% endif %}>
+                    </div>
+                    <p class="text-slate-600 text-xs" id="calendar-description">Permite que tu bot agende citas automáticamente sin costo adicional</p>
+                </div>
+            </div>
+            
+            <!-- Campos de configuración de Cal.com (ocultos por defecto) -->
+            <div id="calendar-config" style="display: {% if company.calendar_api_key %}block{% else %}none{% endif %};">
+                <div class="space-y-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <div>
+                        <label for="calendar_api_key" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                            <i class="fas fa-key mr-1 text-indigo-500 text-xs"></i>API Key de Cal.com
+                            <span class="text-red-600 ml-1 required-indicator" style="display: none;">*</span>
+                        </label>
+                        <input type="text" 
+                               name="calendar_api_key" 
+                               id="calendar_api_key" 
+                               class="input input-bordered input-sm w-full focus:input-primary transition-all text-sm" 
+                               value="{{ company.calendar_api_key|default:'' }}"
+                               placeholder="cal_live_xxxxxxxxxxxxx">
+                        <p class="text-slate-500 text-xs mt-1">
+                            <a href="https://app.cal.com/settings/developer/api-keys" target="_blank" class="link link-primary text-xs">
+                                <i class="fas fa-external-link-alt mr-1"></i>Obtén tu API Key aquí
+                            </a>
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="calendar_event_id" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                <i class="fas fa-hashtag mr-1 text-indigo-500 text-xs"></i>Event ID
+                                <span class="text-red-600 ml-1 required-indicator" style="display: none;">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="calendar_event_id" 
+                                   id="calendar_event_id" 
+                                   class="input input-bordered input-sm w-full focus:input-primary transition-all text-sm" 
+                                   value="{{ company.calendar_event_id|default:'' }}"
+                                   placeholder="3784302">
+                            <p class="text-slate-500 text-xs mt-1">
+                                <a href="https://app.cal.com/event-types" target="_blank" class="link link-primary text-xs">
+                                    <i class="fas fa-external-link-alt mr-1"></i>Ver mis eventos
+                                </a> → copia el ID de la URL
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="calendar_booking_url" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                <i class="fas fa-link mr-1 text-indigo-500 text-xs"></i>URL de agendamiento
+                                <span class="text-red-600 ml-1 required-indicator" style="display: none;">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="calendar_booking_url" 
+                                   id="calendar_booking_url" 
+                                   class="input input-bordered input-sm w-full focus:input-primary transition-all text-sm" 
+                                   value="{{ company.calendar_booking_url|default:'' }}"
+                                   placeholder="cal.com/lyvio/30min">
+                            <p class="text-slate-500 text-xs mt-1">URL pública del evento</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="calendly_usage_description" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                            <i class="fas fa-comment-dots mr-1 text-indigo-500 text-xs"></i>¿Cuándo debe el bot agendar?
+                        </label>
+                        <textarea name="calendly_usage_description" 
+                                  id="calendly_usage_description" 
+                                  class="textarea textarea-bordered textarea-sm w-full focus:textarea-primary transition-all min-h-20 text-sm" 
+                                  placeholder="Ej: Cuando el cliente solicite una reunión, demostración del producto...">{{ bot_config.calendly_usage_description|default:'' }}</textarea>
+                        <p class="text-slate-500 text-xs mt-1">Describe en qué situaciones el bot debe agendar</p>
+                    </div>
+                    
+                    {% if company.calendar_booking_url %}
+                    <div class="bg-green-50 border-l-2 border-green-400 p-2.5 rounded-r-lg">
+                        <p class="text-green-800 text-xs">
+                            <i class="fas fa-check-circle mr-1 text-xs"></i>
+                            <strong>Configurado:</strong> <a href="{{ company.calendar_booking_url }}" target="_blank" class="link text-green-700">{{ company.calendar_booking_url }}</a>
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="bg-blue-50 border-l-2 border-blue-400 p-2.5 rounded-r-lg">
+                        <p class="text-blue-800 text-xs">
+                            <i class="fas fa-info-circle mr-1 text-xs"></i>
+                            <strong>Instrucciones:</strong>
+                        </p>
+                        <ol class="text-blue-700 text-xs mt-1 ml-3 list-decimal space-y-1">
+                            <li>Ve a <a href="https://app.cal.com/settings/security/api-keys" target="_blank" class="underline">Settings → Security → API Keys</a> y genera una API Key</li>
+                            <li>Ve a <a href="https://app.cal.com/event-types" target="_blank" class="underline">Tipos de Evento</a> y abre el evento que quieres usar</li>
+                            <li>Copia el <strong>Event ID</strong> de la URL (ej: event-types/<strong>3784302</strong>)</li>
+                            <li>Copia la <strong>URL de agendamiento</strong> desde el campo "URL" (ej: cal.com/lyvio/30min)</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Paso 5: Documentos de Referencia -->
+    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+                5
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">Documentos de referencia <span class="text-red-500">*</span></h2>
+        </div>
+        
+        <div class="border-2 border-dashed border-slate-300 rounded-lg p-5 text-center bg-slate-50 hover:border-indigo-400 hover:bg-slate-100 transition-all duration-300 cursor-pointer" id="uploadArea">
+            <div class="text-4xl text-indigo-500 mb-3">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3 class="text-base font-semibold text-slate-800 mb-1">Arrastra tus documentos aquí</h3>
+            <p class="text-slate-600 text-sm mb-3">o haz clic para seleccionar archivos</p>
+            
+            <!-- Información del plan y límites -->
+            <div class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full mb-3">
+                <i class="fas fa-crown text-xs"></i>
+                <span class="text-xs font-medium">
+                    <strong>Plan {{ plan_name }}:</strong> Máx. {% if is_trial %}2{% else %}{{ max_documents }}{% endif %} docs | {{ max_file_size_kb }}KB
+                    <!-- Debug: is_trial={{ is_trial }} -->
+                </span>
+            </div>
+            
+            <!-- Formatos aceptados -->
+            <p class="text-slate-500 text-xs mb-4">
+                <i class="fas fa-file-code mr-1"></i>
+                <strong>Formatos:</strong> {{ allowed_file_types }}
+            </p>
+            
+            <div>
+                <input type="file" name="documents" id="documentInput" multiple 
+                       accept=".txt,.md" class="hidden" onchange="showSelectedFiles()">
+                <button type="button" class="btn btn-outline btn-primary btn-sm gap-2" 
+                        onclick="document.getElementById('documentInput').click()">
+                    <i class="fas fa-folder-open"></i>
+                    Seleccionar Archivos
+                </button>
+            </div>
+        </div>
+        
+        <!-- Archivos seleccionados para subir (nuevos) -->
+        <div id="selectedFilesContainer" class="mt-4 hidden">
+            <div id="filesList" class="flex flex-wrap gap-2"></div>
+        </div>
+        
+        <!-- Lista de documentos actuales -->
+        {% if documents %}
+        <div class="mt-5">
+            <h3 class="text-sm font-semibold text-slate-800 mb-3">
+                <i class="fas fa-paperclip mr-1 text-indigo-500 text-xs"></i>
+                Documentos cargados ({{ documents_count }})
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                {% for doc in documents %}
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 text-xs" id="doc-{{ doc.id }}">
+                    <i class="fas fa-file-alt text-xs"></i>
+                    <span class="font-medium max-w-[120px] truncate">{{ doc.filename }}</span>
+                    <button type="button" 
+                            class="w-4 h-4 bg-white bg-opacity-20 hover:bg-red-500 rounded-full flex items-center justify-center transition-all hover:scale-110" 
+                            onclick="deleteDocument({{ doc.id }}, '{{ doc.filename }}')" 
+                            title="Eliminar documento">
+                        <span class="text-xs leading-none">×</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Botón de Guardar -->
+    <div class="text-center mb-6">
+        <button id="botConfigSubmitBtn" type="submit" class="btn btn-primary gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-6">
+            <i class="fas fa-save"></i>
+            Guardar Configuración
+        </button>
+    </div>
+</form>
+
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div id="deleteDocModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[9999] backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 m-4 modal-content">
+        <div class="flex items-start justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                Confirmar eliminación
+            </h3>
+            <button id="cancelDeleteBtn" class="btn btn-ghost btn-sm btn-circle">✕</button>
+        </div>
+        <div class="mb-6 text-slate-700">
+            <p class="mb-2">¿Estás seguro de que deseas eliminar el documento <strong id="deleteDocName" class="text-slate-900"></strong>?</p>
+            <p class="text-sm text-slate-500 flex items-center gap-1">
+                <i class="fas fa-info-circle"></i>
+                Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="flex justify-end gap-3">
+            <button id="cancelDeleteBtn2" class="btn btn-ghost">Cancelar</button>
+            <button id="confirmDeleteBtn" class="btn btn-error gap-2">
+                <i class="fas fa-trash-alt"></i>
+                Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Note: toasts are provided by subscriptions/base.html (daisyUI) -->
+
+<script>
+    // Actualizar contador de caracteres
+    function updateCharCount() {
+        const textarea = document.getElementById('company_context');
+        const charCount = document.getElementById('charCount');
+        charCount.textContent = textarea.value.length;
+    }
+    
+    // Inicializar contador al cargar y configurar validación del formulario
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCharCount();
+
+        // Validación antes de enviar
+        const form = document.getElementById('botConfigForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Prevenir envío inmediato para poder mostrar el loading (evita que el navegador haga navigation paint antes)
+                e.preventDefault();
+                console.log('Formulario enviado - iniciando validación');
+
+                const botType = document.querySelector('input[name="bot_type"]:checked');
+                const tone = document.getElementById('tone').value;
+                const companyContext = document.getElementById('company_context').value.trim();
+                const industrySector = document.getElementById('industry_sector').value;
+                const documentInput = document.getElementById('documentInput');
+                const existingDocs = {{ documents_count }};
+
+                console.log('Validaciones:', {
+                    botType: !!botType,
+                    tone: tone,
+                    companyContext: companyContext.length > 0,
+                    industrySector: industrySector,
+                    existingDocs: existingDocs,
+                    newFiles: documentInput.files.length
+                });
+
+                if (!botType) {
+                    showToast('error', 'Por favor selecciona un tipo de bot');
+                    return false;
+                }
+
+                if (!tone) {
+                    showToast('error', 'Por favor selecciona un tono');
+                    return false;
+                }
+
+                if (!companyContext) {
+                    showToast('error', 'Por favor describe el contexto de tu empresa');
+                    return false;
+                }
+
+                if (!industrySector) {
+                    showToast('error', 'Por favor selecciona un sector industrial');
+                    return false;
+                }
+
+                // Validar que haya al menos 1 documento (existente o nuevo)
+                if (existingDocs === 0 && documentInput.files.length === 0) {
+                    showToast('error', 'Por favor sube al menos un documento de referencia');
+                    return false;
+                }
+
+                // Validar límite de documentos según el plan
+                const maxDocs = {{ max_documents }};
+                const totalDocs = existingDocs + documentInput.files.length;
+                if (totalDocs > maxDocs) {
+                    showToast('error', `Tu plan permite máximo ${maxDocs} documentos. Tienes ${existingDocs} documentos y estás intentando agregar ${documentInput.files.length} más. Elimina algunos documentos antes de continuar.`);
+                    return false;
+                }
+
+                console.log('Todas las validaciones pasaron - enviando formulario');
+
+                // Si llegamos aquí, todas las validaciones pasaron: mostrar loading y someter el formulario programáticamente
+                try {
+                    const submitBtn = document.getElementById('botConfigSubmitBtn') || form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="loading loading-spinner loading-sm mr-2"></span>Guardando...';
+                    }
+
+                    // Dar tiempo a que el navegador pinte el cambio de UI antes de enviar
+                    setTimeout(function() {
+                        form.submit();
+                    }, 150);
+                } catch (err) {
+                    console.error('Error al mostrar loading en el botón:', err);
+                    // En caso de error, intentar enviar el formulario normalmente
+                    form.submit();
+                }
+
+                return true;
+            });
+        }
+    });
+    
+    // Mostrar archivos seleccionados
+    function showSelectedFiles() {
+        const input = document.getElementById('documentInput');
+        const container = document.getElementById('selectedFilesContainer');
+        const filesList = document.getElementById('filesList');
+        
+        const maxFileSize = {{ max_file_size_kb }} * 1024; // KB a bytes
+        const allowedTypes = ['.txt', '.md'];
+        const isTrial = {{ is_trial|lower }};
+        const maxFilesInTrial = 2;
+        const currentDocumentsCount = {{ documents_count }};
+        
+        if (input.files.length > 0) {
+            // Validar límite de archivos en trial
+            if (isTrial && (input.files.length + currentDocumentsCount) > maxFilesInTrial) {
+                showToast('error', `En el período de prueba solo puedes cargar máximo ${maxFilesInTrial} documentos. Actualmente tienes ${currentDocumentsCount} documento(s) cargado(s).`);
+                input.value = ''; // Limpiar selección
+                return;
+            }
+            
+            filesList.innerHTML = '';
+            const filesArray = Array.from(input.files);
+            let hasErrors = false;
+            
+            filesArray.forEach((file, index) => {
+                const sizeInKB = (file.size / 1024).toFixed(2);
+                const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                
+                // Validar tipo de archivo
+                if (!allowedTypes.includes(fileExt)) {
+                    showToast('error', `${file.name}: Solo se aceptan archivos .txt y .md`);
+                    hasErrors = true;
+                    return;
+                }
+                
+                // Validar tamaño
+                if (file.size > maxFileSize) {
+                    showToast('error', `${file.name}: El archivo excede el tamaño máximo de {{ max_file_size_kb }}KB (tu archivo: ${sizeInKB}KB)`);
+                    hasErrors = true;
+                    return;
+                }
+                
+                // Crear badge para el archivo con clases Tailwind
+                const badge = document.createElement('div');
+                badge.className = 'inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 m-1';
+                
+                // Icono del archivo
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-file-alt text-sm';
+                
+                // Nombre del archivo
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                fileName.className = 'font-medium max-w-[150px] truncate';
+                
+                // Botón para eliminar
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.className = 'w-5 h-5 bg-white bg-opacity-20 hover:bg-red-500 rounded-full flex items-center justify-center transition-all hover:scale-110 text-xs';
+                deleteBtn.onclick = function(e) {
+                    e.preventDefault();
+                    removeSelectedFile(index);
+                };
+                
+                badge.appendChild(icon);
+                badge.appendChild(fileName);
+                badge.appendChild(deleteBtn);
+                filesList.appendChild(badge);
+            });
+            
+            // Mostrar u ocultar el contenedor
+            if (filesArray.length > 0 && !hasErrors) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+    
+    // Eliminar archivo de la selección
+    function removeSelectedFile(index) {
+        const input = document.getElementById('documentInput');
+        const dt = new DataTransfer();
+        const files = Array.from(input.files);
+        
+        files.forEach((file, i) => {
+            if (i !== index) {
+                dt.items.add(file);
+            }
+        });
+        
+        input.files = dt.files;
+        showSelectedFiles();
+    }
+    
+    // Toggle de Cal.com y validación de bot médico
+    document.addEventListener('DOMContentLoaded', function() {
+        const enableCalendarCheckbox = document.getElementById('enable_calendar');
+        const calendarConfig = document.getElementById('calendar-config');
+        const requiredBadge = document.getElementById('required-badge');
+        const calendarDescription = document.getElementById('calendar-description');
+        const calendarHeader = document.getElementById('calendar-header');
+        
+        // Función para verificar si es bot médico (ID 6)
+        function isMedicalBot() {
+            const selectedBotType = document.querySelector('input[name="bot_type"]:checked');
+            return selectedBotType && selectedBotType.value === '6';
+        }
+        
+        // Función para actualizar UI según tipo de bot
+        function updateCalendarRequirement() {
+            const isMedical = isMedicalBot();
+            const requiredIndicators = document.querySelectorAll('.required-indicator');
+            
+            if (isMedical) {
+                // Para bot médico: obligatorio
+                enableCalendarCheckbox.checked = true;
+                enableCalendarCheckbox.disabled = true;
+                calendarConfig.style.display = 'block';
+                requiredBadge.style.display = 'inline-block';
+                calendarDescription.innerHTML = '<strong class="text-red-600">OBLIGATORIO para Consultorio Médico:</strong> Permite que tu bot agende citas automáticamente';
+                calendarHeader.classList.remove('border-blue-200', 'from-blue-50', 'to-indigo-50');
+                calendarHeader.classList.add('border-red-200', 'from-red-50', 'to-pink-50');
+                
+                // Hacer campos requeridos
+                document.getElementById('calendar_api_key').required = true;
+                document.getElementById('calendar_event_id').required = true;
+                document.getElementById('calendar_booking_url').required = true;
+                
+                // Mostrar asteriscos rojos
+                requiredIndicators.forEach(indicator => indicator.style.display = 'inline');
+            } else {
+                // Para otros bots: opcional
+                enableCalendarCheckbox.disabled = false;
+                requiredBadge.style.display = 'none';
+                calendarDescription.innerHTML = 'Permite que tu bot agende citas automáticamente sin costo adicional';
+                calendarHeader.classList.remove('border-red-200', 'from-red-50', 'to-pink-50');
+                calendarHeader.classList.add('border-blue-200', 'from-blue-50', 'to-indigo-50');
+                
+                // Remover requerimiento de campos
+                document.getElementById('calendar_api_key').required = false;
+                document.getElementById('calendar_event_id').required = false;
+                document.getElementById('calendar_booking_url').required = false;
+                
+                // Ocultar asteriscos rojos
+                requiredIndicators.forEach(indicator => indicator.style.display = 'none');
+            }
+        }
+        
+        // Toggle manual del calendario (solo si no es bot médico)
+        if (enableCalendarCheckbox && calendarConfig) {
+            enableCalendarCheckbox.addEventListener('change', function() {
+                if (!isMedicalBot()) {
+                    if (this.checked) {
+                        calendarConfig.style.display = 'block';
+                    } else {
+                        calendarConfig.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // Escuchar cambios en el tipo de bot
+        const botTypeRadios = document.querySelectorAll('input[name="bot_type"]');
+        botTypeRadios.forEach(radio => {
+            radio.addEventListener('change', updateCalendarRequirement);
+        });
+        
+        // Ejecutar al cargar la página
+        updateCalendarRequirement();
+        
+        // Validación al enviar el formulario
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (isMedicalBot()) {
+                    const apiKey = document.getElementById('calendar_api_key').value.trim();
+                    const eventId = document.getElementById('calendar_event_id').value.trim();
+                    const bookingUrl = document.getElementById('calendar_booking_url').value.trim();
+                    
+                    if (!apiKey || !eventId || !bookingUrl) {
+                        e.preventDefault();
+                        alert('Para el bot de Consultorio Médico es OBLIGATORIO configurar la integración con Cal.com.\n\nPor favor completa:\n- API Key\n- Event ID\n- URL de agendamiento');
+                        
+                        // Hacer scroll al calendario
+                        document.getElementById('calendar-header').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return false;
+                    }
+                }
+            });
+        }
+    });
+    
+    // Drag and drop para documentos (ejecutar cuando el DOM esté listo)
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadArea = document.getElementById('uploadArea');
+        const documentInput = document.getElementById('documentInput');
+        
+        if (uploadArea && documentInput) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-slate-300', 'bg-slate-50');
+                uploadArea.classList.add('border-indigo-500', 'bg-indigo-50');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.add('border-slate-300', 'bg-slate-50');
+                uploadArea.classList.remove('border-indigo-500', 'bg-indigo-50');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('border-slate-300', 'bg-slate-50');
+                uploadArea.classList.remove('border-indigo-500', 'bg-indigo-50');
+                
+                const files = e.dataTransfer.files;
+                documentInput.files = files;
+                showSelectedFiles();
+            });
+        }
+    });
+    
+    // Variables globales para el modal de eliminación
+    let currentDeleteDocId = null;
+    let currentDeleteDocFilename = null;
+    
+    // showToast: usar la implementación global definida en subscriptions/base.html (daisyUI)
+    
+    // Abrir modal de confirmación de eliminación
+    function deleteDocument(docId, filename) {
+        currentDeleteDocId = docId;
+        currentDeleteDocFilename = filename;
+        
+        document.getElementById('deleteDocName').textContent = filename;
+        // Mostrar modal personalizado (añadir/remover clase hidden)
+        const modalEl = document.getElementById('deleteDocModal');
+        if (modalEl) modalEl.classList.remove('hidden');
+    }
+    
+    // Confirmar eliminación (NO mostrar alert/message arriba, solo toast)
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const cancelDeleteBtn2 = document.getElementById('cancelDeleteBtn2');
+
+        function hideDeleteModal() {
+            const modalEl = document.getElementById('deleteDocModal');
+            if (modalEl) modalEl.classList.add('hidden');
+        }
+
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (!currentDeleteDocId) return;
+
+                // Deshabilitar botón y mostrar loading (daisyUI)
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.innerHTML = '<span class="loading loading-spinner loading-sm mr-2"></span>Eliminando...';
+
+                fetch(`/bot-builder/document/${currentDeleteDocId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Cerrar modal
+                    hideDeleteModal();
+
+                    if (data.success) {
+                        // Animar la salida del documento
+                        const docElement = document.getElementById(`doc-${currentDeleteDocId}`);
+                        if (docElement) {
+                            docElement.style.transition = 'all 0.3s ease';
+                            docElement.style.opacity = '0';
+                            docElement.style.transform = 'scale(0.8)';
+
+                            setTimeout(() => {
+                                docElement.remove();
+                                // Mostrar toast
+                                showToast('success', `Documento "${currentDeleteDocFilename}" eliminado exitosamente`);
+
+                                // Recargar después de 1 segundo
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }, 300);
+                        }
+                    } else {
+                        // Toast para error
+                        showToast('error', 'Error al eliminar el documento: ' + (data.error || 'Error desconocido'));
+                        // Restaurar botón
+                        confirmDeleteBtn.disabled = false;
+                        confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i>Eliminar';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Cerrar modal
+                    hideDeleteModal();
+
+                    // Toast para error
+                    showToast('error', 'Error de conexión al eliminar el documento');
+
+                    // Restaurar botón
+                    confirmDeleteBtn.disabled = false;
+                    confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i>Eliminar';
+                });
+            });
+        }
+
+        // Cancel buttons: ocultar modal y restaurar estado del botón
+        [cancelDeleteBtn, cancelDeleteBtn2].forEach(function(btn){
+            if (btn) btn.addEventListener('click', function(e){
+                e.preventDefault();
+                hideDeleteModal();
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i>Eliminar';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'suscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Configurar Bot - Lyvio Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <h1 class="h3 text-primary fw-bold">¡Hola {{ user.first_name }}!</h1>
+                        <p class="text-muted">Ahora vamos a configurar tu bot de IA personalizado</p>
+                    </div>
+
+                    <!-- Progress indicator -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <small class="text-success fw-bold">✓ Registro</small>
+                                <small class="text-primary fw-bold">2. Configuración</small>
+                                <small class="text-muted">3. ¡Listo!</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trial status -->
+                    {% if trial %}
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="bg-success bg-opacity-10 border border-success rounded p-3">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-clock me-2"></i>Tu trial está activo
+                                </h6>
+                                <p class="mb-1"><strong>{{ trial.days_remaining }} días restantes</strong> de trial gratuito</p>
+                                <small class="text-muted">Termina el {{ trial.end_date|date:"d M Y" }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-light rounded p-3 text-center">
+                                <h6 class="mb-1">Límites del trial</h6>
+                                <small class="text-muted">
+                                    {{ trial.max_messages }} mensajes/mes<br>
+                                    {{ trial.max_conversations }} conversaciones<br>
+                                    {{ trial.max_documents }} documentos
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form -->
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Bot Type Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-robot me-2"></i>Tipo de Bot
+                            </label>
+                            <div class="row">
+                                {% for choice in form.bot_type.field.choices %}
+                                <div class="col-md-6 mb-3">
+                                    <input type="radio" class="btn-check" name="{{ form.bot_type.name }}" 
+                                           id="bot_type_{{ forloop.counter }}" value="{{ choice.0 }}" 
+                                           {% if form.bot_type.value == choice.0 %}checked{% endif %}>
+                                    <label class="btn btn-outline-primary w-100 p-3 text-start" 
+                                           for="bot_type_{{ forloop.counter }}">
+                                        <div class="fw-semibold">{{ choice.1 }}</div>
+                                        <small class="text-muted">
+                                            {% if choice.0 == 1 %}Especializado en resolver consultas y brindar soporte{% endif %}
+                                            {% if choice.0 == 2 %}Enfocado en generar leads y cerrar ventas{% endif %}
+                                            {% if choice.0 == 3 %}Experto en resolución de problemas técnicos{% endif %}
+                                            {% if choice.0 == 4 %}Asistente para procesos de RRHH y onboarding{% endif %}
+                                            {% if choice.0 == 5 %}Bot versátil para múltiples propósitos{% endif %}
+                                        </small>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.bot_type.errors %}
+                                <div class="invalid-feedback d-block">{{ form.bot_type.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Specialty -->
+                        <div class="mb-3">
+                            <label for="{{ form.specialty.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-bullseye me-2"></i>Especialidad principal
+                            </label>
+                            {{ form.specialty }}
+                            <div class="form-text">¿En qué se especializa tu negocio? Ej: "Venta de software", "Consultoría legal"</div>
+                            {% if form.specialty.errors %}
+                                <div class="invalid-feedback d-block">{{ form.specialty.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Tone -->
+                        <div class="mb-3">
+                            <label for="{{ form.tone.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-comments me-2"></i>Tono de comunicación
+                            </label>
+                            {{ form.tone }}
+                            <div class="form-text">¿Cómo quieres que se comunique? Ej: "Profesional y amigable", "Técnico y directo"</div>
+                            {% if form.tone.errors %}
+                                <div class="invalid-feedback d-block">{{ form.tone.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Services -->
+                        <div class="mb-3">
+                            <label for="{{ form.services.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-list me-2"></i>Servicios principales
+                            </label>
+                            {{ form.services }}
+                            <div class="form-text">Lista los principales servicios o productos que ofreces</div>
+                            {% if form.services.errors %}
+                                <div class="invalid-feedback d-block">{{ form.services.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Language -->
+                        <div class="mb-3">
+                            <label for="{{ form.language.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-language me-2"></i>Idioma principal
+                            </label>
+                            {{ form.language }}
+                            {% if form.language.errors %}
+                                <div class="invalid-feedback d-block">{{ form.language.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Additional Context -->
+                        <div class="mb-4">
+                            <label for="{{ form.additional_context.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-info-circle me-2"></i>Información adicional
+                            </label>
+                            {{ form.additional_context }}
+                            <div class="form-text">Cualquier información extra que ayude al bot a entender mejor tu negocio</div>
+                            {% if form.additional_context.errors %}
+                                <div class="invalid-feedback d-block">{{ form.additional_context.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Document Upload -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-upload me-2"></i>Documentos para entrenar el bot
+                                <span class="badge bg-secondary">Opcional</span>
+                            </label>
+                            <div class="border rounded p-4 bg-light">
+                                <input type="file" class="file-input file-input-bordered w-full mb-3" name="files" multiple accept=".pdf,.txt,.doc,.docx">
+                                <div class="text-center">
+                                    <i class="fas fa-cloud-upload-alt fs-2 text-muted mb-2"></i>
+                                    <p class="mb-1">Sube documentos que ayuden a entrenar tu bot</p>
+                                    <small class="text-muted">
+                                        Formatos soportados: PDF, TXT, DOC, DOCX<br>
+                                        {% if trial %}Máximo {{ trial.max_documents }} archivos en el trial{% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3">
+                                <i class="fas fa-cog me-2"></i>Configurar mi Bot IA
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Removed legacy .form-control/.form-select styles; using daisyUI classes for inputs, selects and textareas */
+.card { border-radius: 15px; }
+.progress-bar { border-radius: 4px; }
+</style>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Renovar Suscripción - Lyvio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-base-content mb-4">
+            Renueva tu Suscripción
+        </h1>
+        <p class="text-lg text-base-content/70">
+            Tu suscripción ha expirado. Renuévala para recuperar el acceso
+        </p>
+    </div>
+
+    <!-- Card Principal -->
+    <div class="max-w-2xl mx-auto">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-8">
+                <!-- Alert Warning - Suscripción Expirada -->
+                <div class="alert alert-warning mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <div>
+                        <h3 class="font-bold">Suscripción Expirada</h3>
+                        <div class="text-sm mt-1">
+                            Tu cuenta está actualmente <strong>sin acceso</strong>. Renueva tu suscripción para recuperar todas las funcionalidades.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Error - Falta Información de Facturación -->
+                {% if missing_billing_info %}
+                <div class="alert alert-error mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="flex-grow">
+                        <h3 class="font-bold">Información de Facturación Requerida</h3>
+                        <div class="text-sm mt-1">
+                            Debes completar tu información de facturación (NIT/CC, nombre, etc.) antes de poder renovar.
+                        </div>
+                    </div>
+                    <a href="{% url 'dashboard:billing_info' %}" class="btn btn-sm">
+                        Completar Ahora
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Alert Error - Falta Método de Pago -->
+                {% if missing_payment_method %}
+                <div class="alert alert-error mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="flex-grow">
+                        <h3 class="font-bold">Método de Pago Requerido</h3>
+                        <div class="text-sm mt-1">
+                            No tienes una tarjeta de crédito guardada. Agrega tu tarjeta para poder renovar tu suscripción.
+                        </div>
+                    </div>
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-sm">
+                        Agregar Tarjeta
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Info del Plan -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg mb-4">Detalles de la Renovación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-base-200 rounded-lg p-4">
+                            <div class="text-sm text-base-content/60 mb-1">Plan</div>
+                            <div class="text-lg font-semibold">{{ subscription.plan.name }}</div>
+                        </div>
+                        <div class="bg-base-200 rounded-lg p-4">
+                            <div class="text-sm text-base-content/60 mb-1">Ciclo</div>
+                            <div class="text-lg font-semibold">
+                                {% if subscription.billing_cycle == 'monthly' %}Mensual{% else %}Anual{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monto a Cobrar -->
+                <div class="bg-primary/10 rounded-lg p-6 mb-6 border-2 border-primary/20">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-semibold">Monto a Cobrar</span>
+                        <span class="text-3xl font-bold text-primary">${{ amount|floatformat:0 }} COP</span>
+                    </div>
+                    <div class="text-sm text-base-content/60 mt-2">
+                        {% if subscription.billing_cycle == 'monthly' %}
+                            Se cobrará mensualmente hasta que canceles
+                        {% else %}
+                            Se cobrará anualmente hasta que canceles
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Método de Pago -->
+                {% if not missing_payment_method %}
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Método de Pago</h3>
+                    <div class="flex items-center justify-between bg-base-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <svg class="w-10 h-10 text-primary mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <div>
+                                <div class="font-semibold">{{ card_brand|title }} •••• {{ card_last_four }}</div>
+                                <div class="text-sm text-base-content/60">Tarjeta guardada</div>
+                            </div>
+                        </div>
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-sm btn-ghost">
+                            Cambiar
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Beneficios que recuperas -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Al renovar recuperas:</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Acceso completo a Chatwoot restaurado</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Todos los bots y configuraciones intactas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Conversaciones e historial preservados</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-success mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Reactivación inmediata sin esperas</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Formulario de Renovación -->
+                {% if not missing_billing_info and not missing_payment_method %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div class="divider my-6"></div>
+                    
+                    <!-- Botones de Acción -->
+                    <div class="flex gap-3 justify-end">
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-neutral">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            Renovar y Pagar ${{ amount|floatformat:0 }} COP
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+
+                <!-- Nota al pie -->
+                <div class="text-sm text-base-content/60 text-center mt-6">
+                    <p>Al renovar, se cobrará ${{ amount|floatformat:0 }} COP a tu tarjeta registrada.</p>
+                    <p class="mt-1">Tu acceso se restaurará inmediatamente después del pago aprobado.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nota de Seguridad -->
+        <div class="text-center mt-6 text-sm text-base-content/60">
+            <p>🔒 Pago seguro procesado por Wompi</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

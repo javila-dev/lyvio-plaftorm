@@ -1,0 +1,464 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lyvio • Crear cuenta</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --lv-primary: #6d5ef7;        /* Indigo-violet */
+      --lv-primary-600: #5a49f2;
+      --lv-primary-700: #4936ea;
+      --lv-bg: #0b1020;             /* Deep navy */
+      --lv-card: #ffffff;
+      --lv-muted: #6b7280;
+      --lv-success: #22c55e;
+      --lv-danger: #ef4444;
+      --lv-radius: 16px;
+      --lv-shadow: 0 10px 30px rgba(0, 0, 0, .09);
+    }
+
+    * { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(109, 94, 247, .22), transparent),
+                  radial-gradient(800px 500px at 90% 10%, rgba(73, 54, 234, .18), transparent),
+                  linear-gradient(180deg, #0e1326 0%, #0b1020 100%);
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 32px 16px;
+    }
+
+    .card-wrap {
+      border-radius: var(--lv-radius);
+      background: var(--lv-card);
+      box-shadow: var(--lv-shadow);
+      overflow: hidden;
+      max-height: 90vh;
+    }
+
+    /* Left panel (benefits) */
+    .left-panel {
+      background: radial-gradient(800px 400px at 0% 0%, rgba(255,255,255,.06), transparent),
+                  linear-gradient(160deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%),
+                  linear-gradient(135deg, var(--lv-primary-700) 0%, var(--lv-primary) 100%);
+      color: #ffffff;
+      position: relative;
+      isolation: isolate;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .right-panel {
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .left-panel .logo-img {
+      max-width: 120px; 
+      height: auto;
+      filter: brightness(0) invert(1); /* Hacer el logo blanco */
+    }
+
+    .left-panel .headline {
+      font-weight: 800; 
+      letter-spacing: -0.015em;
+      font-size: 1.5rem;
+    }
+
+    .left-panel .perk {
+      backdrop-filter: blur(6px);
+      background: #ffffff12;
+      border: 1px solid #ffffff24;
+      border-radius: 12px; 
+      padding: 14px 16px; 
+      color: #eef2ff;
+    }
+    
+    .left-panel .perk .fw-semibold {
+      font-size: 14px;
+    }
+    
+    .left-panel .perk small {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .badge-soft { 
+      background: #fff2; 
+      border: 1px solid #fff3; 
+      color: #fff; 
+      border-radius: 999px; 
+      padding: 8px 14px; 
+      font-weight: 600; 
+      font-size: 13px; 
+    }
+
+    /* Form */
+    .brand-title { color: var(--lv-primary-700); font-size: 15px; }
+    .h1-tight    { font-weight: 800; letter-spacing: -0.02em; }
+
+    /* Legacy Bootstrap .form-control/.form-select styles removed to avoid conflicts with Tailwind/daisyUI.
+       Forms now use daisyUI classes (input, textarea, select) and form widgets are controlled from Django forms.
+    */
+
+    /* Floating labels: support both legacy .form-control/.form-select and new .input/.select */
+    .form-floating > .form-control, .form-floating > .form-select,
+    .form-floating > .input, .form-floating > .select {
+      padding-top: 1.625rem;
+      padding-bottom: 0.625rem;
+      padding-left: 2.75rem;
+    }
+    .form-floating > label {
+      padding-left: 2.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label,
+    .form-floating > .form-select ~ label,
+    .form-floating > .input:focus ~ label,
+    .form-floating > .input:not(:placeholder-shown) ~ label,
+    .form-floating > .select ~ label {
+      opacity: 0.65;
+      transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+      padding-left: 2.75rem;
+    }
+
+    /* Icon inside input */
+    .input-icon-wrapper {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--lv-muted);
+      z-index: 4;
+      pointer-events: none;
+    }
+    .form-floating .input-icon {
+      top: 50%;
+    }
+
+    .form-label { 
+      font-weight: 600; 
+      color: #111827; 
+      font-size: 14px; 
+      margin-bottom: 8px;
+    }
+
+    .btn-primary {
+      --bs-btn-bg: var(--lv-primary);
+      --bs-btn-border-color: var(--lv-primary);
+      --bs-btn-hover-bg: var(--lv-primary-700);
+      --bs-btn-hover-border-color: var(--lv-primary-700);
+      --bs-btn-active-bg: var(--lv-primary-700);
+      --bs-btn-active-border-color: var(--lv-primary-700);
+      border-radius: 10px; 
+      font-weight: 700; 
+      letter-spacing: .2px; 
+      box-shadow: 0 8px 24px rgba(109,94,247,.35);
+      padding: 12px 16px;
+    }
+
+    .helper { 
+      color: var(--lv-muted); 
+      font-size: 12px; 
+    }
+
+  .input-group .form-select, .input-group .select { border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .input-group .form-control, .input-group .input { border-left: none; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+    .legal a { color: var(--lv-primary-700); text-decoration: none; }
+    .legal a:hover { text-decoration: underline; }
+
+    /* Step indicator (optional future) */
+    .step-dot { width: 10px; height: 10px; border-radius: 999px; background: #e5e7eb; }
+    .step-dot.active { background: var(--lv-primary); box-shadow: 0 0 0 3px rgba(109,94,247,.20); }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+      .left-panel { min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container shell">
+    <div class="row justify-content-center">
+      <div class="col-12 col-xl-10">
+        <div class="row card-wrap g-0">
+          <!-- Left side: brand + benefits -->
+          <div class="col-lg-5 left-panel p-4 d-flex flex-column gap-3">
+            <div class="d-flex justify-content-end align-items-start">
+              <span class="badge-soft"><i class="fa-solid fa-clock me-1"></i> 14 días gratis</span>
+            </div>
+
+            <!-- Logo centrado -->
+            <div class="text-center mb-2">
+              <img src="{% static 'img/logo.png' %}" alt="Lyvio" class="logo-img">
+            </div>
+
+            <div class="text-center mb-1">
+              <h2 class="headline mb-2">¡Bienvenido a Lyvio!</h2>
+              <p class="mb-0" style="opacity:.92; font-size: 15px;">Crea tu cuenta y disfruta 14 días gratis. Sin tarjeta, sin líos</p>
+            </div>
+
+            <div class="d-flex flex-column gap-3 mt-2">
+              <div class="perk d-flex align-items-center gap-3">
+                <span style="font-size: 1.35rem;"><i class="fa-solid fa-robot"></i></span>
+                <div>
+                  <div class="fw-semibold">Bot IA 24/7</div>
+                  <small class="d-block" style="opacity:.9">Atiende todo el día, entrenado con tus datos</small>
+                </div>
+              </div>
+              <div class="perk d-flex align-items-center gap-3">
+                <span style="font-size: 1.35rem;"><i class="fa-solid fa-comments"></i></span>
+                <div>
+                  <div class="fw-semibold">Chat omnicanal</div>
+                  <small class="d-block" style="opacity:.9">WhatsApp, Instagram, Email en un solo lugar</small>
+                </div>
+              </div>
+              <div class="perk d-flex align-items-center gap-3">
+                <span style="font-size: 1.35rem;"><i class="fa-solid fa-users"></i></span>
+                <div>
+                  <div class="fw-semibold">Multiagente</div>
+                  <small class="d-block" style="opacity:.9">Tu equipo siempre sincronizado</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right side: form -->
+          <div class="col-lg-7 right-panel p-4 bg-white">
+            <h1 class="h1-tight fs-4 mb-2">Crea tu cuenta</h1>
+            <p class="mb-4 brand-title">Comienza tu prueba de 14 días</p>
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating input-icon-wrapper">
+                    <i class="fa-solid fa-user input-icon"></i>
+          <input type="text" name="first_name" id="id_first_name" placeholder="Tu nombre"
+            class="input input-bordered w-full{% if form.first_name.errors %} is-invalid{% endif %}"
+            value="{{ form.first_name.value|default_if_none:'' }}" required>
+                    <label for="id_first_name">Nombre</label>
+                    {% if form.first_name.errors %}
+                      <div class="invalid-feedback">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating input-icon-wrapper">
+                    <i class="fa-solid fa-user input-icon"></i>
+          <input type="text" name="last_name" id="id_last_name" placeholder="Tu apellido"
+            class="input input-bordered w-full{% if form.last_name.errors %} is-invalid{% endif %}"
+            value="{{ form.last_name.value|default_if_none:'' }}" required>
+                    <label for="id_last_name">Apellido</label>
+                    {% if form.last_name.errors %}
+                      <div class="invalid-feedback">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-floating input-icon-wrapper">
+                    <i class="fa-solid fa-envelope input-icon"></i>
+          <input type="email" name="email" id="id_email" placeholder="tucorreo@empresa.com"
+            class="input input-bordered w-full{% if form.email.errors %} is-invalid{% endif %}"
+            value="{{ form.email.value|default_if_none:'' }}" required>
+                    <label for="id_email">Correo electrónico</label>
+                    {% if form.email.errors %}
+                      <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-floating input-icon-wrapper">
+                    <i class="fa-solid fa-building input-icon"></i>
+          <input type="text" name="company_name" id="id_company_name" placeholder="Nombre de tu empresa"
+            class="input input-bordered w-full{% if form.company_name.errors %} is-invalid{% endif %}"
+            value="{{ form.company_name.value|default_if_none:'' }}" required>
+                    <label for="id_company_name">Nombre de la empresa</label>
+                    {% if form.company_name.errors %}
+                      <div class="invalid-feedback">{{ form.company_name.errors.0 }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="id_phone" class="form-label"><i class="fa-solid fa-phone me-1"></i>Teléfono</label>
+                  <div class="input-group">
+                    <select class="select select-bordered phone-country-select" id="country-code" style="max-width: 128px;">
+                      <option value="+57">🇨🇴 +57</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+52">🇲🇽 +52</option>
+                      <option value="+54">🇦🇷 +54</option>
+                      <option value="+56">🇨🇱 +56</option>
+                      <option value="+51">🇵🇪 +51</option>
+                      <option value="+58">🇻🇪 +58</option>
+                      <option value="+593">🇪🇨 +593</option>
+                      <option value="+591">🇧🇴 +591</option>
+                      <option value="+598">🇺🇾 +598</option>
+                      <option value="+595">🇵🇾 +595</option>
+                      <option value="+507">🇵🇦 +507</option>
+                      <option value="+506">🇨🇷 +506</option>
+                      <option value="+504">🇭🇳 +504</option>
+                      <option value="+503">🇸🇻 +503</option>
+                      <option value="+502">🇬🇹 +502</option>
+                      <option value="+501">🇧🇿 +501</option>
+                      <option value="+505">🇳🇮 +505</option>
+                      <option value="+34">🇪🇸 +34</option>
+                      <option value="+33">🇫🇷 +33</option>
+                      <option value="+49">🇩🇪 +49</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+39">🇮🇹 +39</option>
+                      <option value="+55">🇧🇷 +55</option>
+                    </select>
+                    <input type="tel" name="phone" id="id_phone" class="input input-bordered w-full" placeholder="300 123 4567" value="{{ form.phone.value|default_if_none:'' }}" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="id_website" class="form-label"><i class="fa-solid fa-globe me-1"></i>Sitio web <span class="text-muted">(opcional)</span></label>
+                  <input type="url" name="website" id="id_website" class="input input-bordered w-full" placeholder="https://tuempresa.com" value="{{ form.website.value|default_if_none:'' }}">
+                </div>
+
+                <div class="col-12">
+                  <div class="p-3 rounded-3" style="background:#f8fafc; border:1px dashed #e5e7eb;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                      <i class="fa-solid fa-gift text-success"></i>
+                      <h6 class="mb-0 fw-bold">Tu trial incluye</h6>
+                    </div>
+                    <div class="row mt-2 g-2" style="font-size: 12px;">
+                      <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                          <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Conversaciones sin límites</li>
+                          <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Contactos ilimitados</li>
+                          <li class="mb-0"><i class="fa-solid fa-check text-success me-2"></i>Todos los agentes que necesites</li>
+                        </ul>
+                      </div>
+                      <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                          <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Chatbot personalizado</li>
+                          <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Soporte personalizado</li>
+                          <li class="mb-0"><i class="fa-solid fa-check text-success me-2"></i>Integraciones a un clic</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 d-grid mt-3">
+                  <button type="submit" class="btn btn-primary" id="submitBtn" style="font-size: 15px;">
+                    <span class="btn-text"><i class="fa-solid fa-rocket me-2"></i>Comenzar mi prueba gratuita</span>
+                    <span class="btn-loading d-none">
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando…
+                    </span>
+                  </button>
+                </div>
+
+                <div class="col-12 text-center mt-3 legal small text-muted">
+                  Al registrarte aceptas nuestros <a href="#">términos de servicio</a> y <a href="#">política de privacidad</a>.
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const countrySelect = document.getElementById('country-code');
+      const phoneInput = document.getElementById('id_phone');
+      const form = document.querySelector('form');
+
+      // Preseleccionar Colombia
+      if (countrySelect) countrySelect.value = '+57';
+
+      function formatByCountry(code, digits) {
+        // Limites generales
+        if (digits.length > 15) digits = digits.slice(0, 15);
+        if (code === '+57') { // CO: 10 dígitos usuales
+          if (digits.length > 10) digits = digits.slice(0, 10);
+          return digits.replace(/(\d{3})(\d{3})(\d{0,4})?/, (m,a,b,c='') => c ? `${a} ${b} ${c}` : `${a} ${b}`);
+        }
+        if (code === '+1') { // US/CA
+          if (digits.length > 10) digits = digits.slice(0, 10);
+          return digits.replace(/(\d{3})(\d{3})(\d{0,4})?/, (m,a,b,c='') => c ? `(${a}) ${b}-${c}` : `(${a}) ${b}`);
+        }
+        // Genérico: grupos de 3
+        return digits.replace(/(\d{3})(?=\d)/g, '$1 ');
+      }
+
+      phoneInput?.addEventListener('input', (e) => {
+        const raw = e.target.value.replace(/\D/g, '');
+        const cc = countrySelect?.value || '+57';
+        e.target.value = formatByCountry(cc, raw);
+      });
+
+      countrySelect?.addEventListener('change', () => {
+        const cc = countrySelect.value;
+        const placeholders = { '+57': '300 123 4567', '+1': '(555) 123-4567', '+52': '55 1234 5678', '+54': '11 1234 5678' };
+        phoneInput.placeholder = placeholders[cc] || '123 456 789';
+        phoneInput.value = '';
+      });
+
+      // Submit: concat código país + solo dígitos
+      form?.addEventListener('submit', function(e) {
+        const phoneVal = phoneInput.value.trim();
+        const digits = phoneVal.replace(/\D/g, '');
+        if (!digits) { e.preventDefault(); phoneInput.focus(); return; }
+        const cc = countrySelect?.value || '';
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden'; hidden.name = 'phone'; hidden.value = cc + digits;
+        phoneInput.name = 'phone_display';
+        form.appendChild(hidden);
+
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+        submitBtn.disabled = true; btnText.classList.add('d-none'); btnLoading.classList.remove('d-none');
+        setTimeout(() => { // safety reset in case of network stall
+          submitBtn.disabled = false; btnText.classList.remove('d-none'); btnLoading.classList.add('d-none');
+        }, 30000);
+      });
+
+      // Focus micro-interaction
+      const inputs = document.querySelectorAll('.input, .select, .textarea, .file-input');
+      inputs.forEach(el => {
+        el.addEventListener('focus', () => el.style.transform = 'translateY(-1px)');
+        el.addEventListener('blur',  () => el.style.transform = 'translateY(0)');
+      });
+    });
+  </script>
+</body>
+</html>

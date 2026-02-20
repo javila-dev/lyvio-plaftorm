@@ -1,0 +1,410 @@
+{% extends 'subscriptions/base.html' %}
+{% load humanize %}
+
+{% block title %}Dashboard - {{ company.name }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1>¡Hola, {{ user.first_name|default:"Usuario" }}! 👋</h1>
+            <p class="subtitle mb-0">Aquí tienes un resumen de tu cuenta en {{ company.name }}</p>
+        </div>
+        
+        {% if subscription %}
+        <div class="text-end">
+            <span class="status-badge status-{{ subscription.status }}">
+                {% if subscription.status == 'active' %}
+                    <i class="fas fa-check-circle"></i>Activo
+                {% elif subscription.status == 'trial' %}
+                    <i class="fas fa-clock"></i>Período de Prueba
+                {% elif subscription.status == 'cancelled' %}
+                    <i class="fas fa-times-circle"></i>Cancelado
+                {% elif subscription.status == 'expired' %}
+                    <i class="fas fa-exclamation-triangle"></i>Expirado
+                {% endif %}
+            </span>
+        </div>
+        {% elif trial %}
+        <div class="text-end">
+            <span class="status-badge {% if trial_expired %}status-expired{% else %}status-trial{% endif %}">
+                {% if trial_expired %}
+                    <i class="fas fa-exclamation-triangle"></i>Trial Expirado
+                {% else %}
+                    <i class="fas fa-clock"></i>Trial Activo
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container-fluid px-4 pb-4">
+
+{% if subscription %}
+<!-- Welcome Section -->
+<div class="welcome-section mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2 class="mb-2">Tu suscripción está activa 🚀</h2>
+            <p class="mb-3 opacity-75">Estás en el plan <strong>{{ plan.name }}</strong> y todo funciona perfectamente.</p>
+            <div class="d-flex gap-3 flex-wrap">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span>Próxima facturación: {{ next_billing_date|date:"d M Y" }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-credit-card me-2"></i>
+                    <span>${{ plan.price_monthly|floatformat:0|intcomma }}/mes</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-end d-none d-md-block">
+            <div class="display-1 opacity-25">
+                <i class="fas fa-rocket"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
+        <div class="metric-card">
+            <div class="metric-icon metric-success">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <h6 class="text-muted mb-1">Inboxes</h6>
+            <h3 class="mb-2">{{ plan.max_inboxes }}</h3>
+            <div class="progress-custom mb-2">
+                <div class="progress-bar-custom" style="width: 100%"></div>
+            </div>
+            <small class="text-muted">disponibles</small>
+        </div>
+    </div>
+    
+    <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
+        <div class="metric-card">
+            <div class="metric-icon metric-warning">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h6 class="text-muted mb-1">Documentos</h6>
+            <h3 class="mb-2">{{ plan.max_documents }}</h3>
+            <div class="progress-custom mb-2">
+                <div class="progress-bar-custom" style="width: 100%"></div>
+            </div>
+            <small class="text-muted">disponibles</small>
+        </div>
+    </div>
+    
+    <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
+        <div class="metric-card">
+            <div class="metric-icon metric-info">
+                <i class="fas fa-users"></i>
+            </div>
+            <h6 class="text-muted mb-1">Usuarios</h6>
+            <h3 class="mb-2">{{ plan.max_users }}</h3>
+            <div class="progress-custom mb-2">
+                <div class="progress-bar-custom" style="width: 100%"></div>
+            </div>
+            <small class="text-muted">disponibles</small>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Info Cards -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Resumen de Actividad
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div>
+                                <h6 class="mb-1">Estado del Plan</h6>
+                                <small class="text-muted">{{ plan.name }}</small>
+                            </div>
+                            <span class="status-badge status-{{ subscription.status }}">
+                                {% if subscription.status == 'active' %}
+                                    <i class="fas fa-check-circle"></i>Activo
+                                {% elif subscription.status == 'trial' %}
+                                    <i class="fas fa-clock"></i>Trial
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Próximo Pago</h6>
+                                <small class="text-muted">{{ next_billing_date|date:"d M Y" }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">${{ next_invoice_amount|floatformat:0|intcomma }}</div>
+                                <small class="text-muted">{{ subscription.billing_cycle }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {% if last_invoice %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div>
+                                <h6 class="mb-1">Última Factura</h6>
+                                <small class="text-muted">{{ last_invoice.created_at|date:"d M Y" }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">${{ last_invoice.amount|floatformat:0|intcomma }}</div>
+                                <span class="badge bg-success">Pagada</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="text-center">
+                            <a href="{% url 'dashboard:plan_details' %}" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-cog me-1"></i>Gestionar Plan
+                            </a>
+                            <a href="{% url 'dashboard:payment_history' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>Historial
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Tips y Recursos
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="mb-2">🎯 Maximiza tu plan</h6>
+                    <p class="small text-muted mb-2">Aprovecha al máximo tu plan con {{ plan.max_inboxes }} inbox(es), {{ plan.max_documents }} documentos y {{ plan.max_users }} usuarios.</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="mb-2">📊 Gestiona tu equipo</h6>
+                    <p class="small text-muted mb-2">Organiza tus recursos y usuarios para máxima eficiencia.</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="mb-2">💬 Soporte técnico</h6>
+                    <p class="small text-muted mb-2">¿Necesitas ayuda? Contacta a nuestro equipo.</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="mailto:soporte@lyvio.io" class="btn btn-primary btn-sm">
+                        <i class="fas fa-envelope me-1"></i>Contactar Soporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Sin Suscripción Activa -->
+{% if trial %}
+<!-- Información del Trial -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if trial_expired %}border-danger{% else %}border-warning{% endif %}">
+            <div class="card-header {% if trial_expired %}bg-danger text-white{% else %}bg-warning text-dark{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-{% if trial_expired %}exclamation-triangle{% else %}clock{% endif %} me-2"></i>
+                        {% if trial_expired %}
+                            Tu período de prueba ha finalizado
+                        {% else %}
+                            Período de Prueba Activo
+                        {% endif %}
+                    </h5>
+                    {% if not trial_expired %}
+                    <span class="badge bg-light text-dark">
+                        {{ trial_days_remaining }} día{{ trial_days_remaining|pluralize }} restante{{ trial_days_remaining|pluralize }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                {% if trial_expired %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>¡No te preocupes!</strong> Tu cuenta y datos están seguros. Solo necesitas activar un plan para continuar usando Lyvio.
+                </div>
+                {% endif %}
+                
+                <!-- Uso del Trial -->
+                <h6 class="mb-3">Uso durante el período de prueba:</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon metric-primary">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h6 class="text-muted mb-1">Mensajes</h6>
+                            <h4 class="mb-2">{{ trial.current_messages }}</h4>
+                            <div class="progress-custom mb-2">
+                                <div class="progress-bar-custom" style="width: {{ trial_usage.messages }}%"></div>
+                            </div>
+                            <small class="text-muted">de {{ trial.max_messages }} mensajes</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon metric-success">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h6 class="text-muted mb-1">Conversaciones</h6>
+                            <h4 class="mb-2">{{ trial.current_conversations }}</h4>
+                            <div class="progress-custom mb-2">
+                                <div class="progress-bar-custom" style="width: {{ trial_usage.conversations }}%"></div>
+                            </div>
+                            <small class="text-muted">de {{ trial.max_conversations }} conversaciones</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon metric-warning">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h6 class="text-muted mb-1">Documentos</h6>
+                            <h4 class="mb-2">{{ trial.current_documents }}</h4>
+                            <div class="progress-custom mb-2">
+                                <div class="progress-bar-custom" style="width: {{ trial_usage.documents }}%"></div>
+                            </div>
+                            <small class="text-muted">de {{ trial.max_documents }} documentos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Planes Disponibles -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-rocket me-2"></i>
+            {% if trial_expired %}
+                Reactiva tu cuenta - Elige tu plan
+            {% else %}
+                Continúa con un plan completo
+            {% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if trial_expired %}
+        <div class="alert alert-success mb-4">
+            <i class="fas fa-gift me-2"></i>
+            <strong>¡Oferta especial!</strong> Activa cualquier plan ahora y obtén tu primer mes con 20% de descuento.
+        </div>
+        {% endif %}
+        
+        <div class="row">
+            {% for plan in available_plans %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-header bg-light text-center">
+                        <h5 class="card-title mb-0">{{ plan.name }}</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="display-6 text-primary mb-3">
+                            ${{ plan.price_monthly|floatformat:0|intcomma }}
+                            <small class="text-muted fs-6">/mes</small>
+                        </div>
+                        
+                        {% if plan.price_yearly %}
+                        <div class="small text-success mb-3">
+                            ${{ plan.price_yearly|floatformat:0|intcomma }}/año (ahorra anualmente)
+                        </div>
+                        {% endif %}
+                        
+                        <ul class="list-unstyled text-start mb-4">
+                            <li class="mb-1">
+                                <i class="fas fa-check text-success me-2"></i>
+                                {{ plan.max_inboxes }} inbox{{ plan.max_inboxes|pluralize }}
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-check text-success me-2"></i>
+                                {{ plan.max_documents }} documento{{ plan.max_documents|pluralize }}
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-check text-success me-2"></i>
+                                {{ plan.max_users }} usuario{{ plan.max_users|pluralize }}
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Soporte técnico
+                            </li>
+                        </ul>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'dashboard:activate_plan' plan.id %}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Activar Plan
+                            </a>
+                            <small class="text-muted">Pago seguro con Wompi</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Información adicional -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            Garantía de Satisfacción
+                        </h6>
+                        <ul class="list-unstyled mb-0 small">
+                            <li class="mb-1">• Pago 100% seguro con Wompi</li>
+                            <li class="mb-1">• Activación inmediata</li>
+                            <li class="mb-1">• Soporte técnico incluido</li>
+                            <li class="mb-1">• Cancela cuando quieras</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-question-circle text-info me-2"></i>
+                            ¿Necesitas ayuda?
+                        </h6>
+                        <p class="small mb-2">Nuestro equipo está aquí para ayudarte a elegir el plan perfecto.</p>
+                        <a href="mailto:soporte@lyvio.io" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-envelope me-1"></i>
+                            Contactar Soporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+</div>
+{% endblock %}

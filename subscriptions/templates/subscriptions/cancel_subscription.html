@@ -1,0 +1,185 @@
+{% extends 'subscriptions/base.html' %}
+
+{% block title %}Cancelar Suscripción - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-12">
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <div class="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-exclamation-triangle text-3xl text-error"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Cancelar Suscripción</h1>
+        <p class="text-gray-600">Lamentamos verte partir</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card bg-base-100 shadow-lg mb-8">
+            <!-- Alert -->
+            <div class="alert alert-warning mb-6">
+                <i class="fas fa-info-circle text-xl mr-2"></i>
+                <span class="font-bold">Antes de continuar, ten en cuenta:</span>
+                    <ul class="text-sm mt-2 space-y-1">
+                        <li>• Tu suscripción se cancelará al final del período actual</li>
+                        <li>• Mantendrás acceso hasta el {{ subscription.current_period_end|date:"j M Y" }}</li>
+                        <li>• No se realizarán más cobros automáticos</li>
+                        <li>• Puedes reactivar tu suscripción en cualquier momento</li>
+                    </ul>
+                </div>
+            
+        </div>
+
+            <!-- Plan Info Grid -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Plan Actual -->
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body text-center">
+                        <h3 class="text-sm font-semibold text-gray-600 mb-2">Plan Actual</h3>
+                        <div class="text-3xl font-bold text-primary mb-2">{{ subscription.plan.name }}</div>
+                        <div class="text-xl font-semibold text-gray-700">
+                            ${{ subscription.plan.price_monthly|floatformat:0 }}<span class="text-sm font-normal text-gray-500">/mes</span>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge badge-outline badge-sm">
+                                Activo hasta {{ subscription.current_period_end|date:"j M Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Beneficios que perderás -->
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body">
+                        <h3 class="text-sm font-semibold text-gray-600 mb-3">Beneficios que perderás:</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-sm">
+                                <i class="fas fa-times text-error mr-2"></i>
+                                <span>{{ subscription.plan.max_messages_month|floatformat:0 }} mensajes mensuales</span>
+                            </li>
+                            <li class="flex items-center text-sm">
+                                <i class="fas fa-times text-error mr-2"></i>
+                                <span>{{ subscription.plan.max_storage_mb|floatformat:0 }} MB de almacenamiento</span>
+                            </li>
+                            <li class="flex items-center text-sm">
+                                <i class="fas fa-times text-error mr-2"></i>
+                                <span>{{ subscription.plan.max_inboxes }} inbox{{ subscription.plan.max_inboxes|pluralize }}</span>
+                            </li>
+                            <li class="flex items-center text-sm">
+                                <i class="fas fa-times text-error mr-2"></i>
+                                <span>Soporte prioritario</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Cancelación -->
+            <div class="card bg-base-100 shadow-lg mb-8 p-8">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Razón de cancelación -->
+                        <label class="label">
+                            <span class="label-text font-semibold">¿Por qué quieres cancelar? (Opcional)</span>
+                        </label>
+                        <select class="select select-bordered w-full mb-3" name="cancellation_reason" id="cancellation_reason">
+                            <option value="">Selecciona una razón...</option>
+                            <option value="too_expensive">Muy costoso</option>
+                            <option value="not_using">No lo estoy usando</option>
+                            <option value="missing_features">Le faltan funcionalidades</option>
+                            <option value="technical_issues">Problemas técnicos</option>
+                            <option value="switching_provider">Cambio de proveedor</option>
+                            <option value="business_closure">Cierre del negocio</option>
+                            <option value="other">Otra razón</option>
+                        </select>
+                        
+                        <textarea class="textarea textarea-bordered w-full" 
+                                name="additional_comments" 
+                                rows="3" 
+                                placeholder="Comentarios adicionales (opcional)..."></textarea>
+                        <label class="label">
+                            <span class="label-text-alt text-gray-500">Tus comentarios nos ayudan a mejorar nuestro servicio.</span>
+                        </label>
+
+                    <!-- Confirmación -->
+                    <div class="form-control mb-6">
+                        <label class="label cursor-pointer justify-start gap-3 bg-base-200 p-4 rounded-lg">
+                            <input type="checkbox" 
+                                class="checkbox checkbox-error" 
+                                id="confirm_cancellation" 
+                                name="confirm_cancellation" 
+                                required>
+                            <span class="label-text font-bold">
+                                Confirmo que deseo cancelar mi suscripción
+                            </span>
+                        </label>
+                        <small class="text-gray-500 mt-2 block">Esta acción cancelará tu suscripción al final del período actual.</small>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex justify-end gap-3">
+                        <button type="button" class="btn btn-outline btn-neutral" onclick="window.location.href='{% url 'dashboard:dashboard' %}'">
+                            <i class="fas fa-arrow-left mr-1"></i>
+                            Mantener Suscripción
+                        </button>
+                        
+                        <button type="submit" class="btn btn-error" id="cancel-btn" disabled>
+                            <i class="fas fa-times-circle mr-1"></i>
+                            Confirmar Cancelación
+                        </button>
+                    </div>
+                </form>
+            </div>
+    </div>
+
+    <!-- Alternativas -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Pausar cuenta -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body text-center">
+                <div class="w-14 h-14 bg-info/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-pause text-2xl text-info"></i>
+                </div>
+                <h3 class="card-title text-lg justify-center mb-2">¿Necesitas una pausa?</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Podemos pausar tu cuenta temporalmente en lugar de cancelar.
+                </p>
+                <a href="mailto:soporte@lyvio.io?subject=Pausar cuenta temporalmente" 
+                   class="btn btn-outline btn-info btn-sm">
+                    <i class="fas fa-envelope mr-1"></i>
+                    Contactar Soporte
+                </a>
+            </div>
+        </div>
+        
+        <!-- Plan económico -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body text-center">
+                <div class="w-14 h-14 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-arrow-down text-2xl text-success"></i>
+                </div>
+                <h3 class="card-title text-lg justify-center mb-2">¿Muy costoso?</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Hablemos sobre un plan que se ajuste a tu presupuesto.
+                </p>
+                <a href="mailto:ventas@lyvio.io?subject=Opciones de plan económico" 
+                   class="btn btn-outline btn-success btn-sm">
+                    <i class="fas fa-comments mr-1"></i>
+                    Hablar con Ventas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('confirm_cancellation');
+    const cancelBtn = document.getElementById('cancel-btn');
+    
+    checkbox.addEventListener('change', function() {
+        cancelBtn.disabled = !this.checked;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,639 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Información de Pago - {{ plan.name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Reset Bootstrap y aplicar estilos modernos */
+    .main-content {
+        background: #f8fafc !important;
+        padding: 2rem !important;
+        margin-left: 200px !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+    }
+    
+    .payment-container {
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        padding: 2rem 0 !important;
+    }
+    
+    .payment-card {
+        background: white !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+        overflow: hidden !important;
+        border: 1px solid #e2e8f0 !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .payment-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        color: white !important;
+        padding: 2rem !important;
+        text-align: center !important;
+        border-radius: 0 !important;
+    }
+    
+    .payment-header h2 {
+        margin: 0 !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.75rem !important;
+        color: white !important;
+    }
+    
+    .header-icon {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
+        font-size: 1.25rem !important;
+    }
+    
+    .payment-body {
+        padding: 2rem !important;
+    }
+    
+    .plan-summary {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        margin-bottom: 2rem !important;
+        position: relative !important;
+    }
+    
+    .plan-summary::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 3px !important;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+    
+    .plan-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .plan-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .plan-cycle {
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+    
+    .plan-price {
+        text-align: right;
+    }
+    
+    .price-original {
+        text-decoration: line-through;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        display: block;
+    }
+    
+    .price-final {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #1e293b;
+        line-height: 1;
+    }
+    
+    .discount-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.75rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+        .form-control {
+        width: 100% !important;
+        padding: 0.875rem 1rem !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        transition: all 0.2s ease !important;
+        background: #fafafa !important;
+        font-family: 'Inter', sans-serif !important;
+        box-shadow: none !important;
+    }
+    
+    .form-control:focus {
+        outline: none !important;
+        border-color: #4f46e5 !important;
+        background: white !important;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+    }
+    
+    .form-control:hover {
+        border-color: #d1d5db !important;
+        background: white !important;
+    }
+    
+    .card-number-input {
+        font-family: 'Monaco', 'Menlo', monospace;
+        letter-spacing: 0.1em;
+        font-size: 1.1rem;
+    }
+    
+    .card-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        flex-direction: column;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        color: white !important;
+        padding: 1rem 2rem !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+        text-decoration: none !important;
+        text-transform: none !important;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4) !important;
+        color: white !important;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    }
+    
+    .btn-primary:active {
+        transform: translateY(0) !important;
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #64748b;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+        text-decoration: none;
+    }
+    
+    .security-note {
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #166534;
+        position: relative;
+    }
+    
+    .security-note::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .security-icon {
+        color: #10b981;
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+    }
+    
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .form-error {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+    
+    .form-control.error {
+        border-color: #dc2626;
+        background: #fef2f2;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .payment-container {
+            padding: 1rem;
+        }
+        
+        .payment-card {
+            border-radius: 16px;
+        }
+        
+        .payment-header {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+        
+        .payment-body {
+            padding: 2rem 1.5rem;
+        }
+        
+        .card-row {
+            grid-template-columns: 2fr 2fr 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-card">
+        <!-- Header -->
+        <div class="payment-header">
+            <h2>
+                <span class="header-icon">
+                    <i class="fas fa-credit-card"></i>
+                </span>
+                Información de Pago
+            </h2>
+        </div>
+        
+        <!-- Body -->
+        <div class="payment-body">
+            <!-- Resumen del Plan -->
+            <div class="plan-summary">
+                <div class="plan-title">
+                    <i class="fas fa-star" style="color: #fbbf24;"></i>
+                    {{ plan.name }}
+                    {% if discount_info %}
+                        <span class="discount-badge">
+                            {{ discount_info.campaign.discount_value }}% OFF
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="plan-details">
+                    <div class="plan-cycle">
+                        <i class="fas fa-calendar-alt" style="margin-right: 0.5rem; color: #667eea;"></i>
+                        Ciclo: {{ billing_cycle|capfirst }}
+                    </div>
+                    <div class="plan-price">
+                        {% if discount_info %}
+                            <span class="price-original">
+                                ${{ original_amount|floatformat:0 }} COP
+                            </span>
+                        {% endif %}
+                        <span class="price-final">
+                            ${{ final_amount|floatformat:0 }} COP
+                        </span>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Formulario de Tarjeta -->
+            <form method="post" id="cardForm">
+                {% csrf_token %}
+                <input type="hidden" name="billing_cycle" value="{{ billing_cycle }}">
+                
+                <div class="form-group">
+                    <label class="form-label" for="card_number">
+                        <i class="fas fa-credit-card"></i>
+                        Número de Tarjeta
+                    </label>
+                    <input type="text" id="card_number" name="card_number" 
+                           class="form-control card-number-input" 
+                           placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    <div class="form-error" id="card-number-error">
+                        Por favor ingresa un número de tarjeta válido
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="card_holder">
+                        <i class="fas fa-user"></i>
+                        Nombre del Titular
+                    </label>
+                    <input type="text" id="card_holder" name="card_holder" class="form-control" 
+                           placeholder="Como aparece en la tarjeta" value="{{ user.get_full_name }}" required>
+                    <div class="form-error" id="card-holder-error">
+                        El nombre debe tener al menos 5 caracteres
+                    </div>
+                </div>
+                
+                <div class="card-row">
+                    <div class="form-group">
+                        <label class="form-label" for="exp_month">
+                            <i class="fas fa-calendar"></i>
+                            Mes
+                        </label>
+                        <select id="exp_month" name="exp_month" class="form-control" required>
+                            <option value="">MM</option>
+                            {% for i in "123456789ABC"|make_list %}
+                                <option value="{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}">
+                                    {% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="exp_year">
+                            <i class="fas fa-calendar-check"></i>
+                            Año
+                        </label>
+                        <select id="exp_year" name="exp_year" class="form-control" required>
+                            <option value="">AA</option>
+                            {% for year in years %}
+                                <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="cvc">
+                            <i class="fas fa-lock"></i>
+                            CVC
+                        </label>
+                        <input type="text" id="cvc" name="cvc" class="form-control" 
+                               placeholder="123" maxlength="4" required>
+                        <div class="form-error" id="cvc-error">
+                            CVC debe tener 3 o 4 dígitos
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="submit-btn">
+                        <span class="btn-text">
+                            <i class="fas fa-shield-alt"></i>
+                            Activar Suscripción
+                        </span>
+                        <div class="loading-spinner"></div>
+                    </button>
+                    
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+            </form>
+            
+            <!-- Nota de Seguridad -->
+            <div class="security-note">
+                <i class="fas fa-shield-alt security-icon"></i>
+                <strong>Tu información está 100% segura:</strong> 
+                Utilizamos encriptación de nivel bancario y nunca almacenamos los datos completos de tu tarjeta. 
+                Wompi cumple con los estándares PCI DSS para máxima seguridad.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardNumberInput = document.getElementById('card_number');
+    const cardHolderInput = document.getElementById('card_holder');
+    const cvcInput = document.getElementById('cvc');
+    const submitBtn = document.getElementById('submit-btn');
+    const form = document.getElementById('cardForm');
+    
+    // Detectar tipo de tarjeta y mostrar ícono
+    function detectCardType(number) {
+        const cleanNumber = number.replace(/\s/g, '');
+        if (cleanNumber.match(/^4/)) return 'visa';
+        if (cleanNumber.match(/^5[1-5]/)) return 'mastercard';
+        if (cleanNumber.match(/^3[47]/)) return 'amex';
+        return 'generic';
+    }
+    
+    // Formatear número de tarjeta con espacios
+    cardNumberInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+        
+        // Cambiar color según validez
+        if (value.length >= 13 && value.length <= 19) {
+            e.target.classList.remove('error');
+            hideError('card-number-error');
+        }
+    });
+    
+    // Validación en tiempo real del nombre
+    cardHolderInput.addEventListener('input', function(e) {
+        const value = e.target.value;
+        if (value.length >= 5) {
+            e.target.classList.remove('error');
+            hideError('card-holder-error');
+        }
+    });
+    
+    // Solo números en CVC
+    cvcInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        const value = e.target.value;
+        if (value.length >= 3 && value.length <= 4) {
+            e.target.classList.remove('error');
+            hideError('cvc-error');
+        }
+    });
+    
+    // Funciones de validación
+    function showError(elementId) {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+            errorElement.style.display = 'block';
+        }
+    }
+    
+    function hideError(elementId) {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+            errorElement.style.display = 'none';
+        }
+    }
+    
+    function validateCardNumber(number) {
+        const cleanNumber = number.replace(/\s/g, '');
+        return cleanNumber.length >= 13 && cleanNumber.length <= 19;
+    }
+    
+    function validateCardHolder(name) {
+        return name.trim().length >= 5;
+    }
+    
+    function validateCVC(cvc) {
+        return cvc.length >= 3 && cvc.length <= 4;
+    }
+    
+    function validateExpiry(month, year) {
+        if (!month || !year) return false;
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear() % 100;
+        const currentMonth = currentDate.getMonth() + 1;
+        
+        const expYear = parseInt(year);
+        const expMonth = parseInt(month);
+        
+        if (expYear < currentYear) return false;
+        if (expYear === currentYear && expMonth < currentMonth) return false;
+        
+        return true;
+    }
+    
+    // Validación del formulario
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validar número de tarjeta
+        const cardNumber = cardNumberInput.value;
+        if (!validateCardNumber(cardNumber)) {
+            cardNumberInput.classList.add('error');
+            showError('card-number-error');
+            isValid = false;
+        }
+        
+        // Validar nombre del titular
+        const cardHolder = cardHolderInput.value;
+        if (!validateCardHolder(cardHolder)) {
+            cardHolderInput.classList.add('error');
+            showError('card-holder-error');
+            isValid = false;
+        }
+        
+        // Validar CVC
+        const cvc = cvcInput.value;
+        if (!validateCVC(cvc)) {
+            cvcInput.classList.add('error');
+            showError('cvc-error');
+            isValid = false;
+        }
+        
+        // Validar expiración
+        const expMonth = document.getElementById('exp_month').value;
+        const expYear = document.getElementById('exp_year').value;
+        if (!validateExpiry(expMonth, expYear)) {
+            document.getElementById('exp_month').classList.add('error');
+            document.getElementById('exp_year').classList.add('error');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Mostrar loading
+        const btnText = submitBtn.querySelector('.btn-text');
+        const spinner = submitBtn.querySelector('.loading-spinner');
+        
+        btnText.style.display = 'none';
+        spinner.style.display = 'block';
+        submitBtn.disabled = true;
+        
+        // Si hay error, restaurar botón después de un tiempo
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                btnText.style.display = 'flex';
+                spinner.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }, 10000);
+    });
+    
+    // Animaciones suaves al hacer focus
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

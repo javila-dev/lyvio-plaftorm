@@ -1,0 +1,232 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Datos de Facturación - {{ company.name }}{% endblock %}
+
+{% block content %}
+  <div class="ml-3 mb-4">
+    <h2 class="font-bold mb-1 flex items-center" style="letter-spacing:0.5px; font-size:1.5rem; color:#334155;">
+      <span class="text-blue-600 mr-2" style="font-size:1.5rem;">💳</span> Datos de Facturación
+    </h2>
+    <p class="text-gray-500 mb-0 text-lg" style="margin-left:0.2rem;">Completa los datos fiscales para emitir facturas y activar suscripciones.</p>
+  </div>
+
+
+<div class="mx-auto py-3" style="max-width:900px; background:#f8fafc;max-width:600px">
+
+  <form method="post" novalidate autocomplete="off">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+  <style>
+          .form-label {
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.35rem;
+            font-size: 0.92rem;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+          }
+          .input-group-modern {
+            display: block;
+          }
+          .input-group-modern input,
+          .input-group-modern select {
+            border-radius: 0.9rem;
+            border: 1px solid #e6eef7;
+            background: #ffffff;
+            font-size: 0.95rem;
+            height: 2.6rem;
+            width: 100%;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            padding: 0 0.9rem;
+          }
+          .input-group-modern input:focus,
+          .input-group-modern select:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 0.12rem #0ea5e933;
+            background: #fff;
+          }
+          .is-invalid { border-color: #dc3545 !important; box-shadow: 0 0 0 0.12rem #dc354533; }
+          .is-valid { border-color: #16a34a !important; box-shadow: 0 0 0 0.12rem #16a34a33; }
+          .error-text {
+            color: #dc3545;
+            font-size: 0.88rem;
+            margin-top: 4px;
+            font-weight: 500;
+          }
+          .row-1 { display:flex; gap:1rem; align-items:flex-start; margin-bottom:0.75rem; }
+          .row-1 .flex-cell { flex:1; }
+          .row-1 .dv-cell { width:88px; }
+          .row-2 { margin-bottom:0.75rem; }
+          .row-3 { display:flex; gap:1rem; margin-bottom:0.75rem; }
+          .row-3 .col, .row-4 .col { flex:1; }
+          .row-4 { display:flex; gap:1rem; margin-bottom:0.75rem; }
+          @media (max-width: 700px) {
+            .row-1, .row-3, .row-4 { flex-direction:column; }
+            .row-1 .dv-cell { width:100%; }
+          }
+        </style>
+
+        <!-- Row 1: Tipo ID | Número ID | DV (oculto) -->
+  <div class="row-1">
+          <div class="flex-cell">
+            <label for="{{ form.id_type.id_for_label }}" class="form-label"><i class="fas fa-id-badge"></i> Tipo Identificación</label>
+            <div class="input-group-modern">{{ form.id_type }}</div>
+            {% if form.id_type.errors %}<div class="error-text">{{ form.id_type.errors }}</div>{% endif %}
+          </div>
+
+          <div class="flex-cell">
+            <label for="{{ form.id_number.id_for_label }}" class="form-label"><i class="fas fa-id-card"></i> Número de Identificación</label>
+            <div class="input-group-modern">{{ form.id_number }}</div>
+            {% if form.id_number.errors %}<div class="error-text">{{ form.id_number.errors }}</div>{% endif %}
+          </div>
+
+          <div class="dv-cell" id="dv-col">
+            <label for="{{ form.id_dv.id_for_label }}" class="form-label"><i class="fas fa-hashtag"></i> DV</label>
+            <div class="input-group-modern">{{ form.id_dv }}</div>
+            {% if form.id_dv.errors %}<div class="error-text">{{ form.id_dv.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <!-- Row 2: Nombre completo -->
+        <div class="row-2">
+          <div class="full">
+            <label for="{{ form.name.id_for_label }}" class="form-label"><i class="fas fa-user mr-2"></i> Nombre completo</label>
+            <div class="input-group-modern">{{ form.name }}</div>
+            {% if form.name.errors %}<div class="error-text">{{ form.name.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <!-- Row 3: Tipo persona | Régimen -->
+  <div class="row-3">
+          <div class="col">
+            <label for="{{ form.kind_of_person.id_for_label }}" class="form-label"><i class="fas fa-user mr-2"></i> Tipo de Persona</label>
+            <div class="input-group-modern">{{ form.kind_of_person }}</div>
+            {% if form.kind_of_person.errors %}<div class="error-text">{{ form.kind_of_person.errors }}</div>{% endif %}
+          </div>
+          <div class="col">
+            <label for="{{ form.regime.id_for_label }}" class="form-label"><i class="fas fa-building mr-2"></i> Régimen</label>
+            <div class="input-group-modern">{{ form.regime }}</div>
+            {% if form.regime.errors %}<div class="error-text">{{ form.regime.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <!-- Row 4: Teléfono | Email -->
+        <div class="row-4">
+          <div class="col">
+            <label for="{{ form.phone.id_for_label }}" class="form-label"><i class="fas fa-phone"></i> Teléfono</label>
+            <div class="input-group-modern">{{ form.phone }}</div>
+            {% if form.phone.errors %}<div class="error-text">{{ form.phone.errors }}</div>{% endif %}
+          </div>
+          <div class="col">
+            <label for="{{ form.email.id_for_label }}" class="form-label"><i class="fas fa-envelope"></i> Email</label>
+            <div class="input-group-modern">{{ form.email }}</div>
+            {% if form.email.errors %}<div class="error-text">{{ form.email.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="window.location.href='{% url 'dashboard:dashboard' %}'">Cancelar</button>
+      <button id="billing-save" class="btn btn-sm btn-primary" type="submit" style="font-weight:600;letter-spacing:0.3px;">Guardar</button>
+    </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mostrar/ocultar DV según el tipo de identificación
+function toggleDV(){
+  const select = document.getElementById('id_id_type');
+  const dvCol = document.getElementById('dv-col');
+  if(!select) return;
+  if(select.value === 'NIT') dvCol.style.display = 'block';
+  else dvCol.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+
+  // Cálculo del DV para NIT (DIAN) y validación en frontend
+  function computeNitDV(nit) {
+    if(!nit) return null;
+    const digits = (''+nit).replace(/\D/g,'').split('').reverse().map(d=>parseInt(d,10));
+    const weights = [3,7,13,17,19,23,29,37,41,43,47,53,59,67,71];
+    let total = 0;
+    for(let i=0;i<digits.length;i++){
+      const w = weights[i] || 0;
+      total += digits[i] * w;
+    }
+    const remainder = total % 11;
+    let dv = 11 - remainder;
+    if(dv === 11) dv = 0;
+    if(dv === 10) dv = 1;
+    return dv;
+  }
+
+  function validateNitDVFront(){
+    const type = document.getElementById('id_id_type');
+    const num = document.getElementById('id_id_number');
+    const dv = document.getElementById('id_id_dv');
+    const save = document.getElementById('billing-save');
+    if(!type || !num || !dv || !save) return;
+    if(type.value !== 'NIT'){
+      dv.classList.remove('is-invalid');
+      dv.classList.remove('is-valid');
+      save.disabled = false;
+      return;
+    }
+    const expected = computeNitDV(num.value);
+    const provided = (''+dv.value).replace(/\D/g,'');
+    if(!num.value || !provided){
+      // missing data — keep save disabled if dv required
+      save.disabled = true;
+      dv.classList.remove('is-valid');
+      dv.classList.remove('is-invalid');
+      return;
+    }
+    if(parseInt(provided,10) === expected){
+      dv.classList.remove('is-invalid');
+      dv.classList.add('is-valid');
+      save.disabled = false;
+      // remove any inline error message
+      const next = dv.nextElementSibling;
+      if(next && next.classList && next.classList.contains('error-text')) next.style.display='none';
+    } else {
+      dv.classList.remove('is-valid');
+      dv.classList.add('is-invalid');
+      save.disabled = true;
+      // show inline message
+      let next = dv.nextElementSibling;
+      if(!next || !(next.classList && next.classList.contains('error-text'))){
+        next = document.createElement('div');
+        next.className = 'error-text';
+        dv.parentNode.appendChild(next);
+      }
+      next.style.display = 'block';
+      next.textContent = 'Dígito verificador inválido para este NIT';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const type = document.getElementById('id_id_type');
+    const num = document.getElementById('id_id_number');
+    const dv = document.getElementById('id_id_dv');
+    if(type) type.addEventListener('change', function(){ toggleDV(); validateNitDVFront(); });
+    if(num) num.addEventListener('input', validateNitDVFront);
+    if(dv) dv.addEventListener('input', validateNitDVFront);
+    // initial validation
+    validateNitDVFront();
+  });
+  
+  toggleDV();
+  const select = document.getElementById('id_id_type');
+  if(select) select.addEventListener('change', toggleDV);
+});
+</script>
+
+{% endblock %}

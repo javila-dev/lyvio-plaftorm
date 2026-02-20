@@ -1,0 +1,215 @@
+{% extends 'subscriptions/base.html' %}
+{% load humanize %}
+
+{% block title %}Historial de Pagos - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3 mb-2">
+            <i class="fas fa-history text-indigo-600"></i>
+            Historial de Pagos
+        </h1>
+        <p class="text-slate-600 text-lg">Todas tus facturas y transacciones</p>
+    </div>
+
+{% if invoices %}
+<!-- Tabla de Facturas -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                    <th class="text-slate-600 font-semibold">Factura</th>
+                    <th class="text-slate-600 font-semibold">Fecha</th>
+                    <th class="text-slate-600 font-semibold">Monto</th>
+                    <th class="text-slate-600 font-semibold">Método de Pago</th>
+                    <th class="text-slate-600 font-semibold">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-4 pl-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file-invoice text-slate-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-800 text-sm">#{{ invoice.id|stringformat:"05d" }}</div>
+                                {% if invoice.wompi_reference %}
+                                    <div class="text-xs text-slate-400">{{ invoice.wompi_reference|truncatechars:60 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <td class="py-4 text-center">
+                        <div class="text-slate-700 text-sm">{{ invoice.created_at|date:"j M Y" }}</div>
+                        <div class="text-xs text-slate-400">{{ invoice.created_at|date:"H:i" }}</div>
+                    </td>
+                    
+                    <td class="py-4 text-right">
+                        <div class="font-semibold text-slate-800">${{ invoice.amount|floatformat:0|intcomma }}</div>
+                        <div class="text-xs text-slate-400">COP</div>
+                    </td>
+                    
+                    <td class="py-4 text-center">
+                        {% if invoice.wompi_transaction_id %}
+                            <div class="gap-2">
+                                {% if invoice.subscription.card_brand %}
+                                    {% if invoice.subscription.card_brand == 'VISA' %}
+                                        <i class="fab fa-cc-visa text-slate-500 text-lg"></i>
+                                    {% elif invoice.subscription.card_brand == 'MASTERCARD' %}
+                                        <i class="fab fa-cc-mastercard text-slate-500 text-lg"></i>
+                                    {% elif invoice.subscription.card_brand == 'AMEX' %}
+                                        <i class="fab fa-cc-amex text-slate-500 text-lg"></i>
+                                    {% elif invoice.subscription.card_brand == 'DINERS' %}
+                                        <i class="fab fa-cc-diners-club text-slate-500 text-lg"></i>
+                                    {% else %}
+                                        <i class="fas fa-credit-card text-slate-500 text-lg"></i>
+                                    {% endif %}
+                                    <span class="text-slate-600 text-sm">{{ invoice.subscription.card_brand|title }}</span>
+                                {% else %}
+                                    <i class="fas fa-credit-card text-slate-500 text-lg"></i>
+                                    <span class="text-slate-600 text-sm">Tarjeta</span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <span class="text-slate-400 text-sm">-</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td class="py-4 text-center">
+                        <div class="gap-2">
+                            <a href="{% url 'dashboard:invoice_detail' invoice.id %}" 
+                               class="btn btn-xs btn-ghost gap-1 text-slate-600 hover:text-indigo-600" 
+                               title="Ver detalle">
+                                <i class="fas fa-eye text-xs"></i>
+                                <span class="text-xs">Ver</span>
+                            </a>
+                            
+                            {% if invoice.invoice_pdf_url %}
+                            <a href="{{ invoice.invoice_pdf_url }}" 
+                               class="btn btn-xs btn-ghost gap-1 text-slate-600 hover:text-indigo-600" 
+                               title="Descargar PDF" 
+                               target="_blank">
+                                <i class="fas fa-download text-xs"></i>
+                                <span class="text-xs">PDF</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Paginación -->
+{% if invoices.has_other_pages %}
+<div class="flex justify-center mt-6">
+    <div class="btn-group btn-group-sm">
+        {% if invoices.has_previous %}
+            <a href="?page=1" class="btn btn-ghost">
+                <i class="fas fa-angle-double-left text-xs"></i>
+            </a>
+            <a href="?page={{ invoices.previous_page_number }}" class="btn btn-ghost">
+                <i class="fas fa-angle-left text-xs"></i>
+            </a>
+        {% endif %}
+
+        {% for num in invoices.paginator.page_range %}
+            {% if invoices.number == num %}
+                <button class="btn btn-active">{{ num }}</button>
+            {% elif num > invoices.number|add:'-3' and num < invoices.number|add:'3' %}
+                <a href="?page={{ num }}" class="btn btn-ghost">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if invoices.has_next %}
+            <a href="?page={{ invoices.next_page_number }}" class="btn btn-ghost">
+                <i class="fas fa-angle-right text-xs"></i>
+            </a>
+            <a href="?page={{ invoices.paginator.num_pages }}" class="btn btn-ghost">
+                <i class="fas fa-angle-double-right text-xs"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<!-- Sin Facturas -->
+<div class="bg-white rounded-xl shadow-lg p-12 text-center">
+    <div class="text-6xl text-slate-300 mb-4">
+        <i class="fas fa-receipt"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-slate-700 mb-2">No hay facturas registradas</h3>
+    <p class="text-slate-500 text-sm mb-6">
+        Cuando realices tu primer pago, las facturas aparecerán aquí.
+    </p>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-sm gap-2">
+        <i class="fas fa-arrow-left"></i>
+        <span>Volver al Dashboard</span>
+    </a>
+</div>
+{% endif %}
+
+<!-- Información adicional -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+    <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-slate-300">
+        <div class="flex gap-3">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-info-circle text-slate-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-slate-700 mb-2">Información sobre facturas</h3>
+                <ul class="space-y-1.5">
+                    <li class="flex items-start gap-2 text-slate-600 text-xs">
+                        <i class="fas fa-circle text-slate-400 mt-1" style="font-size: 4px;"></i>
+                        <span>Las facturas se generan automáticamente</span>
+                    </li>
+                    <li class="flex items-start gap-2 text-slate-600 text-xs">
+                        <i class="fas fa-circle text-slate-400 mt-1" style="font-size: 4px;"></i>
+                        <span>Recibirás una copia por email</span>
+                    </li>
+                    <li class="flex items-start gap-2 text-slate-600 text-xs">
+                        <i class="fas fa-circle text-slate-400 mt-1" style="font-size: 4px;"></i>
+                        <span>Los PDFs están disponibles para descarga</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-slate-300">
+        <div class="flex gap-3">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-question-circle text-slate-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-slate-700 mb-2">¿Necesitas ayuda?</h3>
+                <p class="text-slate-600 text-xs mb-3">
+                    Si tienes preguntas sobre tus facturas o pagos
+                </p>
+                <a href="mailto:facturacion@lyvio.io" class="btn btn-xs gap-1 text-slate-600">
+                    <i class="fas fa-envelope text-xs"></i>
+                    <span>Contactar Facturación</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+{% endblock %}

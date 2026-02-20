@@ -1,0 +1,324 @@
+{% extends 'subscriptions/base.html' %}
+{% load humanize %}
+
+{% block title %}Activar Plan {{ plan.name }} - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <i class="fas fa-rocket text-white text-4xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Activar Plan {{ plan.name }}</h1>
+        <p class="text-slate-600">{{ company.name }}</p>
+        
+        {% if discount_info %}
+        <div class="alert alert-success shadow-lg mt-6 max-w-2xl mx-auto">
+            <i class="fas fa-gift text-2xl"></i>
+            <div>
+                <h3 class="font-bold text-lg">¡{{ discount_info.campaign.name }}!</h3>
+                <p class="text-sm">{{ discount_info.campaign.description }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="post" id="activationForm">
+        {% csrf_token %}
+        
+        <!-- Ciclo de Facturación -->
+        <div class="card bg-white shadow-xl mb-6">
+            <div class="card-body">
+                <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-indigo-600"></i>
+                    Selecciona tu Ciclo de Facturación
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Plan Mensual -->
+                    <label for="monthly" class="cursor-pointer">
+                        <div class="card border-2 border-indigo-200 hover:border-indigo-500 hover:shadow-xl transition-all h-full">
+                            <div class="card-body relative">
+                                <input type="radio" name="billing_cycle" id="monthly" value="monthly" checked 
+                                       class="radio radio-primary absolute top-4 right-4">
+                                
+                                <h3 class="text-xl font-bold text-slate-900 mb-4">Plan Mensual</h3>
+                                
+                                {% if discount_info %}
+                                <div class="mb-3">
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-4xl font-bold text-indigo-600">${{ discount_info.monthly_final|floatformat:0|intcomma }}</span>
+                                        <span class="text-slate-600 text-lg">/mes</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-sm text-slate-500 line-through">${{ plan.price_monthly|floatformat:0|intcomma }}</span>
+                                        <span class="badge badge-success">
+                                            {% if discount_info.campaign.discount_type == 'percentage' %}
+                                                -{{ discount_info.campaign.discount_value }}%
+                                            {% else %}
+                                                -${{ discount_info.monthly_discount|floatformat:0|intcomma }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="mb-4">
+                                    <span class="text-4xl font-bold text-indigo-600">${{ monthly_price|floatformat:0|intcomma }}</span>
+                                    <span class="text-slate-600 text-lg">/mes</span>
+                                </div>
+                                {% endif %}
+                                
+                                <ul class="space-y-2 text-sm text-slate-700">
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Facturación mensual
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Flexibilidad de cancelación
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Ideal para proyectos cortos
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Plan Anual -->
+                    {% if yearly_price %}
+                    <label for="yearly" class="cursor-pointer">
+                        <div class="card border-2 border-emerald-200 hover:border-emerald-500 hover:shadow-xl transition-all h-full relative overflow-hidden">
+                            <!-- Badge Más Popular -->
+                            <div class="absolute top-0 right-0">
+                                <div class="bg-gradient-to-br from-emerald-500 to-green-600 text-white px-6 py-2 rounded-bl-2xl font-bold text-sm shadow-lg">
+                                    ⭐ MÁS POPULAR
+                                </div>
+                            </div>
+                            
+                            <div class="card-body relative mt-8">
+                                <input type="radio" name="billing_cycle" id="yearly" value="yearly" 
+                                       class="radio radio-success absolute top-4 right-4">
+                                
+                                <h3 class="text-xl font-bold text-slate-900 mb-4">Plan Anual</h3>
+                                
+                                <div class="mb-3">
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-4xl font-bold text-emerald-600">${{ yearly_price|floatformat:0|intcomma }}</span>
+                                        <span class="text-slate-600 text-lg">/año</span>
+                                    </div>
+                                    
+                                    {% if discount_percentage > 0 %}
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-sm text-slate-500 line-through">${{ plan.price_yearly|floatformat:0|intcomma }}</span>
+                                        <span class="badge badge-success">-{{ discount_percentage }}%</span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <p class="text-sm text-emerald-600 font-semibold mt-2">
+                                        Equivale a ${{ yearly_price|floatformat:0 }}/mes
+                                    </p>
+                                </div>
+                                
+                                <ul class="space-y-2 text-sm text-slate-700">
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Máximo ahorro anual
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Sin sorpresas de precio
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-check text-emerald-600"></i>
+                                        Ideal para proyectos largos
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles y Resumen -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Detalles del Plan -->
+            <div class="card bg-white shadow-xl">
+                <div class="card-body">
+                    <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-box text-indigo-600"></i>
+                        Detalles del Plan
+                    </h2>
+                    
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">{{ plan.name }}</h3>
+                    
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-inbox text-emerald-600"></i>
+                            </div>
+                            <span><strong>{{ plan.max_inboxes }}</strong> inbox{{ plan.max_inboxes|pluralize }}</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file text-amber-600"></i>
+                            </div>
+                            <span><strong>{{ plan.max_documents }}</strong> documento{{ plan.max_documents|pluralize }}</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-users text-blue-600"></i>
+                            </div>
+                            <span><strong>{{ plan.max_users }}</strong> usuario{{ plan.max_users|pluralize }}</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-headset text-purple-600"></i>
+                            </div>
+                            <span>Soporte técnico incluido</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Resumen de Compra -->
+            <div class="card bg-gradient-to-br from-indigo-50 to-purple-50 shadow-xl border-2 border-indigo-200">
+                <div class="card-body">
+                    <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <i class="fas fa-receipt text-indigo-600"></i>
+                        Resumen de Compra
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Plan:</span>
+                            <span class="font-bold text-slate-900">{{ plan.name }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Ciclo:</span>
+                            <span id="selectedCycle" class="font-bold text-slate-900">Mensual</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Precio:</span>
+                            <span id="selectedPrice" class="font-bold text-slate-900">
+                                {% if discount_info %}
+                                    ${{ discount_info.monthly_final|floatformat:0|intcomma }}
+                                {% else %}
+                                    ${{ monthly_price|floatformat:0|intcomma }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if discount_info %}
+                        <div class="flex justify-between items-center text-emerald-600">
+                            <span>Descuento:</span>
+                            <span class="font-bold">
+                                {% if discount_info.campaign.discount_type == 'percentage' %}
+                                    -{{ discount_info.campaign.discount_value }}%
+                                {% else %}
+                                    -${{ discount_info.monthly_discount|floatformat:0|intcomma }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="divider my-6"></div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-slate-900">Total a Pagar:</span>
+                        <span id="totalAmount" class="text-3xl font-bold text-indigo-600">
+                            {% if discount_info %}
+                                ${{ discount_info.monthly_final|floatformat:0|intcomma }}
+                            {% else %}
+                                ${{ monthly_price|floatformat:0|intcomma }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pago Seguro -->
+        <div class="card bg-white shadow-xl mb-6">
+            <div class="card-body">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-emerald-600"></i>
+                            Pago 100% Seguro
+                        </h3>
+                        <p class="text-slate-600">
+                            Procesamos tu pago de forma segura con Wompi. 
+                            Serás redirigido a la pasarela de pago para completar la transacción.
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <img src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.png" 
+                             alt="Wompi" class="h-16 object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <button type="submit" class="btn btn-primary btn-lg gap-2 w-full sm:w-auto">
+                <i class="fas fa-credit-card"></i>
+                Proceder al Pago
+            </button>
+            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-lg gap-2 w-full sm:w-auto">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const monthlyRadio = document.getElementById('monthly');
+    const yearlyRadio = document.getElementById('yearly');
+    const selectedCycle = document.getElementById('selectedCycle');
+    const selectedPrice = document.getElementById('selectedPrice');
+    const totalAmount = document.getElementById('totalAmount');
+    
+    // Precios calculados desde el backend
+    const monthlyPrice = {% if discount_info %}{{ discount_info.monthly_final|floatformat:0 }}{% else %}{{ monthly_price|floatformat:0 }}{% endif %};
+    {% if yearly_price %}
+    const yearlyPrice = {% if discount_info %}{{ discount_info.yearly_final|floatformat:0 }}{% else %}{{ yearly_price|floatformat:0 }}{% endif %};
+    {% endif %}
+    
+    function updateSummary() {
+        if (monthlyRadio.checked) {
+            selectedCycle.textContent = 'Mensual';
+            selectedPrice.textContent = '$' + monthlyPrice.toLocaleString();
+            totalAmount.textContent = '$' + monthlyPrice.toLocaleString();
+        } else if (yearlyRadio && yearlyRadio.checked) {
+            selectedCycle.textContent = 'Anual';
+            selectedPrice.textContent = '$' + yearlyPrice.toLocaleString();
+            totalAmount.textContent = '$' + yearlyPrice.toLocaleString();
+        }
+    }
+    
+    monthlyRadio.addEventListener('change', updateSummary);
+    if (yearlyRadio) {
+        yearlyRadio.addEventListener('change', updateSummary);
+    }
+    
+    // Make entire card clickable
+    document.querySelectorAll('.card.border-primary, .card.border-success').forEach(card => {
+        card.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                updateSummary();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

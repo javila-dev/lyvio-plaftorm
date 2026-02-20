@@ -1,0 +1,9 @@
+{% extends 'onboarding/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block onboarding_content %}
+<h2 class="text-center mb-4">Información de tu Empresa</h2>
+<p class="text-center text-muted mb-5">Configuraremos tu cuenta en Chatwoot automáticamente</p>
+
+{% crispy form %}
+{% endblock %}

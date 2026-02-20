@@ -1,0 +1,374 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Administrativo - Lyvio{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                    <i class="fas fa-chart-line text-slate-700"></i>
+                    Dashboard Administrativo
+                </h1>
+                <p class="text-sm text-slate-600 mt-1">
+                    Monitoreo y gestión de todas las cuentas
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total Empresas -->
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Total Empresas</p>
+                    <p class="text-3xl font-bold text-slate-900">{{ stats.total_companies }}</p>
+                </div>
+                <i class="fas fa-building text-3xl text-slate-400"></i>
+            </div>
+        </div>
+        
+        <!-- Activas -->
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Cuentas Activas</p>
+                    <p class="text-3xl font-bold text-emerald-600">{{ stats.active_companies }}</p>
+                </div>
+                <i class="fas fa-check-circle text-3xl text-emerald-500"></i>
+            </div>
+        </div>
+        
+        <!-- Pendientes -->
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Pendientes Activación</p>
+                    <p class="text-3xl font-bold text-amber-600">{{ stats.pending_activation }}</p>
+                </div>
+                <i class="fas fa-hourglass-half text-3xl text-amber-500"></i>
+            </div>
+        </div>
+        
+        <!-- Recientes -->
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Registros (7 días)</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ stats.recent_companies }}</p>
+                </div>
+                <i class="fas fa-calendar-plus text-3xl text-blue-500"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Secondary Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Tokens Pendientes</p>
+                    <p class="text-2xl font-bold text-slate-700">{{ stats.pending_tokens }}</p>
+                </div>
+                <i class="fas fa-key text-2xl text-slate-400"></i>
+            </div>
+        </div>
+        
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Tokens Expirados (24h)</p>
+                    <p class="text-2xl font-bold text-slate-700">{{ stats.expired_tokens }}</p>
+                </div>
+                <i class="fas fa-clock text-2xl text-slate-400"></i>
+            </div>
+        </div>
+        
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Trials Activos</p>
+                    <p class="text-2xl font-bold text-emerald-600">{{ stats.active_trials }}</p>
+                </div>
+                <i class="fas fa-gift text-2xl text-emerald-400"></i>
+            </div>
+        </div>
+        
+        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 mb-1">Trials por Expirar</p>
+                    <p class="text-2xl font-bold text-amber-600">{{ stats.expiring_trials }}</p>
+                </div>
+                <i class="fas fa-exclamation-triangle text-2xl text-amber-400"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white border border-slate-200 rounded-lg p-4">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div class="md:col-span-3">
+                <label class="label">
+                    <span class="label-text text-sm font-semibold text-slate-700">Estado</span>
+                </label>
+                <select name="status" class="select select-bordered w-full select-sm bg-white">
+                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Todas las empresas</option>
+                    <optgroup label="Estado de Cuenta">
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Cuentas activas</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pendientes activación</option>
+                        <option value="with_bots" {% if status_filter == 'with_bots' %}selected{% endif %}>Con bots configurados</option>
+                    </optgroup>
+                    <optgroup label="Estado de Plans">
+                        <option value="trial_active" {% if status_filter == 'trial_active' %}selected{% endif %}>Trials activos</option>
+                        <option value="trial_expiring" {% if status_filter == 'trial_expiring' %}selected{% endif %}>Trials por expirar (7 días)</option>
+                        <option value="trial_expired" {% if status_filter == 'trial_expired' %}selected{% endif %}>Trials expirados</option>
+                        <option value="subscription_active" {% if status_filter == 'subscription_active' %}selected{% endif %}>Suscripciones activas</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="md:col-span-7">
+                <label class="label">
+                    <span class="label-text text-sm font-semibold text-slate-700">Buscar</span>
+                </label>
+                <input type="text" 
+                       name="search" 
+                       class="input input-bordered w-full input-sm bg-white" 
+                       placeholder="Nombre de empresa, email..."
+                       value="{{ search }}">
+            </div>
+            
+            <div class="md:col-span-2">
+                <button type="submit" class="btn btn-sm btn-neutral w-full">
+                    <i class="fas fa-search mr-2"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Resources Info Alert -->
+    <div class="alert bg-blue-50 border border-blue-200">
+        <div class="flex gap-3">
+            <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-blue-900 mb-2">Recursos del Trial</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
+                    <div>
+                        <span class="font-semibold text-blue-700">
+                            <i class="fas fa-comments mr-1"></i>Mensajes:
+                        </span>
+                        <span class="text-slate-600">Total procesados por bots IA</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-blue-700">
+                            <i class="fas fa-comment-dots mr-1"></i>Conversaciones:
+                        </span>
+                        <span class="text-slate-600">Conversaciones únicas iniciadas</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-blue-700">
+                            <i class="fas fa-file-alt mr-1"></i>Documentos:
+                        </span>
+                        <span class="text-slate-600">Archivos para entrenar el bot</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-600 mt-2">
+                    <i class="fas fa-lightbulb mr-1"></i>
+                    Las suscripciones pagadas tienen recursos ilimitados
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies List -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+            <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                <i class="fas fa-list text-slate-600"></i>
+                Lista de Empresas
+                <span class="badge badge-neutral badge-sm">{{ companies|length }} de {{ companies.paginator.count }}</span>
+            </h2>
+        </div>
+        <div class="divide-y divide-slate-200">
+            {% for company in companies %}
+            <div class="p-4 hover:bg-slate-50 transition-colors">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+                    <!-- Company Info -->
+                    <div class="lg:col-span-4">
+                        <h3 class="font-semibold text-slate-900 text-sm mb-0.5">{{ company.name }}</h3>
+                        <p class="text-xs text-slate-600 mb-0.5">{{ company.email }}</p>
+                        <p class="text-xs text-slate-500">
+                            <i class="fas fa-user mr-1"></i>{{ company.plan_info.admin_name }}
+                        </p>
+                    </div>
+                    
+                    <!-- Status & Metadata -->
+                    <div class="lg:col-span-2">
+                        {% if company.user_count > 0 %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold mb-1">
+                                <i class="fas fa-check-circle text-[10px]"></i>Activa
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold mb-1">
+                                <i class="fas fa-clock text-[10px]"></i>Pendiente
+                            </span>
+                        {% endif %}
+                        <div class="flex flex-wrap gap-1 mt-1.5 text-[11px]">
+                            {% if company.chatwoot_account_id %}
+                                <span class="text-slate-600">
+                                    <i class="fas fa-hashtag"></i> App ID: {{ company.chatwoot_account_id }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mt-1">
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px]">
+                                <i class="fas fa-file-alt"></i>{{ company.document_count|default:0 }}
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px]">
+                                <i class="fas fa-robot"></i>{{ company.bot_count|default:0 }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Plan Info -->
+                    <div class="lg:col-span-2">
+                        {% if company.plan_info.is_trial %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                <i class="fas fa-gift text-[10px]"></i>{{ company.plan_info.plan_name }}
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                <i class="fas fa-crown text-[10px]"></i>{{ company.plan_info.plan_name }}
+                            </span>
+                        {% endif %}
+                        {% if company.plan_info.expiry_date %}
+                            <div class="text-[11px] mt-1">
+                                {% if company.plan_info.days_remaining <= 7 %}
+                                    <span class="inline-flex items-center gap-0.5 text-red-600 font-bold">
+                                        <i class="fas fa-exclamation-triangle"></i> {{ company.plan_info.days_remaining }}d
+                                    </span>
+                                {% elif company.plan_info.days_remaining <= 30 %}
+                                    <span class="inline-flex items-center gap-0.5 text-amber-600 font-semibold">
+                                        <i class="fas fa-clock"></i> {{ company.plan_info.days_remaining }}d
+                                    </span>
+                                {% else %}
+                                    <span class="text-emerald-600">{{ company.plan_info.days_remaining }}d</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Expiry Date -->
+                    <div class="lg:col-span-2">
+                        <p class="text-[10px] text-slate-500 mb-0.5 uppercase tracking-wide">Vencimiento</p>
+                        {% if company.plan_info.expiry_date %}
+                            {% if company.plan_info.is_expired %}
+                                <p class="text-sm font-bold text-red-600">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold mt-0.5">
+                                    <i class="fas fa-times-circle"></i>Expirado
+                                </span>
+                            {% elif company.plan_info.days_remaining <= 7 %}
+                                <p class="text-sm font-bold text-red-600">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold mt-0.5">
+                                    <i class="fas fa-exclamation-triangle"></i>Por vencer
+                                </span>
+                            {% elif company.plan_info.days_remaining <= 30 %}
+                                <p class="text-sm font-semibold text-amber-600">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                            {% else %}
+                                <p class="text-sm font-semibold text-slate-700">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-slate-400 text-sm">-</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Resources -->
+                    <div class="lg:col-span-2">
+                        <p class="text-[10px] text-slate-500 mb-1 uppercase tracking-wide">Recursos</p>
+                        {% if company.plan_info.resources and company.plan_info.resources.type == 'trial' %}
+                            <div class="space-y-0.5 text-[11px]">
+                                <div class="flex items-center gap-1 text-blue-600">
+                                    <i class="fas fa-comments"></i>
+                                    <span>{{ company.plan_info.resources.messages.used }}/{{ company.plan_info.resources.messages.limit }}</span>
+                                </div>
+                                <div class="flex items-center gap-1 text-indigo-600">
+                                    <i class="fas fa-comment-dots"></i>
+                                    <span>{{ company.plan_info.resources.conversations.used }}/{{ company.plan_info.resources.conversations.limit }}</span>
+                                </div>
+                                <div class="flex items-center gap-1 text-amber-600">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>{{ company.plan_info.resources.documents.used }}/{{ company.plan_info.resources.documents.limit }}</span>
+                                </div>
+                            </div>
+                        {% elif company.plan_info.resources and company.plan_info.resources.type == 'subscription' %}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">
+                                <i class="fas fa-infinity"></i>Ilimitados
+                            </span>
+                        {% else %}
+                            <p class="text-slate-400 text-xs">-</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Created Date -->
+                    <div class="lg:col-span-2">
+                        <p class="text-[10px] text-slate-500 mb-0.5 uppercase tracking-wide">Registro</p>
+                        <p class="text-sm font-semibold text-slate-700">{{ company.created_at|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-12">
+                <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
+                <h3 class="text-lg font-semibold text-slate-600 mb-2">No se encontraron empresas</h3>
+                <p class="text-sm text-slate-500">Intenta ajustar los filtros de búsqueda</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if companies.has_other_pages %}
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="flex justify-center">
+                <div class="join">
+                    {% if companies.has_previous %}
+                        <a href="?page={{ companies.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
+                           class="join-item btn btn-sm">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in companies.paginator.page_range %}
+                        {% if companies.number == num %}
+                            <button class="join-item btn btn-sm btn-active">{{ num }}</button>
+                        {% elif num > companies.number|add:'-3' and num < companies.number|add:'3' %}
+                            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
+                               class="join-item btn btn-sm">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if companies.has_next %}
+                        <a href="?page={{ companies.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
+                           class="join-item btn btn-sm">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Auto-refresh every 5 minutes
+setTimeout(() => location.reload(), 300000);
+</script>
+{% endblock %}

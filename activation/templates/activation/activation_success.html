@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Activando cuenta • Lyvio</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --lv-primary: #6d5ef7;
+      --lv-primary-600: #5a49f2;
+      --lv-primary-700: #4936ea;
+    }
+
+    * { 
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(109, 94, 247, .22), transparent),
+                  radial-gradient(800px 500px at 90% 10%, rgba(73, 54, 234, .18), transparent),
+                  linear-gradient(180deg, #0e1326 0%, #0b1020 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .loading-container {
+      text-align: center;
+      color: white;
+      max-width: 600px;
+    }
+
+    .loading-emoji {
+      font-size: 5rem;
+      margin-bottom: 2rem;
+      animation: bounce 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .loading-text {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .loading-subtext {
+      font-size: 1.2rem;
+      opacity: 0.8;
+      margin-bottom: 3rem;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 2rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--lv-primary-700) 0%, var(--lv-primary) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.5rem;
+      box-shadow: 0 12px 32px rgba(109, 94, 247, .4);
+    }
+
+    .debug-info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00ff00;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      max-width: 400px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-container">
+    <div class="loading-emoji" id="loadingEmoji">🚀</div>
+    
+    <h1 class="loading-text" id="loadingText">Activando tus superpoderes...</h1>
+    
+    <div class="spinner"></div>
+    
+    <p class="loading-subtext">Estamos configurando todo para ti</p>
+
+  </div>
+
+
+  <script>
+    // Auto-redirect si hay SSO URL con mensajes animados
+    const ssoLink = `{{ request.session.chatwoot_sso_url|default:''|safe }}`;
+    
+    
+    const loadingMessages = [
+      { emoji: '🚀', text: 'Activando tus superpoderes...' },
+      { emoji: '🎨', text: 'Configurando tu espacio de trabajo...' },
+      { emoji: '🤖', text: 'Preparando tu asistente IA...' },
+      { emoji: '✨', text: 'Personalizando tu experiencia...' },
+      { emoji: '🔧', text: 'Ajustando los últimos detalles...' },
+      { emoji: '🎯', text: 'Casi listo para despegar...' }
+    ];
+    
+    let messageIndex = 0;
+    
+    function updateLoadingMessage() {
+      if (messageIndex < loadingMessages.length) {
+        const msg = loadingMessages[messageIndex];
+        document.getElementById('loadingEmoji').textContent = msg.emoji;
+        document.getElementById('loadingText').textContent = msg.text;
+        messageIndex++;
+      }
+    }
+    
+    if (ssoLink && ssoLink.trim() !== '') {
+      console.log('✅ SSO Link válido, iniciando redirección...');
+      
+      // Mostrar primer mensaje inmediatamente
+      updateLoadingMessage();
+      
+      // Cambiar mensaje cada 1.2 segundos
+      const messageTimer = setInterval(() => {
+        if (messageIndex < loadingMessages.length) {
+          updateLoadingMessage();
+        } else {
+          clearInterval(messageTimer);
+        }
+      }, 1200);
+      
+      // Redirigir después de 7 segundos
+      setTimeout(() => {
+        window.location.href = ssoLink;
+      }, 7000);
+    } else {
+            
+      // Si no hay SSO link, redirigir al dashboard normal después de 3 segundos
+      setTimeout(() => {
+        window.location.href = "https://app.lyvio.io";
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

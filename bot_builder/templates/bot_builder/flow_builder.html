@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+
+{% block title %}Constructor de Flujos - {{ company.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .flow-builder-container {
+        height: calc(100vh - 200px);
+        min-height: 600px;
+    }
+    
+    .node-palette {
+        background: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        overflow-y: auto;
+        max-height: 100%;
+    }
+    
+    .flow-canvas {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .node-item {
+        cursor: move;
+        transition: all 0.2s;
+        margin-bottom: 8px;
+    }
+    
+    .node-item:hover {
+        background: #e9ecef;
+        transform: translateX(4px);
+    }
+    
+    .properties-panel {
+        background: #f8f9fa;
+        border-left: 1px solid #dee2e6;
+        overflow-y: auto;
+        max-height: 100%;
+    }
+    
+    .toolbar {
+        background: white;
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto h-full">
+    <div class="toolbar flex justify-between items-center">
+        <div>
+            <h5 class="mb-0">
+                <i class="fas fa-project-diagram mr-2"></i>
+                Constructor de Flujos - {{ bot.name }}
+            </h5>
+        </div>
+        <div>
+            <button class="btn btn-outline btn-sm mr-2" onclick="saveFlow()">
+                <i class="fas fa-save mr-1"></i>Guardar
+            </button>
+            <button class="btn btn-outline btn-sm mr-2" onclick="testFlow()">
+                <i class="fas fa-play mr-1"></i>Probar
+            </button>
+            <a href="{% url 'bot_builder:config' %}" class="btn btn-outline btn-sm">
+                <i class="fas fa-arrow-left mr-1"></i>Volver
+            </a>
+        </div>
+    </div>
+    <div class="grid grid-cols-12 gap-0 flow-builder-container">
+        <div class="col-span-12 lg:col-span-3">
+            <div class="node-palette p-3">
+                <h6 class="font-bold mb-3">
+                    <i class="fas fa-puzzle-piece mr-2"></i>Componentes
+                </h6>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted small">INICIO/FIN</h6>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="start">
+                        <i class="fas fa-play-circle text-success mr-2"></i>
+                        <small>Inicio</small>
+                    </div>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="end">
+                        <i class="fas fa-stop-circle text-danger mr-2"></i>
+                        <small>Fin</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-muted small">MENSAJES</h6>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="message">
+                        <i class="fas fa-comment text-primary mr-2"></i>
+                        <small>Mensaje</small>
+                    </div>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="question">
+                        <i class="fas fa-question-circle text-info mr-2"></i>
+                        <small>Pregunta</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-muted small">LÓGICA</h6>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="condition">
+                        <i class="fas fa-code-branch text-warning mr-2"></i>
+                        <small>Condición</small>
+                    </div>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="ai">
+                        <i class="fas fa-brain text-purple mr-2"></i>
+                        <small>IA</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-muted small">DATOS</h6>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="collect">
+                        <i class="fas fa-database text-secondary mr-2"></i>
+                        <small>Recopilar</small>
+                    </div>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="webhook">
+                        <i class="fas fa-link text-dark mr-2"></i>
+                        <small>Webhook</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-muted small">ACCIONES</h6>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="email">
+                        <i class="fas fa-envelope text-info mr-2"></i>
+                        <small>Email</small>
+                    </div>
+                    <div class="node-item p-2 border rounded bg-white" draggable="true" data-node-type="transfer">
+                        <i class="fas fa-user-tie text-success mr-2"></i>
+                        <small>Transferir</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-6">
+            <div class="flow-canvas h-full" id="flowCanvas">
+                <div class="flex items-center justify-center h-full text-muted">
+                    <div class="text-center">
+                        <i class="fas fa-mouse-pointer fa-3x mb-3"></i>
+                        <p>Arrastra componentes aquí para construir tu flujo</p>
+                        <small>Haz clic en un nodo para editarlo en el panel de la derecha</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-3">
+            <div class="properties-panel p-3">
+                <h6 class="font-bold mb-3">
+                    <i class="fas fa-cog mr-2"></i>Propiedades
+                </h6>
+                
+                <div id="nodeProperties" class="text-muted">
+                    <p>Selecciona un nodo para ver sus propiedades</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para configuración de nodos -->
+<div class="modal fade" id="nodeConfigModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configurar Nodo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="nodeConfigForm">
+                    <!-- El formulario se carga dinámicamente según el tipo de nodo -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveNodeConfig()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Estado del constructor de flujos
+let flowData = {
+    nodes: [],
+    connections: []
+};
+
+let selectedNode = null;
+let nodeCounter = 0;
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFlowBuilder();
+    loadExistingFlow();
+});
+
+function initializeFlowBuilder() {
+    const canvas = document.getElementById('flowCanvas');
+    
+    // Permitir drop en el canvas
+    canvas.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        canvas.style.background = '#f8f9fa';
+    });
+    
+    canvas.addEventListener('dragleave', function(e) {
+        canvas.style.background = '#ffffff';
+    });
+    
+    canvas.addEventListener('drop', function(e) {
+        e.preventDefault();
+        canvas.style.background = '#ffffff';
+        
+        const nodeType = e.dataTransfer.getData('text/plain');
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        createNode(nodeType, x, y);
+    });
+    
+    // Configurar arrastre desde la paleta
+    const nodeItems = document.querySelectorAll('.node-item');
+    nodeItems.forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', this.dataset.nodeType);
+        });
+    });
+}
+
+function createNode(type, x, y) {
+    nodeCounter++;
+    
+    const node = {
+        id: `node_${nodeCounter}`,
+        type: type,
+        x: x,
+        y: y,
+        config: getDefaultNodeConfig(type)
+    };
+    
+    flowData.nodes.push(node);
+    renderNode(node);
+}
+
+function getDefaultNodeConfig(type) {
+    const configs = {
+        start: { title: 'Inicio del flujo' },
+        end: { title: 'Fin del flujo' },
+        message: { 
+            title: 'Mensaje',
+            text: 'Escribe tu mensaje aquí...',
+            delay: 1000
+        },
+        question: {
+            title: 'Pregunta',
+            text: '¿Cuál es tu pregunta?',
+            options: ['Opción 1', 'Opción 2']
+        },
+        condition: {
+            title: 'Condición',
+            variable: '',
+            operator: 'equals',
+            value: ''
+        },
+        ai: {
+            title: 'Respuesta IA',
+            prompt: 'Responde basándote en la conversación...',
+            useDocuments: true
+        },
+        collect: {
+            title: 'Recopilar datos',
+            variable: '',
+            type: 'text',
+            validation: ''
+        },
+        webhook: {
+            title: 'Webhook',
+            url: '',
+            method: 'POST',
+            headers: {}
+        },
+        email: {
+            title: 'Enviar email',
+            to: '',
+            subject: '',
+            template: ''
+        },
+        transfer: {
+            title: 'Transferir a agente',
+            department: 'soporte',
+            message: 'Transfiriendo...'
+        }
+    };
+    
+    return configs[type] || { title: type };
+}
+
+function renderNode(node) {
+    const canvas = document.getElementById('flowCanvas');
+    
+    const nodeElement = document.createElement('div');
+    nodeElement.className = 'absolute border rounded bg-white shadow-sm p-2';
+    nodeElement.style.left = node.x + 'px';
+    nodeElement.style.top = node.y + 'px';
+    nodeElement.style.minWidth = '120px';
+    nodeElement.style.cursor = 'pointer';
+    nodeElement.id = node.id;
+    
+    const icon = getNodeIcon(node.type);
+    nodeElement.innerHTML = `
+        <div class="flex items-center">
+            <i class="${icon} mr-2"></i>
+            <small class="font-semibold">${node.config.title}</small>
+        </div>
+    `;
+    
+    // Eventos del nodo
+    nodeElement.addEventListener('click', () => selectNode(node));
+    nodeElement.addEventListener('dblclick', () => editNode(node));
+    
+    // Hacer el nodo arrastrable
+    makeNodeDraggable(nodeElement, node);
+    
+    canvas.appendChild(nodeElement);
+}
+
+function getNodeIcon(type) {
+    const icons = {
+        start: 'fas fa-play-circle text-success',
+        end: 'fas fa-stop-circle text-danger',
+        message: 'fas fa-comment text-primary',
+        question: 'fas fa-question-circle text-info',
+        condition: 'fas fa-code-branch text-warning',
+        ai: 'fas fa-brain text-purple',
+        collect: 'fas fa-database text-secondary',
+        webhook: 'fas fa-link text-dark',
+        email: 'fas fa-envelope text-info',
+        transfer: 'fas fa-user-tie text-success'
+    };
+    
+    return icons[type] || 'fas fa-circle';
+}
+
+function makeNodeDraggable(element, node) {
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+    
+    element.addEventListener('mousedown', function(e) {
+        if (e.detail === 2) return; // Ignore double clicks
+        
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = node.x;
+        initialY = node.y;
+        
+        element.style.zIndex = '1000';
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        
+        node.x = initialX + deltaX;
+        node.y = initialY + deltaY;
+        
+        element.style.left = node.x + 'px';
+        element.style.top = node.y + 'px';
+    });
+    
+    document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            isDragging = false;
+            element.style.zIndex = '';
+        }
+    });
+}
+
+function selectNode(node) {
+    selectedNode = node;
+    updatePropertiesPanel(node);
+    
+    // Highlight visual
+    document.querySelectorAll('.flow-canvas > div').forEach(el => {
+        el.classList.remove('border-primary');
+    });
+    
+    document.getElementById(node.id).classList.add('border-primary');
+}
+
+function updatePropertiesPanel(node) {
+    const panel = document.getElementById('nodeProperties');
+    
+    let html = `
+        <div class="mb-3">
+            <label class="form-label small fw-bold">Tipo</label>
+            <div class="bg-light p-2 rounded small">${node.type}</div>
+        </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Título</label>
+                <input type="text" class="input input-bordered w-full text-sm" value="${node.config.title}" 
+                       onchange="updateNodeProperty('title', this.value)">
+            </div>
+    `;
+    
+    // Propiedades específicas por tipo
+    if (node.type === 'message') {
+        html += `
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Texto</label>
+                <textarea class="textarea textarea-bordered w-full text-sm" rows="3" 
+                         onchange="updateNodeProperty('text', this.value)">${node.config.text}</textarea>
+            </div>
+        `;
+    }
+    
+    html += `
+        <div class="mt-3">
+            <button class="btn btn-outline-danger btn-sm w-100" onclick="deleteNode()">
+                <i class="fas fa-trash mr-1"></i>Eliminar
+            </button>
+        </div>
+    `;
+    
+    panel.innerHTML = html;
+}
+
+function updateNodeProperty(property, value) {
+    if (selectedNode) {
+        selectedNode.config[property] = value;
+        
+        // Actualizar visualización del nodo
+        const nodeElement = document.getElementById(selectedNode.id);
+        const icon = getNodeIcon(selectedNode.type);
+        nodeElement.innerHTML = `
+            <div class="flex items-center">
+                <i class="${icon} mr-2"></i>
+                <small class="font-semibold">${selectedNode.config.title}</small>
+            </div>
+        `;
+    }
+}
+
+function deleteNode() {
+    if (selectedNode) {
+        // Eliminar del DOM
+        document.getElementById(selectedNode.id).remove();
+        
+        // Eliminar del array
+        flowData.nodes = flowData.nodes.filter(n => n.id !== selectedNode.id);
+        
+        // Limpiar selección
+        selectedNode = null;
+        document.getElementById('nodeProperties').innerHTML = '<p class="text-muted">Selecciona un nodo para ver sus propiedades</p>';
+    }
+}
+
+function editNode(node) {
+    selectedNode = node;
+    // Por ahora, usar el panel de propiedades
+    // En el futuro se puede abrir un modal más completo
+    selectNode(node);
+}
+
+function saveFlow() {
+    // Implementar guardado del flujo
+    console.log('Guardando flujo:', flowData);
+    
+    fetch('{% url "bot_builder:save-flow" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            bot_id: {{ bot.id }},
+            flow_data: flowData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Flujo guardado exitosamente');
+        } else {
+            alert('Error al guardar: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al guardar el flujo');
+    });
+}
+
+function testFlow() {
+    alert('Función de prueba - Por implementar');
+}
+
+function loadExistingFlow() {
+    // Implementar carga de flujo existente
+    // Por ahora, crear un flujo de ejemplo
+    
+    {% if bot.bot_config %}
+        // Si hay configuración existente, cargarla
+        try {
+            const existingFlow = JSON.parse('{{ bot.bot_config.system_prompt|escapejs }}');
+            if (existingFlow.nodes) {
+                flowData = existingFlow;
+                flowData.nodes.forEach(node => renderNode(node));
+            }
+        } catch (e) {
+            // Si no es un flujo válido, crear uno de ejemplo
+            createExampleFlow();
+        }
+    {% else %}
+        createExampleFlow();
+    {% endif %}
+}
+
+function createExampleFlow() {
+    // Crear un flujo de ejemplo para empezar
+    const startNode = {
+        id: 'start_1',
+        type: 'start',
+        x: 50,
+        y: 50,
+        config: { title: 'Inicio' }
+    };
+    
+    const messageNode = {
+        id: 'message_1',
+        type: 'message',
+        x: 50,
+        y: 150,
+        config: { 
+            title: 'Saludo',
+            text: '¡Hola! Soy el asistente virtual de {{ company.name }}. ¿En qué puedo ayudarte?'
+        }
+    };
+    
+    flowData.nodes = [startNode, messageNode];
+    nodeCounter = 2;
+    
+    flowData.nodes.forEach(node => renderNode(node));
+}
+</script>
+{% endblock %}

@@ -1,0 +1,438 @@
+{% extends 'subscriptions/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Actualizar Plan - Lyvio{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+            <i class="fas fa-arrow-up text-emerald-500"></i>
+            Actualizar Plan
+        </h1>
+        <p class="text-slate-500">
+            Actualiza tu suscripción de <strong>{{ current_plan.name }}</strong> a <strong>{{ new_plan.name }}</strong>
+        </p>
+    </div>
+
+    <!-- Comparación de Planes -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Plan Actual -->
+        <div class="bg-white rounded-lg border border-slate-200">
+            <div class="bg-slate-100 px-6 py-4 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
+                    <i class="fas fa-box"></i>
+                    Plan Actual
+                </h3>
+            </div>
+            <div class="p-6">
+                <h4 class="text-2xl font-bold text-slate-600 mb-4">{{ current_plan.name }}</h4>
+                <div class="text-3xl font-extrabold text-slate-500 mb-6">
+                    ${{ current_plan.price_monthly|floatformat:0|intcomma }}
+                    <span class="text-base font-normal text-slate-400">/mes</span>
+                </div>
+                
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-3 text-slate-600">
+                        <i class="fas fa-inbox text-slate-400 w-5"></i>
+                        <span>{{ current_plan.max_inboxes }} inbox{{ current_plan.max_inboxes|pluralize }}</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600">
+                        <i class="fas fa-file text-slate-400 w-5"></i>
+                        <span>{{ current_plan.max_documents }} documento{{ current_plan.max_documents|pluralize }}</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600">
+                        <i class="fas fa-users text-slate-400 w-5"></i>
+                        <span>{{ current_plan.max_users }} usuario{{ current_plan.max_users|pluralize }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Nuevo Plan -->
+        <div class="bg-white rounded-lg border-2 border-emerald-500 shadow-md">
+            <div class="bg-emerald-500 px-6 py-4 border-b border-emerald-600">
+                <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fas fa-star"></i>
+                    Nuevo Plan
+                </h3>
+            </div>
+            <div class="p-6">
+                <h4 class="text-2xl font-bold text-emerald-600 mb-4">{{ new_plan.name }}</h4>
+                <div class="text-3xl font-extrabold text-emerald-600 mb-6">
+                    ${{ new_plan.price_monthly|floatformat:0|intcomma }}
+                    <span class="text-base font-normal text-slate-500">/mes</span>
+                </div>
+                
+                <ul class="space-y-3">
+                    <li class="flex items-center justify-between">
+                        <span class="flex items-center gap-3 text-slate-700">
+                            <i class="fas fa-inbox text-emerald-500 w-5"></i>
+                            <strong>{{ new_plan.max_inboxes }} inbox{{ new_plan.max_inboxes|pluralize }}</strong>
+                        </span>
+                        {% if new_plan.max_inboxes > current_plan.max_inboxes %}
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full">
+                                <i class="fas fa-arrow-up"></i> +{{ new_plan.max_inboxes|add:"-"|add:current_plan.max_inboxes }}
+                            </span>
+                        {% endif %}
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <span class="flex items-center gap-3 text-slate-700">
+                            <i class="fas fa-file text-emerald-500 w-5"></i>
+                            <strong>{{ new_plan.max_documents }} documento{{ new_plan.max_documents|pluralize }}</strong>
+                        </span>
+                        {% if new_plan.max_documents > current_plan.max_documents %}
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full">
+                                <i class="fas fa-arrow-up"></i> +{{ new_plan.max_documents|add:"-"|add:current_plan.max_documents }}
+                            </span>
+                        {% endif %}
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <span class="flex items-center gap-3 text-slate-700">
+                            <i class="fas fa-users text-emerald-500 w-5"></i>
+                            <strong>{{ new_plan.max_users }} usuario{{ new_plan.max_users|pluralize }}</strong>
+                        </span>
+                        {% if new_plan.max_users > current_plan.max_users %}
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full">
+                                <i class="fas fa-arrow-up"></i> +{{ new_plan.max_users|add:"-"|add:current_plan.max_users }}
+                            </span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Upgrade -->
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h3 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-credit-card text-indigo-500"></i>
+                    Confirmar Actualización
+                </h3>
+            </div>
+            
+            <div class="p-6">
+                <form method="POST" id="upgradeForm">
+                    {% csrf_token %}
+                    
+                    <!-- Ciclo de Facturación -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Ciclo de Facturación</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Mensual -->
+                            <label class="billing-option cursor-pointer" for="monthly">
+                                <input class="billing-cycle-input" type="radio" name="billing_cycle" 
+                                       id="monthly" value="monthly" checked required
+                                       data-price="{{ new_plan.price_monthly }}"
+                                       data-current-price="{{ current_plan.price_monthly }}">
+                                <div class="billing-content">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <strong class="text-slate-800">Mensual</strong>
+                                            <p class="text-xs text-slate-500 mt-0.5">Pago mes a mes</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <strong class="text-slate-800">${{ new_plan.price_monthly|floatformat:0|intcomma }}</strong>
+                                            <p class="text-xs text-slate-500">/mes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Anual -->
+                            {% if new_plan.price_yearly %}
+                            <label class="billing-option cursor-pointer" for="yearly">
+                                <input class="billing-cycle-input" type="radio" name="billing_cycle" 
+                                       id="yearly" value="yearly" required
+                                       data-price="{{ new_plan.price_yearly }}"
+                                       data-current-price="{{ current_plan.price_yearly|default:current_plan.price_monthly }}">
+                                <div class="billing-content">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <strong class="text-slate-800">Anual</strong>
+                                            <span class="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full ml-2">Ahorra 20%</span>
+                                            <p class="text-xs text-slate-500 mt-0.5">Un solo pago al año</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <strong class="text-slate-800">${{ new_plan.price_yearly|floatformat:0|intcomma }}</strong>
+                                            <p class="text-xs text-slate-500">/año</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Resumen de Costos (Dinámico) -->
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-6" id="costSummary">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-calculator text-indigo-500"></i>
+                            Resumen de Costos
+                        </h4>
+                        
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between text-slate-600">
+                                <span>Plan actual:</span>
+                                <strong id="currentPlanPrice">${{ current_plan.price_monthly|floatformat:0|intcomma }}/mes</strong>
+                            </div>
+                            
+                            <div class="flex justify-between text-slate-600">
+                                <span>Nuevo plan:</span>
+                                <strong id="newPlanPrice">${{ new_plan.price_monthly|floatformat:0|intcomma }}/mes</strong>
+                            </div>
+                            
+                            <hr class="my-3 border-indigo-200">
+                            
+                            <div class="flex justify-between text-slate-700">
+                                <span>Diferencia:</span>
+                                <strong class="text-emerald-600" id="priceDifference">
+                                    +${{ price_difference|floatformat:0|intcomma }}<span id="periodText">/mes</span>
+                                </strong>
+                            </div>
+
+                            <div class="flex justify-between text-slate-700">
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-calendar-alt text-xs"></i>
+                                    Prorrateo (días restantes):
+                                </span>
+                                <strong id="proratedAmount" class="text-indigo-600">Calculando...</strong>
+                            </div>
+                            
+                            <hr class="my-3 border-indigo-200">
+                            
+                            <div class="flex justify-between items-center">
+                                <strong class="text-slate-800">Total a pagar hoy:</strong>
+                                <strong class="text-2xl text-emerald-600" id="totalAmount">$0</strong>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <span id="proratedExplanation">
+                                Se cobrará el prorrateo por los días restantes del mes actual.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Método de Pago -->
+                    {% if subscription.payment_source_id %}
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg mb-6">
+                        <h5 class="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-credit-card"></i>
+                            Método de Pago
+                        </h5>
+                        <p class="text-sm text-emerald-700 flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
+                            Se utilizará tu tarjeta registrada para procesar el pago automáticamente.
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-6">
+                        <h5 class="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Método de Pago Requerido
+                        </h5>
+                        <p class="text-sm text-amber-700 mb-3">
+                            No tienes un método de pago registrado. Por favor actualiza tu método de pago primero.
+                        </p>
+                        <a href="{% url 'dashboard:dashboard' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-md transition-colors">
+                            Actualizar Método de Pago
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Información Importante -->
+                    <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+                        <h5 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            Información Importante
+                        </h5>
+                        <ul class="space-y-1.5 text-sm text-blue-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5"></i>
+                                <span>El cargo se procesará inmediatamente</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5"></i>
+                                <span>El cambio de plan será efectivo de inmediato</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5"></i>
+                                <span>Se cobrará el prorrateo por los días restantes</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5"></i>
+                                <span>Tendrás acceso inmediato a todas las nuevas funciones</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                        <a href="{% url 'dashboard:plan_details' %}" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 border border-slate-300 text-slate-700 font-medium rounded-md hover:bg-slate-50 transition-colors">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </a>
+                        <button id="confirmUpgradeBtn" type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed" {% if not subscription.payment_source_id %}disabled{% endif %}>
+                            <i class="fas fa-check"></i>
+                            Confirmar Actualización
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const billingCycleInputs = document.querySelectorAll('.billing-cycle-input');
+    const subscriptionStatus = '{{ subscription.status }}'; // Status de la suscripción
+    const upgradeForm = document.getElementById('upgradeForm');
+    const confirmButton = document.getElementById('confirmUpgradeBtn');
+    
+    if (upgradeForm && confirmButton) {
+        upgradeForm.addEventListener('submit', function() {
+            confirmButton.disabled = true;
+            confirmButton.classList.add('cursor-wait');
+            confirmButton.innerHTML = `
+                <span class="inline-flex items-center gap-2">
+                    <span class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+                    Procesando...
+                </span>
+            `;
+        });
+    }
+    
+    // Formatear números con separador de miles
+    function formatNumber(num) {
+        return Math.round(num).toLocaleString('es-CO');
+    }
+    
+    // Calcular días restantes del mes
+    function getDaysRemaining() {
+        const now = new Date();
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const currentDay = now.getDate();
+        return daysInMonth - currentDay + 1;
+    }
+    
+    // Calcular prorrateo
+    function calculateProration(priceDifference, newPrice, isYearly) {
+        if (isYearly) {
+            // Para anual, no hay prorrateo, se paga el año completo
+            return 0;
+        }
+        
+        // Si la suscripción NO está activa, cobrar precio completo del nuevo plan (sin prorrateo)
+        if (subscriptionStatus !== 'active') {
+            return newPrice;
+        }
+        
+        const daysRemaining = getDaysRemaining();
+        const now = new Date();
+        const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        
+        // Prorrateo: (diferencia_mensual / días_del_mes) * días_restantes
+        return (priceDifference / daysInMonth) * daysRemaining;
+    }
+    
+    // Actualizar resumen de costos
+    function updateCostSummary() {
+        const selectedInput = document.querySelector('.billing-cycle-input:checked');
+        const newPrice = parseFloat(selectedInput.dataset.price);
+        const currentPrice = parseFloat(selectedInput.dataset.currentPrice);
+        const isYearly = selectedInput.value === 'yearly';
+        
+        const priceDifference = newPrice - currentPrice;
+        const prorated = calculateProration(priceDifference, newPrice, isYearly);
+        const total = isYearly ? newPrice : prorated;
+        
+        // Actualizar precios mostrados
+        document.getElementById('currentPlanPrice').textContent = 
+            '$' + formatNumber(currentPrice) + (isYearly ? '/año' : '/mes');
+        document.getElementById('newPlanPrice').textContent = 
+            '$' + formatNumber(newPrice) + (isYearly ? '/año' : '/mes');
+        document.getElementById('priceDifference').innerHTML = 
+            '+$' + formatNumber(priceDifference) + '<span id="periodText">' + (isYearly ? '/año' : '/mes') + '</span>';
+        
+        // Actualizar prorrateo
+        if (isYearly) {
+            document.getElementById('proratedAmount').textContent = 'No aplica (pago anual)';
+            document.getElementById('totalAmount').textContent = '$' + formatNumber(total);
+            document.getElementById('proratedExplanation').textContent = 
+                'Se cobrará el año completo del nuevo plan inmediatamente.';
+        } else {
+            const daysRemaining = getDaysRemaining();
+            
+            // Si la suscripción NO está activa, mostrar mensaje diferente
+            if (subscriptionStatus !== 'active') {
+                document.getElementById('proratedAmount').textContent = 
+                    '$' + formatNumber(prorated) + ' (precio completo)';
+                document.getElementById('totalAmount').textContent = '$' + formatNumber(total);
+                document.getElementById('proratedExplanation').textContent = 
+                    'Como tu suscripción no está activa, se cobrará el precio completo del mes. A partir del próximo mes se cobrará $' + formatNumber(newPrice) + '.';
+            } else {
+                document.getElementById('proratedAmount').textContent = 
+                    '$' + formatNumber(prorated) + ' (' + daysRemaining + ' días)';
+                document.getElementById('totalAmount').textContent = '$' + formatNumber(total);
+                document.getElementById('proratedExplanation').textContent = 
+                    'Se cobrará el prorrateo por los ' + daysRemaining + ' días restantes del mes actual. A partir del próximo mes se cobrará $' + formatNumber(newPrice) + '.';
+            }
+        }
+    }
+    
+    // Escuchar cambios en el ciclo de facturación
+    billingCycleInputs.forEach(input => {
+        input.addEventListener('change', updateCostSummary);
+    });
+    
+    // Calcular al cargar la página
+    updateCostSummary();
+});
+</script>
+
+<style>
+.billing-option {
+    display: block;
+    position: relative;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.billing-option:hover {
+    border-color: #6366f1;
+    background-color: #f8fafc;
+}
+
+.billing-option input[type="radio"] {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.billing-option .billing-content {
+    margin-left: 28px;
+}
+
+.billing-option:has(input[type="radio"]:checked) {
+    background-color: #eef2ff;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+</style>
+
+{% endblock %}

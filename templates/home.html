@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Bienvenido a Lyvio{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-4">Bot de IA para tu Negocio</h1>
+        <p class="lead mb-4">Automatiza tu atención al cliente con inteligencia artificial</p>
+        <a href="{% url 'onboarding:select-plan' %}" class="btn btn-light btn-lg px-5">
+            Comenzar Ahora <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-lightning-charge text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Configuración Rápida</h4>
+                    <p class="text-muted">Pon tu bot en funcionamiento en menos de 5 minutos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-brain text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">IA Avanzada</h4>
+                    <p class="text-muted">Powered by GPT-4 y tecnología de embeddings</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-whatsapp text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Multi-Canal</h4>
+                    <p class="text-muted">WhatsApp, Telegram, Web y más</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <h2 class="mb-4">Cómo Funciona</h2>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">1</div>
+                <h5 class="mt-3">Elige tu Plan</h5>
+                <p class="text-muted">Selecciona el plan que mejor se adapte a tu negocio</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">2</div>
+                <h5 class="mt-3">Configura tu Bot</h5>
+                <p class="text-muted">Define el tono, servicios y conocimiento</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">3</div>
+                <h5 class="mt-3">Sube Documentos</h5>
+                <p class="text-muted">Carga PDFs y documentos con información clave</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">4</div>
+                <h5 class="mt-3">¡Listo!</h5>
+                <p class="text-muted">Tu bot está funcionando 24/7</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4">Configuración</h1>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="list-group">
+                <a href="#company" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-building"></i> Empresa
+                </a>
+                <a href="#subscription" class="list-group-item list-group-item-action">
+                    <i class="bi bi-credit-card"></i> Suscripción
+                </a>
+                <a href="#profile" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person"></i> Mi Perfil
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <!-- Company Info -->
+            <div class="card mb-4" id="company">
+                <div class="card-header">
+                    <h5 class="mb-0">Información de la Empresa</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre</label>
+                        <p>{{ company.name }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Chatwoot Account ID</label>
+                        <p><code>{{ company.chatwoot_account_id }}</code></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Creada</label>
+                        <p>{{ company.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription -->
+            <div class="card mb-4" id="subscription">
+                <div class="card-header">
+                    <h5 class="mb-0">Suscripción</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Plan Actual</label>
+                            <p class="h4">{{ subscription.plan.name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Estado</label>
+                            <p>
+                                <span class="badge bg-{% if subscription.status == 'active' %}success{% elif subscription.status == 'trial' %}info{% else %}warning{% endif %} fs-6">
+                                    {{ subscription.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ciclo de Facturación</label>
+                            <p>{{ subscription.get_billing_cycle_display }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Próxima Renovación</label>
+                            <p>{{ subscription.current_period_end|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Límites del Plan</h6>
+                        <ul class="mb-0">
+                            <li>{{ subscription.plan.max_inboxes }} Inboxes</li>
+                            <li>{{ subscription.plan.max_documents }} Documentos</li>
+                            <li>{{ subscription.plan.max_users }} Usuarios</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="{% url 'dashboard:plan_details' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-up-circle"></i> Ver Detalles del Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="card" id="profile">
+                <div class="card-header">
+                    <h5 class="mb-0">Mi Perfil</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <p>{{ user.email }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre</label>
+                        <p>{{ user.get_full_name|default:"No especificado" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Teléfono</label>
+                        <p>{{ user.phone|default:"No especificado" }}</p>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Editar Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
