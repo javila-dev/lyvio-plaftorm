@@ -1,0 +1,44 @@
+services:
+  lyvio-migrations:
+    image: jorgeavilag/lyvio-platform:latest
+    restart: "no"
+    env_file:
+      - .env
+    command: python manage.py migrate --noinput
+    networks:
+      - shared-services
+
+  lyvio-platform:
+    image: jorgeavilag/lyvio-platform:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads 2 --timeout 120
+    volumes:
+      - /root/apps/lyvio_platform/staticfiles:/app/staticfiles
+      - /root/apps/lyvio_platform/media:/app/media
+      - /root/apps/lyvio_platform/logs:/app/logs
+    networks:
+      - dokploy-network
+      - shared-services
+    depends_on:
+      lyvio-migrations:
+        condition: service_completed_successfully
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.lyvio.rule=Host(`lyvio.io`)"
+      - "traefik.http.routers.lyvio.entrypoints=web"
+      - "traefik.http.routers.lyvio.middlewares=lyvio-https-redirect"
+      - "traefik.http.middlewares.lyvio-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.lyvio-https-redirect.redirectscheme.permanent=true"
+      - "traefik.http.routers.lyvio-secure.rule=Host(`lyvio.io`)"
+      - "traefik.http.routers.lyvio-secure.entrypoints=websecure"
+      - "traefik.http.routers.lyvio-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.lyvio-secure.loadbalancer.server.port=8000"
+
+networks:
+  dokploy-network:
+    external: true
+  shared-services:
+    external: true
