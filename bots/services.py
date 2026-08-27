@@ -86,7 +86,41 @@ class ChatwootService:
             except Exception as e:
                 logger.error(f"❌ Error actualizando cuenta Chatwoot: {e}")
                 raise
-    
+
+    async def update_billing_status(self, account_id, status, grace_ends_at=None):
+        """
+        Actualiza el estado de facturación de una cuenta en Chatwoot vía
+        custom_attributes, para que el banner de período de gracia lo lea.
+
+        Args:
+            account_id: ID de la cuenta en Chatwoot
+            status: 'past_due' para mostrar el banner, o None para limpiarlo
+                    (cuando la suscripción sale de past_due)
+            grace_ends_at: datetime hasta cuándo dura el período de gracia
+                    (solo aplica cuando status='past_due')
+        """
+        custom_attributes = {
+            'lyvio_billing_status': status,
+            'lyvio_billing_grace_ends_at': grace_ends_at.isoformat() if grace_ends_at else None,
+        }
+
+        async with httpx.AsyncClient() as client:
+            try:
+                logger.info(f"💳 Actualizando billing status Chatwoot ID {account_id}: {status}")
+
+                response = await client.patch(
+                    f"{self.api_url}/platform/api/v1/accounts/{account_id}",
+                    headers={'api_access_token': self.platform_token},
+                    json={'custom_attributes': custom_attributes}
+                )
+                response.raise_for_status()
+                result = response.json()
+                logger.info(f"✅ Billing status actualizado en Chatwoot: ID {account_id}")
+                return result
+            except Exception as e:
+                logger.error(f"❌ Error actualizando billing status en Chatwoot: {e}")
+                raise
+
     async def create_user(self, account_id, user):
         """Crea un usuario en una cuenta de Chatwoot"""
         async with httpx.AsyncClient() as client:

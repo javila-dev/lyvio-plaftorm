@@ -1,7 +1,10 @@
+import logging
 from django.db import models
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from accounts.models import Company
+
+logger = logging.getLogger(__name__)
 
 class DiscountCampaign(models.Model):
     DISCOUNT_TYPES = (
@@ -157,22 +160,79 @@ class Subscription(models.Model):
     class Meta:
         ordering = ['-created_at']
     
+    # Días de gracia tras la fecha de corte antes de que N8N ejecute la
+    # suspensión dura. Controla la ventana en la que Chatwoot muestra el
+    # banner de "período de gracia" (ver LyvioBillingBanner.vue).
+    GRACE_PERIOD_DAYS = 5
+
     def __str__(self):
         return f"{self.company.name} - {self.plan.name} ({self.status})"
-    
+
     def save(self, *args, **kwargs):
+        previous_status = None
+        if self.pk:
+            previous_status = (
+                Subscription.objects.filter(pk=self.pk)
+                .values_list('status', flat=True)
+                .first()
+            )
+
         if not self.pk:
             # Nueva suscripción
             if self.plan.trial_days > 0:
                 self.trial_ends_at = timezone.now() + relativedelta(days=self.plan.trial_days)
-            
+
             # Calcular período
             if self.billing_cycle == 'monthly':
                 self.current_period_end = timezone.now() + relativedelta(months=1)
             else:
                 self.current_period_end = timezone.now() + relativedelta(years=1)
-        
+
         super().save(*args, **kwargs)
+
+        entering_past_due = self.status == 'past_due' and previous_status != 'past_due'
+        leaving_past_due = previous_status == 'past_due' and self.status != 'past_due'
+        if entering_past_due or leaving_past_due:
+            self._sync_billing_status_to_chatwoot(entering_past_due)
+
+    def _sync_billing_status_to_chatwoot(self, entering_past_due):
+        """
+        Notifica a Chatwoot (vía custom_attributes de la Account) que esta
+        suscripción entró o salió de 'past_due', para que
+        LyvioBillingBanner.vue muestre u oculte el aviso de período de gracia.
+        Nunca lanza: un fallo de red hacia Chatwoot no debe romper el flujo
+        de cobro/reactivación que disparó este save().
+        """
+        account_id = getattr(self.company, 'chatwoot_account_id', None)
+        if not account_id:
+            return
+
+        try:
+            import asyncio
+            from bots.services import ChatwootService
+
+            grace_ends_at = None
+            if entering_past_due and self.current_period_end:
+                grace_ends_at = self.current_period_end + relativedelta(
+                    days=self.GRACE_PERIOD_DAYS
+                )
+            status_value = 'past_due' if entering_past_due else None
+
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(
+                    ChatwootService().update_billing_status(
+                        account_id, status_value, grace_ends_at
+                    )
+                )
+            finally:
+                loop.close()
+        except Exception as e:
+            logger.error(
+                f"[Lyvio Billing Banner] No se pudo sincronizar subscription "
+                f"{self.pk} (account {account_id}) con Chatwoot: {e}"
+            )
 
 class Invoice(models.Model):
     STATUS_CHOICES = (
