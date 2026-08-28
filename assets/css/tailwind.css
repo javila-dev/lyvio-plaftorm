@@ -1,0 +1,11 @@
+/* Tailwind entry for Lyvio Django project */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Puedes añadir utilidades o componentes personalizados aquí */
+
+/* Ejemplo: ajustes base para que no choque con Bootstrap mientras coexisten */
+html {
+  /* evita que Tailwind reescriba fonts globales si Bootstrap ya los define */
+}

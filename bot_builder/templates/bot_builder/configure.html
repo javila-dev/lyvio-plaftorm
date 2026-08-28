@@ -4,15 +4,15 @@
 {% block title %}Configurar Bot IA - Lyvio{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 py-8">
+<div class="min-h-screen py-8">
     <div class="container mx-auto px-4 max-w-6xl">
-        
+
         <!-- Page Header -->
         <div class="mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
-                        <i class="fas fa-robot text-indigo-600 text-2xl"></i>
+                    <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-robot text-[#2781f6] text-2xl"></i>
                         Configuración del Bot IA
                     </h1>
                     <p class="text-slate-600 mt-1 text-sm">Personaliza tu asistente virtual para que se adapte perfectamente a tu negocio</p>
@@ -51,20 +51,84 @@
     .modal-content {
         animation: modalFadeIn 0.3s ease;
     }
+
+    .calendar-optional {
+        background: var(--info-bg);
+        border-color: rgba(34, 211, 238, 0.3);
+    }
+    .calendar-required {
+        background: var(--danger-bg);
+        border-color: rgba(248, 113, 113, 0.3);
+    }
+
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; }
+    .wizard-nav-btn[hidden] { display: none; }
 </style>
+
+{% if bot_config.bot_type %}
+<!-- Vista resumen: el bot ya está configurado -->
+<div class="card p-6 mb-4" id="summaryView">
+    <div class="flex items-start gap-4">
+        <img src="{% static 'img/bots/' %}{{ bot_config.bot_type.icon }}" alt="{{ bot_config.bot_type.name }}" class="w-16 h-16 object-contain flex-shrink-0">
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400">
+                    <i class="fas fa-check-circle text-[10px]"></i>Configurado
+                </span>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">{{ bot_config.name|default:bot_config.bot_type.name }}</h2>
+            <p class="text-sm text-slate-500 mb-4">{{ bot_config.bot_type.name }} · {{ bot_config.tone }}</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Sector</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ bot_config.industry_sector|default:"—" }}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Calendario</p>
+                    <p class="text-sm font-semibold text-slate-800">{% if company.calendar_api_key %}Habilitado{% else %}No habilitado{% endif %}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Documentos</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ documents_count }} cargado{{ documents_count|pluralize }}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">Idioma</p>
+                    <p class="text-sm font-semibold text-slate-800">{{ bot_config.get_language_display }}</p>
+                </div>
+            </div>
+            <button type="button" id="editConfigBtn" class="btn btn-primary btn-sm gap-2">
+                <i class="fas fa-pen"></i>
+                Editar Configuración
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div id="wizardContainer" {% if bot_config.bot_type %}class="hidden"{% endif %}>
+
+<!-- Progreso del wizard -->
+<div class="mb-5">
+    <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-slate-600">Paso <span id="wizardStepNum">1</span> de 5</span>
+        <span class="text-sm font-medium text-slate-600"><span id="wizardStepPct">20</span>% completado</span>
+    </div>
+    <progress id="wizardProgress" class="progress progress-primary w-full" value="1" max="5"></progress>
+</div>
 
 <form id="botConfigForm" method="POST" enctype="multipart/form-data" action="{% url 'bot_builder:configure' %}">
     {% csrf_token %}
-    
+
     <!-- Paso 1: Tipo de Bot -->
-    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+    <div class="card p-5 mb-4 wizard-step active" data-step="1">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
-            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+            <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-base" style="background: #2781f6;">
                 1
             </div>
             <h2 class="text-xl font-bold text-slate-800">Selecciona el tipo de bot</h2>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {% for bot_type in bot_types %}
             {% if bot_type.name != "Recursos Humanos" %}
@@ -97,9 +161,9 @@
     </div>
     
     <!-- Paso 2: Tono y Sector -->
-    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+    <div class="card p-5 mb-4 wizard-step" data-step="2">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
-            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+            <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-base" style="background: #2781f6;">
                 2
             </div>
             <h2 class="text-xl font-bold text-slate-800">Configuración del bot</h2>
@@ -152,9 +216,9 @@
     </div>
     
     <!-- Paso 3: Contexto de la Empresa -->
-    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+    <div class="card p-5 mb-4 wizard-step" data-step="3">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
-            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+            <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-base" style="background: #2781f6;">
                 3
             </div>
             <h2 class="text-xl font-bold text-slate-800">Contexto de tu empresa</h2>
@@ -174,8 +238,8 @@
                       oninput="updateCharCount()"
                       placeholder="Ejemplo: Somos una agencia de marketing digital especializada..."
                       required>{{ bot_config.company_context }}</textarea>
-            <div class="bg-blue-50 border-l-2 border-blue-400 p-2.5 rounded-r-lg mt-2">
-                <p class="text-blue-800 text-xs">
+            <div class="p-2.5 rounded-r-lg mt-2" style="background: var(--info-bg); border-left: 2px solid var(--info);">
+                <p class="text-xs" style="color: var(--info);">
                     <i class="fas fa-info-circle mr-1 text-xs"></i>
                     Esta información ayudará al bot a entender mejor tu negocio.
                 </p>
@@ -184,9 +248,9 @@
     </div>
     
     <!-- Paso 4: Integración de Cal.com -->
-    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+    <div class="card p-5 mb-4 wizard-step" data-step="4">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
-            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+            <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-base" style="background: #2781f6;">
                 4
             </div>
             <h2 class="text-xl font-bold text-slate-800">Integración de Calendario</h2>
@@ -194,7 +258,7 @@
         
         <div class="space-y-4">
             <!-- Toggle de Cal.com con logo -->
-            <div id="calendar-header" class="flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div id="calendar-header" class="calendar-optional flex items-start gap-3 p-4 rounded-lg border">
                 <div class="flex-shrink-0 w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center p-2">
                     <img src="https://cal.com/logo.svg" alt="Cal.com" class="w-full h-full object-contain">
                 </div>
@@ -288,20 +352,20 @@
                     </div>
                     
                     {% if company.calendar_booking_url %}
-                    <div class="bg-green-50 border-l-2 border-green-400 p-2.5 rounded-r-lg">
-                        <p class="text-green-800 text-xs">
+                    <div class="p-2.5 rounded-r-lg" style="background: var(--success-bg); border-left: 2px solid var(--success);">
+                        <p class="text-xs" style="color: var(--success);">
                             <i class="fas fa-check-circle mr-1 text-xs"></i>
-                            <strong>Configurado:</strong> <a href="{{ company.calendar_booking_url }}" target="_blank" class="link text-green-700">{{ company.calendar_booking_url }}</a>
+                            <strong>Configurado:</strong> <a href="{{ company.calendar_booking_url }}" target="_blank" class="link" style="color: var(--success);">{{ company.calendar_booking_url }}</a>
                         </p>
                     </div>
                     {% endif %}
-                    
-                    <div class="bg-blue-50 border-l-2 border-blue-400 p-2.5 rounded-r-lg">
-                        <p class="text-blue-800 text-xs">
+
+                    <div class="p-2.5 rounded-r-lg" style="background: var(--info-bg); border-left: 2px solid var(--info);">
+                        <p class="text-xs" style="color: var(--info);">
                             <i class="fas fa-info-circle mr-1 text-xs"></i>
                             <strong>Instrucciones:</strong>
                         </p>
-                        <ol class="text-blue-700 text-xs mt-1 ml-3 list-decimal space-y-1">
+                        <ol class="text-xs mt-1 ml-3 list-decimal space-y-1" style="color: var(--info);">
                             <li>Ve a <a href="https://app.cal.com/settings/security/api-keys" target="_blank" class="underline">Settings → Security → API Keys</a> y genera una API Key</li>
                             <li>Ve a <a href="https://app.cal.com/event-types" target="_blank" class="underline">Tipos de Evento</a> y abre el evento que quieres usar</li>
                             <li>Copia el <strong>Event ID</strong> de la URL (ej: event-types/<strong>3784302</strong>)</li>
@@ -314,14 +378,17 @@
     </div>
     
     <!-- Paso 5: Documentos de Referencia -->
-    <div class="bg-white rounded-xl shadow-lg p-5 mb-4 hover:shadow-xl transition-shadow duration-300">
+    <div class="card p-5 mb-4 wizard-step" data-step="5">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
-            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-base shadow-md">
+            <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-base" style="background: #2781f6;">
                 5
             </div>
-            <h2 class="text-xl font-bold text-slate-800">Documentos de referencia <span class="text-red-500">*</span></h2>
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">Documentos de referencia <span class="text-red-500">*</span></h2>
+                <p class="text-sm text-slate-500 mt-0.5">Precios, catálogo, horarios, preguntas frecuentes — mientras más completos, mejores serán sus respuestas.</p>
+            </div>
         </div>
-        
+
         <div class="border-2 border-dashed border-slate-300 rounded-lg p-5 text-center bg-slate-50 hover:border-indigo-400 hover:bg-slate-100 transition-all duration-300 cursor-pointer" id="uploadArea">
             <div class="text-4xl text-indigo-500 mb-3">
                 <i class="fas fa-cloud-upload-alt"></i>
@@ -347,14 +414,14 @@
             <div>
                 <input type="file" name="documents" id="documentInput" multiple 
                        accept=".txt,.md" class="hidden" onchange="showSelectedFiles()">
-                <button type="button" class="btn btn-outline btn-primary btn-sm gap-2" 
+                <button type="button" class="btn btn-outline btn-primary btn-sm gap-2"
                         onclick="document.getElementById('documentInput').click()">
                     <i class="fas fa-folder-open"></i>
                     Seleccionar Archivos
                 </button>
             </div>
         </div>
-        
+
         <!-- Archivos seleccionados para subir (nuevos) -->
         <div id="selectedFilesContainer" class="mt-4 hidden">
             <div id="filesList" class="flex flex-wrap gap-2"></div>
@@ -369,7 +436,7 @@
             </h3>
             <div class="flex flex-wrap gap-2">
                 {% for doc in documents %}
-                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 text-xs" id="doc-{{ doc.id }}">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 text-white rounded-full hover:-translate-y-0.5 transition-all duration-200 text-xs" style="background: #2781f6;" id="doc-{{ doc.id }}">
                     <i class="fas fa-file-alt text-xs"></i>
                     <span class="font-medium max-w-[120px] truncate">{{ doc.filename }}</span>
                     <button type="button" 
@@ -385,21 +452,33 @@
         {% endif %}
     </div>
     
-    <!-- Botón de Guardar -->
-    <div class="text-center mb-6">
-        <button id="botConfigSubmitBtn" type="submit" class="btn btn-primary gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-6">
+    <!-- Navegación del wizard -->
+    <div class="flex items-center justify-between mb-6">
+        <button type="button" id="wizardBackBtn" class="btn wizard-nav-btn border border-slate-300 text-slate-600 hover:bg-[#272a2d] gap-2" hidden>
+            <i class="fas fa-arrow-left"></i>
+            Atrás
+        </button>
+        <span class="flex-1"></span>
+        <button type="button" id="wizardNextBtn" class="btn btn-primary wizard-nav-btn gap-2">
+            Siguiente
+            <i class="fas fa-arrow-right"></i>
+        </button>
+        <button id="botConfigSubmitBtn" type="submit" class="btn btn-primary wizard-nav-btn gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-6" hidden>
             <i class="fas fa-save"></i>
             Guardar Configuración
         </button>
     </div>
 </form>
 
+</div>
+<!-- /wizardContainer -->
+
     </div>
 </div>
 
 <!-- Modal de Confirmación de Eliminación -->
 <div id="deleteDocModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[9999] backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 m-4 modal-content">
+    <div class="rounded-2xl w-full max-w-md p-6 m-4 modal-content" style="background: var(--surface-raised); border: 1px solid var(--border);">
         <div class="flex items-start justify-between mb-4">
             <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <i class="fas fa-exclamation-triangle text-yellow-500"></i>
@@ -427,6 +506,105 @@
 <!-- Note: toasts are provided by subscriptions/base.html (daisyUI) -->
 
 <script>
+    // ============================================================
+    // WIZARD: navegación paso a paso + vista resumen para bots
+    // ya configurados (editar reabre el wizard con los datos guardados)
+    // ============================================================
+    (function() {
+        const TOTAL_STEPS = 5;
+        let currentStep = 1;
+
+        function stepEl(n) {
+            return document.querySelector('.wizard-step[data-step="' + n + '"]');
+        }
+
+        function isMedicalBotSelected() {
+            const selected = document.querySelector('input[name="bot_type"]:checked');
+            return selected && selected.value === '6';
+        }
+
+        // Cada función valida solo lo que corresponde a ESE paso, no todo el
+        // formulario — así "Siguiente" no bloquea con errores de pasos futuros.
+        function validateStep(n) {
+            if (n === 1) {
+                if (!document.querySelector('input[name="bot_type"]:checked')) {
+                    showToast('error', 'Por favor selecciona un tipo de bot');
+                    return false;
+                }
+            } else if (n === 2) {
+                if (!document.getElementById('tone').value) {
+                    showToast('error', 'Por favor selecciona un tono');
+                    return false;
+                }
+                if (!document.getElementById('industry_sector').value) {
+                    showToast('error', 'Por favor selecciona un sector industrial');
+                    return false;
+                }
+            } else if (n === 3) {
+                if (!document.getElementById('company_context').value.trim()) {
+                    showToast('error', 'Por favor describe el contexto de tu empresa');
+                    return false;
+                }
+            } else if (n === 4) {
+                if (isMedicalBotSelected()) {
+                    const apiKey = document.getElementById('calendar_api_key').value.trim();
+                    const eventId = document.getElementById('calendar_event_id').value.trim();
+                    const bookingUrl = document.getElementById('calendar_booking_url').value.trim();
+                    if (!apiKey || !eventId || !bookingUrl) {
+                        showToast('error', 'Para Consultorio Médico, la integración con Cal.com es obligatoria: API Key, Event ID y URL de agendamiento');
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function showWizardStep(n) {
+            currentStep = n;
+            for (let i = 1; i <= TOTAL_STEPS; i++) {
+                const el = stepEl(i);
+                if (el) el.classList.toggle('active', i === n);
+            }
+            document.getElementById('wizardStepNum').textContent = n;
+            document.getElementById('wizardStepPct').textContent = Math.round((n / TOTAL_STEPS) * 100);
+            document.getElementById('wizardProgress').value = n;
+
+            document.getElementById('wizardBackBtn').hidden = (n === 1);
+            document.getElementById('wizardNextBtn').hidden = (n === TOTAL_STEPS);
+            document.getElementById('botConfigSubmitBtn').hidden = (n !== TOTAL_STEPS);
+
+            stepEl(n).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const nextBtn = document.getElementById('wizardNextBtn');
+            const backBtn = document.getElementById('wizardBackBtn');
+            const editBtn = document.getElementById('editConfigBtn');
+            const summaryView = document.getElementById('summaryView');
+            const wizardContainer = document.getElementById('wizardContainer');
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    if (validateStep(currentStep)) {
+                        showWizardStep(Math.min(currentStep + 1, TOTAL_STEPS));
+                    }
+                });
+            }
+            if (backBtn) {
+                backBtn.addEventListener('click', function() {
+                    showWizardStep(Math.max(currentStep - 1, 1));
+                });
+            }
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    summaryView.classList.add('hidden');
+                    wizardContainer.classList.remove('hidden');
+                    showWizardStep(1);
+                });
+            }
+        });
+    })();
+
     // Actualizar contador de caracteres
     function updateCharCount() {
         const textarea = document.getElementById('company_context');
@@ -565,7 +743,8 @@
                 
                 // Crear badge para el archivo con clases Tailwind
                 const badge = document.createElement('div');
-                badge.className = 'inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 m-1';
+                badge.className = 'inline-flex items-center gap-2 px-4 py-2 text-white rounded-full hover:-translate-y-0.5 transition-all duration-200 m-1';
+                badge.style.background = '#2781f6';
                 
                 // Icono del archivo
                 const icon = document.createElement('i');
@@ -645,8 +824,8 @@
                 calendarConfig.style.display = 'block';
                 requiredBadge.style.display = 'inline-block';
                 calendarDescription.innerHTML = '<strong class="text-red-600">OBLIGATORIO para Consultorio Médico:</strong> Permite que tu bot agende citas automáticamente';
-                calendarHeader.classList.remove('border-blue-200', 'from-blue-50', 'to-indigo-50');
-                calendarHeader.classList.add('border-red-200', 'from-red-50', 'to-pink-50');
+                calendarHeader.classList.remove('calendar-optional');
+                calendarHeader.classList.add('calendar-required');
                 
                 // Hacer campos requeridos
                 document.getElementById('calendar_api_key').required = true;
@@ -660,8 +839,8 @@
                 enableCalendarCheckbox.disabled = false;
                 requiredBadge.style.display = 'none';
                 calendarDescription.innerHTML = 'Permite que tu bot agende citas automáticamente sin costo adicional';
-                calendarHeader.classList.remove('border-red-200', 'from-red-50', 'to-pink-50');
-                calendarHeader.classList.add('border-blue-200', 'from-blue-50', 'to-indigo-50');
+                calendarHeader.classList.remove('calendar-required');
+                calendarHeader.classList.add('calendar-optional');
                 
                 // Remover requerimiento de campos
                 document.getElementById('calendar_api_key').required = false;

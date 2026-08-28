@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lyvio</title>
-    
+    <title>Lyvio — Atiende WhatsApp, Instagram y más con un bot de IA para tu negocio</title>
+    <meta name="description" content="Lyvio conecta WhatsApp, Instagram, Messenger y correo a un bot de IA entrenado para tu negocio. Sin código, listo para atender en minutos. Prueba 14 días gratis.">
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
-    
-    <!-- Nueva Fuente: Figtree (de Google Fonts) -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+
+    <!-- Inter (tipografía única del sitio) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Íconos (Font Awesome) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (solo los estilos que el sitio usa: solid + brands, sin el resto del paquete) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css">
 
     <!-- SCRIPTS DE TRACKING Y ANÁLISIS -->
-
-    <!-- 1. Google Tag Manager -->
-    <!-- Reemplaza GTM-XXXXXXX con tu ID de Contenedor de GTM. -->
-    <!-- Google Analytics, Hotjar, etc., se gestionan desde aquí. -->
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -47,8 +47,7 @@
     /></noscript>
     <!-- End Meta Pixel Code -->
 
-    <!-- 3. Microsoft Clarity -->
-    <!-- Reemplaza YOUR_CLARITY_ID con tu ID de Proyecto de Clarity -->
+    <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -58,2353 +57,972 @@
     </script>
     <!-- End Microsoft Clarity -->
 
-
     <style>
-        /* --- 1. Paleta de Colores Profesional y Reseteo --- */
+        /* ============================================================
+           DESIGN TOKENS
+           ============================================================ */
         :root {
-            --primary-gradient: linear-gradient(110deg, #6e8efb, #a777e3);
-            --primary-color: #6e8efb;
-            --secondary-color: #a777e3;
-            
-            /* Paleta de colores refinada */
-            --text-dark: #111827;      /* Gris oscuro (casi negro) */
-            --text-light: #6B7280;     /* Gris medio */
-            --bg-light: #F9FAFB;       /* Blanco hueso */
-            --white: #ffffff;
-            --border-color: #E5E7EB;   /* Gris claro */
-            
-            /* Paleta Retro Arcade - Colores Neón */
-            --neon-pink: #FF006E;
-            --neon-cyan: #00F5FF;
-            --neon-purple: #8B00FF;
-            --neon-yellow: #FFD60A;
-            --neon-green: #00FF41;
-            --neon-orange: #FF6B35;
-            
-            /* Gradientes tipo arcade */
-            --arcade-gradient-1: linear-gradient(135deg, #FF006E 0%, #8B00FF 100%);
-            --arcade-gradient-2: linear-gradient(135deg, #00F5FF 0%, #8B00FF 100%);
-            --arcade-gradient-3: linear-gradient(135deg, #FFD60A 0%, #FF6B35 100%);
-            
-            --border-radius: 16px;     /* Más redondeado, más moderno */
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
-            --shadow-color: 0 10px 30px -5px rgba(110, 142, 251, 0.15);
+            /* Warm neutrals (sand/paper), not cool grays — the calm behind
+               the brand blue, chosen over a second saturated hue. */
+            --ink: #2A2723;
+            --ink-soft: #5C5648;
+            --ink-faint: #726B5A; /* darkened from #8F8878: that shade only hit 3.3-3.5:1 on paper/white, below WCAG AA's 4.5:1 for the body-sized text that used it (trust-line, captions, footer) */
+            --paper: #FBF8F2;
+            --paper-tint: #F3EEE4;
+            --paper-tint-2: #EFE8D8;
+            --line: #E6DECB;
+            /* Derived from the real Lyvio logo (sampled from static/img/logo.png:
+               its icon and wordmark sit consistently around rgb(142,187,254)).
+               --brand-soft is that exact logo blue; --brand is a deeper, more
+               saturated step of the same hue for buttons/CTAs (5.5:1 contrast
+               on white); --brand-strong is the hover step. */
+            --brand-soft: #8EBBFE;
+            --brand: #3A5FDB;
+            --brand-strong: #2E4FD1;
+            /* Deep step of the same brand-blue ramp (not a new hue) —
+               reserved for full-bleed bold sections (hero, final CTA), so
+               the brighter --brand button still pops against it. */
+            --brand-deep: #1B2C7A;
+            /* Green stays exactly where it already was earning its keep:
+               success/checkmark semantics only, never a decorative field. */
+            --ok: #1D9A6C;
+            --radius-sm: 8px;
+            --radius: 14px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 1px 2px rgba(42,39,35,0.06);
+            --shadow: 0 1px 2px rgba(42,39,35,0.05), 0 12px 28px -10px rgba(42,39,35,0.18);
+            --measure: 62ch;
+            --container: 1180px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
         body {
-            font-family: 'Figtree', sans-serif;
-            color: var(--text-light);
-            line-height: 1.7;
-            background: var(--white);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-feature-settings: 'tnum' 1;
+            color: var(--ink-soft);
+            background: var(--paper);
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            position: relative;
-            --bg-shapes-y: 0px;
-            --bg-shapes-x: 0px;
-            --bg-shapes-rotate: 0deg;
-        }
-        
-        /* Global patterns: handle all decorative shapes from the body (single source of truth) */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background-color: transparent;
-            opacity: 0.14;
-            transform: translateY(var(--bg-shapes-y)) translateX(var(--bg-shapes-x)) rotate(var(--bg-shapes-rotate));
-            will-change: transform;
-            pointer-events: none;
-            background-image:
-                url("{% static 'img/patterns/burbuja_chat.png' %}"),
-                url("{% static 'img/patterns/whatsapp.png' %}"),
-                url("{% static 'img/patterns/instagram.png' %}"),
-                url("{% static 'img/patterns/gmail.png' %}"),
-                url("{% static 'img/patterns/bot.png' %}"),
-                url("{% static 'img/patterns/avion.png' %}"),
-                url("{% static 'img/patterns/circulo.png' %}"),
-                url("{% static 'img/patterns/corazon.png' %}"),
-                url("{% static 'img/patterns/rayo.png' %}"),
-                url("{% static 'img/patterns/whatsapp.png' %}");
-            background-size:
-                84px auto, 72px auto, 72px auto, 64px auto, 68px auto,
-                64px auto, 58px auto, 56px auto, 60px auto, 72px auto;
-            background-position:
-                6% 8%, 86% 12%, 50% 6%, 18% 78%, 82% 74%,
-                44% 92%, 24% 46%, 74% 60%, 60% 84%, 36% 70%;
-            background-repeat: no-repeat;
-            z-index: -2;
-            filter: hue-rotate(var(--bg-shapes-rotate));
         }
 
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.11;
-            transform: translateY(calc(var(--bg-shapes-y) * -0.7)) translateX(calc(var(--bg-shapes-x) * -0.5)) rotate(calc(var(--bg-shapes-rotate) * -1));
-            will-change: transform;
-            pointer-events: none;
-            background-image:
-                url("{% static 'img/patterns/avion.png' %}"),
-                url("{% static 'img/patterns/bot.png' %}"),
-                url("{% static 'img/patterns/gmail.png' %}"),
-                url("{% static 'img/patterns/instagram.png' %}"),
-                url("{% static 'img/patterns/whatsapp.png' %}"),
-                url("{% static 'img/patterns/burbuja_chat.png' %}");
-            background-size:
-                76px auto, 92px auto, 72px auto, 86px auto, 78px auto, 66px auto;
-            background-position:
-                16% 26%, 76% 14%, 8% 70%, 56% 66%, 32% 6%, 88% 90%;
-            background-repeat: no-repeat;
-            z-index: -1;
-            filter: hue-rotate(calc(var(--bg-shapes-rotate) * -1.9));
-        }
+        ::selection { background: var(--brand); color: #fff; }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--paper-tint); }
+        ::-webkit-scrollbar-thumb { background: #D6CBB0; border-radius: 8px; border: 3px solid var(--paper-tint); }
+        a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
 
-        /* Global override: disable section-level decorative container pseudo-elements
-           We rely on body::before / body::after for decorative patterns to avoid stacking issues */
-        #hero .container::before, #hero .container::after,
-        #channels .container::before, #channels .container::after,
-        #features .container::before, #features .container::after,
-        #ai-assistant .container::before, #ai-assistant .container::after,
-        #testimonial .container::before, #testimonial .container::after,
-        #pricing .container::before, #pricing .container::after,
-        #differentiator .container::before, #differentiator .container::after,
-        #cta .container::before, #cta .container::after,
-        footer .container::before, footer .container::after {
-            content: none !important;
-        }
+        h1, h2, h3 { color: var(--ink); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Figtree', sans-serif;
-            color: var(--text-dark);
-            font-weight: 700; /* Un poco más de peso para titulares */
-        }
-
-        .container {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        section {
-            padding: 60px 0;
-        }
+        .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+        section { padding: 96px 0; }
+        /* Lenis compensates the sticky header's height for its own JS-driven
+           anchor clicks (offset: -76), but any other path to these anchors —
+           a direct #fragment URL, JS disabled, a screen reader jumping to a
+           landmark — uses the native jump, which doesn't know about the
+           sticky header. This keeps every anchor target landing correctly. */
+        section[id] { scroll-margin-top: 76px; }
+        .section-head { max-width: 640px; margin: 0 0 48px; }
+        .section-head h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.025em; margin-bottom: 16px; }
+        .section-head p { font-size: 1.125rem; max-width: var(--measure); }
+        .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
 
         .btn {
-            display: inline-block;
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 26px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9375rem;
+            text-decoration: none; border: 1px solid transparent; cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
         }
+        .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 1px 2px rgba(58,95,219,0.18), 0 10px 20px -8px rgba(58,95,219,0.5); }
+        .btn-primary:hover { background: var(--brand-strong); transform: translateY(-1px); box-shadow: 0 1px 2px rgba(58,95,219,0.22), 0 14px 24px -8px rgba(58,95,219,0.55); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-secondary { background: var(--paper); color: var(--ink); border-color: var(--line); }
+        .btn-secondary:hover { border-color: var(--ink-faint); background: var(--paper-tint); }
+        .btn-ghost { color: var(--ink); font-weight: 600; text-decoration: none; }
+        .btn-ghost:hover { color: var(--brand-strong); }
+        .btn-lg { padding: 16px 30px; font-size: 1rem; }
+        .btn-block { width: 100%; }
 
-        .btn-primary {
-            background: var(--arcade-gradient-1);
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 0, 110, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--white);
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-        }
-        .btn-secondary:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-        
-        /* Animación de entrada para secciones */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- 2. Navegación Limpia --- */
+        /* ============================================================
+           HEADER
+           ============================================================ */
         header {
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            background: rgba(249, 250, 251, 0.8); /* Coincide con el bg-light */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(251,248,242,0.86);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line);
         }
+        header .container { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+        header .logo { height: 34px; width: auto; display: block; }
+        header .logo--scaled { transform: scale(1.32); transform-origin: left center; }
+        nav.primary-nav { display: flex; gap: 32px; }
+        nav.primary-nav a { color: var(--ink-soft); text-decoration: none; font-weight: 500; font-size: 0.9375rem; transition: color 0.15s ease; }
+        nav.primary-nav a:hover { color: var(--ink); }
+        nav.primary-nav a.nav-mobile-only { display: none; }
+        .header-actions { display: flex; align-items: center; gap: 18px; }
+        .mobile-menu-toggle { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; background: none; border: none; font-size: 22px; color: var(--ink); cursor: pointer; }
 
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* ============================================================
+           HERO
+           ============================================================ */
+        #hero { background: var(--brand-deep); padding: 100px 0 120px; position: relative; overflow: hidden; }
+        #hero .grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: center; position: relative; z-index: 1; }
+        .hero-copy h1 { font-size: clamp(2.75rem, 6vw, 5rem); line-height: 1.05; letter-spacing: -0.03em; color: #fff; margin-bottom: 24px; }
+        .hero-copy h1 em { color: var(--brand-soft); font-style: normal; }
+        .hero-copy .lede { font-size: 1.25rem; color: rgba(255,255,255,0.82); max-width: 46ch; margin-bottom: 34px; }
+        .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; }
+        .trust-line { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; color: rgba(255,255,255,0.72); }
+        .trust-line i { color: var(--brand-soft); }
 
-        .logo { max-height: 60px; }
-        .nav-links { display: flex; list-style: none; gap: 35px; }
-        .nav-links a { text-decoration: none; color: var(--text-light); font-weight: 600; transition: color 0.3s ease; }
-        .nav-links a:hover { color: var(--primary-color); }
-        .nav-buttons { display: flex; gap: 15px; align-items: center; }
-        .nav-buttons .login-btn { text-decoration: none; color: var(--text-dark); font-weight: 600; }
-        .mobile-menu-toggle { display: none; font-size: 24px; cursor: pointer; color: var(--text-dark); }
+        /* Chat demo mock — authored demonstration UI, not a real customer conversation.
+           Floats hard on the deep-blue field: a real shadow, not a hint of one. */
+        .chat-demo {
+            background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+            box-shadow: 0 8px 16px -6px rgba(42,39,35,0.35), 0 32px 64px -20px rgba(42,39,35,0.55);
+            overflow: hidden; max-width: 420px; margin-left: auto;
+            transform: rotate(1.1deg); transition: transform 0.3s ease;
+        }
+        .chat-demo:hover { transform: rotate(0deg) translateY(-2px); }
+        .chat-demo__bar { background: var(--ink); color: #fff; padding: 14px 18px; display: flex; align-items: center; gap: 10px; }
+        .chat-demo__bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+        .chat-demo__bar strong { font-size: 0.875rem; font-weight: 600; }
+        .chat-demo__bar span { font-size: 0.75rem; color: rgba(255,255,255,0.6); display: block; }
+        .chat-demo__body { padding: 20px 18px; background: var(--paper-tint); min-height: 300px; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 82%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.45; }
+        .bubble.in { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; color: var(--ink); }
+        .bubble.out { align-self: flex-end; background: var(--brand); color: #fff; border-bottom-right-radius: 4px; }
+        .bubble.out .meta { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 4px; font-size: 0.6875rem; color: rgba(255,255,255,0.92); }
+        .bubble .meta { font-size: 0.6875rem; color: var(--ink-faint); margin-top: 4px; }
+        .bubble.typing { display: inline-flex; gap: 4px; padding: 12px 16px; }
+        .bubble.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); animation: typing-pulse 1.2s infinite ease-in-out; }
+        .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+        .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typing-pulse { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+        .chat-demo__foot { padding: 12px 18px; border-top: 1px solid var(--line); font-size: 0.75rem; color: var(--ink-faint); text-align: center; }
 
-        /* --- 3. Sección Hero con Foco en el Beneficio (Estilo Wati: 2 columnas) --- */
-        #hero {
-            padding-top: 80px;
-            padding-bottom: 80px;
-            position: relative;
-            overflow: hidden;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        #hero .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-            max-width: 1400px; /* Más ancho para permitir imagen más grande */
-        }
-        
-        /* Mover patterns dentro del container para evitar problemas de stacking */
-        #hero::before, #hero::after { content: none !important; }
-        #hero .container { position: relative; z-index: 2; }
-        #hero .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 5%;
-            background-size: 80px auto;
-            width: 100px;
-            height: 100px;
-            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(180deg) saturate(1.5);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(var(--shape-rotate));
-            will-change: transform;
-        }
-        #hero .container::after {
-            content: '';
-            position: absolute;
-            bottom: 10%;
-            left: 8%;
-            background-size: 70px auto;
-            width: 90px;
-            height: 90px;
-            background: url("{% static 'img/patterns/whatsapp.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(45deg) saturate(1.3);
-            transform: translateY(calc(var(--shape-y) * -0.8)) translateX(calc(var(--shape-x) * -0.7)) rotate(calc(var(--shape-rotate) * 2 - 8deg));
-            will-change: transform;
-        }
-        
-        .hero-text {
-            text-align: left;
-            order: 2; /* Texto a la derecha */
-        }
-        
-        .hero-text h1 {
-            font-size: 48px;
-            font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: 20px;
-        }
-        
-        /* Palabras destacadas con gradiente arcade */
-        .hero-text h1 .highlight {
-            background: var(--arcade-gradient-2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        /* ============================================================
+           LOGO STRIP
+           ============================================================ */
+        #logos { padding: 40px 0 96px; }
+        #logos p.label { text-align: center; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.02em; color: var(--ink-faint); margin-bottom: 28px; }
+        .logo-row { display: flex; align-items: center; justify-content: center; gap: 56px; flex-wrap: wrap; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--line); }
+        .logo-row img { height: 34px; width: auto; object-fit: contain; filter: grayscale(100%); opacity: 0.55; transition: opacity 0.2s ease, filter 0.2s ease; }
+        .logo-row img:hover { filter: grayscale(0%); opacity: 1; }
 
-        .hero-text p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            color: var(--text-light);
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        /* Banner imagen izquierda */
-        .hero-animation {
-            order: 1; /* Imagen a la izquierda */
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .hero-animation img {
-            width: 100%;
-            max-width: 650px;
-            height: auto;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* --- 4. Prueba Social (Logos) --- */
-        #channels {
-            padding-top: 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Formas irregulares dentro del container para evitar stacking issues */
-        #channels::before, #channels::after { content: none !important; }
-        #channels .container { text-align: center; position: relative; z-index: 2; }
-        #channels .container::before {
-            content: '';
-            position: absolute;
-            top: 30%;
-            left: 10%;
-            background-size: 65px auto;
-            width: 150px;
-            height: 150px;
-            background: url("{% static 'img/patterns/instagram.png' %}") center/contain no-repeat;
-            border-radius: 50%;
-            transform: rotate(-25deg);
-            z-index: 0;
-            pointer-events: none;
-        }
-        #channels .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            right: 15%;
-            background-size: 60px auto;
-            width: 110px;
-            height: 110px;
-            background: url("{% static 'img/patterns/gmail.png' %}") center/contain no-repeat;
-            border-radius: 50%;
-            transform: rotate(20deg);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .channels-title { font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 30px; }
-        
-        /* Grid de iconos con animación de convergencia */
-        .channel-icons { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 40px;
-            position: relative;
-        }
-        
-        /* Burbujas de chat decorativas detrás de iconos */
-        .channel-icons::before {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: rgba(110, 142, 251, 0.05);
-            border-radius: 50%;
-            top: -10px;
-            left: 20%;
-            z-index: -1;
-        }
-        
-        .channel-icons::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(167, 119, 227, 0.05);
-            border-radius: 50%;
-            bottom: -5px;
-            right: 25%;
-            z-index: -1;
-        }
-        
-        .channel-icons i { 
-            font-size: 36px; 
-            color: #9ca3af; 
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 15px;
-            border-radius: 12px;
-        }
-        
-        .channel-icons i:hover {
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transform: translateY(-3px);
-        }
-        
-        .channel-icons i.fa-whatsapp:hover { color: #25D366; }
-        .channel-icons i.fa-instagram:hover { color: #E4405F; }
-        .channel-icons i.fa-facebook-messenger:hover { color: #00B2FF; }
-        .channel-icons i.fa-telegram:hover { color: #229ED9; }
-        .channel-icons i.fa-globe:hover { color: var(--secondary-color); }
-        
-        /* --- 5. Sección de Beneficios (Features) --- */
-        #features {
-            position: relative;
-            background: transparent;
-            /* allow decorations and neighboring elements to overflow instead of being clipped */
-            overflow: visible;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        /* Mover patterns dentro del container para evitar stacking problems */
-        #features::before, #features::after { content: none !important; }
-        #features .container { position: relative; z-index: 2; }
-        #features .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 8%;
-            background-size: 70px auto;
-            width: 95px;
-            height: 95px;
-            background: url("{% static 'img/patterns/bot.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(270deg) saturate(1.4);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 12deg));
-            will-change: transform;
-        }
-        #features .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            left: 15%;
-            background-size: 60px auto;
-            width: 110px;
-            height: 110px;
-            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(45deg) saturate(1.2);
-            transform: translateY(calc(var(--shape-y) * -0.7)) translateX(calc(var(--shape-x) * -0.8)) rotate(calc(var(--shape-rotate) * -1 - 15deg));
-            will-change: transform;
-        }
-        
-        /* Forma orgánica de fondo (blob shape) */
-        #features .container {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .section-header { text-align: center; max-width: 600px; margin: 0 auto 60px auto; }
-        .section-header h2 { font-size: 42px; margin-bottom: 15px; }
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .feature-card { 
-            background: var(--white);
-            border: 1px solid rgba(110, 142, 251, 0.1);
-            border-radius: var(--border-radius); 
-            padding: 30px; 
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Patrón de líneas sutil dentro de cada card */
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(110, 142, 251, 0.03) 0%, transparent 100%);
-            border-radius: 0 var(--border-radius) 0 100%;
-            z-index: 0;
-        }
-        
-        .feature-card > * {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .feature-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: var(--shadow-color);
-            border-color: rgba(110, 142, 251, 0.2);
-        }
-        
-        .feature-card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card .icon { 
-            font-size: 24px; 
-            width: 50px; 
-            height: 50px; 
-            display: grid; 
-            place-items: center; 
-            border-radius: 12px; 
-            background: var(--primary-gradient); 
-            color: var(--white); 
-            box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
-            flex-shrink: 0;
-        }
-        
-        .feature-card h3 { 
-            font-size: 20px; 
-            margin: 0;
-        }
-        
-        .feature-card p {
-            flex-grow: 1;
-        }
-        
-        /* Métricas destacadas tipo Wati */
-        .metric-highlight {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(110, 142, 251, 0.1) 0%, rgba(167, 119, 227, 0.1) 100%);
-            border-left: 3px solid var(--primary-color);
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 15px 0 0 0;
-            margin-top: auto;
-        }
-        
-        .metric-highlight strong {
-            font-size: 32px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .metric-highlight span {
-            color: var(--text-light);
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        /* --- 5.5. Sección Chatbot 24/7 Destacado --- */
-        #ai-assistant {
-            background: transparent;
-            position: relative;
-            overflow: hidden;
-            padding: 100px 0;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        #ai-assistant .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .ai-content h2 {
-            font-size: 44px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-            line-height: 1.2;
-        }
-        
-        .ai-content h2 .highlight {
-            color: var(--primary-color);
-        }
-        
-        .ai-content .subtitle {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: var(--text-medium);
-            font-weight: 400;
-            line-height: 1.6;
-        }
-        
-        /* Visual derecho con ilustración y burbujas flotantes */
-        .ai-visual {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 550px;
-        }
-        
-        .ai-illustration {
-            position: relative;
-            width: 100%;
-            max-width: 750px;
-            z-index: 2;
-        }
-        
-        .ai-illustration img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        /* Burbujas flotantes estilo glassmorphism */
-        .ai-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1.5px solid rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15), 
-                        inset 0 0 20px rgba(255, 255, 255, 0.3);
-            z-index: 3;
-            animation: float-bubble 4s ease-in-out infinite;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .ai-bubble::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            left: 15%;
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            filter: blur(8px);
-        }
-        
-        .ai-bubble:hover {
-            transform: scale(1.12);
-            background: rgba(255, 255, 255, 0.35);
-            box-shadow: 0 12px 48px rgba(102, 126, 234, 0.3),
-                        inset 0 0 25px rgba(255, 255, 255, 0.4);
-        }
-        
-        .ai-bubble i {
-            font-size: 28px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .ai-bubble span {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #1F2937;
-            text-align: center;
-            line-height: 1.2;
-            padding: 0 10px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Distribución alrededor de la imagen */
-        .ai-bubble-1 {
-            top: 0%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-        
-        .ai-bubble-1 i {
-            color: #6366F1;
-        }
-        
-        .ai-bubble-2 {
-            top: -5%;
-            left: 50%;
-            transform: translateX(-50%);
-            animation-delay: 0.8s;
-        }
-        
-        .ai-bubble-2 i {
-            color: #8B5CF6;
-        }
-        
-        .ai-bubble-3 {
-            top: 5%;
-            right: 0%;
-            animation-delay: 1.6s;
-        }
-        
-        .ai-bubble-3 i {
-            color: #10B981;
-        }
-        
-        .ai-bubble-4 {
-            bottom: 5%;
-            left: 0%;
-            animation-delay: 2.4s;
-        }
-        
-        .ai-bubble-4 i {
-            color: #F59E0B;
-        }
-        
-        .ai-bubble-5 {
-            bottom: 0%;
-            right: 3%;
-            animation-delay: 3.2s;
-        }
-        
-        .ai-bubble-5 i {
-            color: #EC4899;
-        }
-        
-        @keyframes float-bubble {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-        
-        /* Mover patterns dentro del container de AI Assistant */
-        #ai-assistant::before, #ai-assistant::after { content: none !important; }
-        #ai-assistant .container { position: relative; z-index: 2; }
-        #ai-assistant .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.12;
-            background-image: 
-                url("{% static 'img/patterns/burbuja_chat.png' %}"),
-                url("{% static 'img/patterns/bot.png' %}");
-            background-size:
-                80px auto, 70px auto, 60px auto, 65px auto, 60px auto;
-            background-position:
-                15% 20%, 85% 75%, 50% 50%, 30% 80%, 70% 30%;
-            background-repeat: no-repeat;
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(var(--shape-rotate));
-            filter: hue-rotate(180deg);
-            pointer-events: none;
-            will-change: transform;
-        }
-        #ai-assistant .container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.1;
-            background-image: 
-                url("{% static 'img/patterns/whatsapp.png' %}"),
-                url("{% static 'img/patterns/instagram.png' %}");
-            background-size:
-                70px auto, 60px auto, 65px auto, 60px auto, 70px auto;
-            background-position:
-                75% 15%, 25% 80%, 50% 90%, 10% 60%, 80% 40%;
-            background-repeat: no-repeat;
-            transform: translateY(calc(var(--shape-y) * -0.6)) translateX(calc(var(--shape-x) * -0.8)) rotate(calc(var(--shape-rotate) * -1));
-            filter: hue-rotate(270deg);
-            pointer-events: none;
-            will-change: transform;
-        }
-        
-        .ai-stat span {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* --- 6. Sección Marcas que Confían (Carrusel de Logos) --- */
-        #testimonial {
-            background: transparent;
-            position: relative;
-            overflow: hidden;
-            padding: 60px 0;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        /* Testimonial patterns moved into container */
-        #testimonial::before, #testimonial::after { content: none !important; }
-        #testimonial .container { position: relative; z-index: 2; }
-        #testimonial .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 12%;
-            background-size: 70px auto;
-            width: 85px;
-            height: 85px;
-            background: url("{% static 'img/patterns/gmail.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(180deg) saturate(1.5);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 48deg));
-            will-change: transform;
-        }
-        #testimonial .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            left: 20%;
-            background-size: 60px auto;
-            width: 80px;
-            height: 80px;
-            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(330deg) saturate(1.3);
-            transform: translateY(calc(var(--shape-y) * -0.9)) translateX(calc(var(--shape-x) * -0.6)) rotate(calc(var(--shape-rotate) * -2 - 35deg));
-            will-change: transform;
-        }
-        
-        #testimonial .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        
-        #testimonial .section-header h2 {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
+        /* ============================================================
+           CHANNELS
+           ============================================================ */
+        .channel-row { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; row-gap: 20px; }
+        /* Same "quiet until you look" language as the logo strip right above
+           it — muted single-color glyph at rest, real brand color only on
+           hover. A row of 5 loud rainbow circles fought the one-blue system
+           everywhere else; a row of 5 loud logos would too. */
+        .channel-chip { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; font-weight: 600; color: var(--ink-soft); }
+        .channel-chip__icon { font-size: 1.375rem; color: var(--ink-faint); transition: color 0.2s ease; }
+        .channel-chip:hover .channel-chip__icon { color: var(--icon-color, var(--brand)); }
+        .channel-chip:hover { color: var(--ink); }
+        .channel-chip:nth-child(1) { --icon-color: #25D366; }
+        .channel-chip:nth-child(2) { --icon-color: #E4405F; }
+        .channel-chip:nth-child(3) { --icon-color: #0084FF; }
+        .channel-chip:nth-child(4) { --icon-color: #229ED9; }
+        .channel-chip:nth-child(5) { --icon-color: var(--brand); }
+        .channel-chip:nth-child(6) { --icon-color: var(--ink); }
 
-        /* --- Nueva sección: Integra las herramientas que ya amas --- */
-        #integrations { padding: 50px 0; background: var(--bg-light); position: relative; overflow: visible; }
-    #integrations .container { position: relative; z-index: 5; }
-        #integrations .section-header { text-align: center; margin-bottom: 30px; }
-        #integrations .section-header h2 { font-size: 30px; color: var(--text-dark); }
-        .integrations-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; align-items: center; justify-items: center; }
-        .integration-item { background: var(--white); padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 160px; box-shadow: 0 6px 18px rgba(24,24,24,0.04); }
-        .integration-item img { max-width: 100%; max-height: 48px; object-fit: contain; display: block; }
+        /* ============================================================
+           FEATURES
+           ============================================================ */
+        #features { background: var(--paper-tint); }
+        /* Asymmetric: one lead card carries the section, two ride beside it —
+           not three identical boxes. Breaks the same-size-card default. */
+        .feature-grid { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: repeat(2, 1fr); gap: 20px; }
+        .feature {
+            background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px 28px;
+            box-shadow: 0 2px 6px -2px rgba(42,39,35,0.06), 0 14px 28px -16px rgba(42,39,35,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .feature:hover { transform: translateY(-3px); box-shadow: 0 4px 10px -2px rgba(42,39,35,0.08), 0 22px 40px -18px rgba(42,39,35,0.16); }
+        .feature .icon { width: 52px; height: 52px; border-radius: var(--radius-sm); background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 1.3rem; margin-bottom: 20px; box-shadow: 0 6px 14px -6px rgba(58,95,219,0.5); }
+        .feature h3 { font-size: 1.125rem; margin-bottom: 10px; }
+        .feature p { font-size: 0.9375rem; }
+        .feature:first-child { grid-row: span 2; padding: 40px 36px; display: flex; flex-direction: column; justify-content: center; }
+        .feature:first-child .icon { width: 64px; height: 64px; font-size: 1.6rem; margin-bottom: 24px; }
+        .feature:first-child h3 { font-size: 1.625rem; margin-bottom: 14px; }
+        .feature:first-child p { font-size: 1.0625rem; max-width: 34ch; }
 
-        @media (max-width: 992px) {
-            .integrations-grid { grid-template-columns: repeat(3, 1fr); }
+        /* ============================================================
+           VERTICALS (plantillas por rubro)
+           ============================================================ */
+        /* A scrollable, snapping strip instead of a static grid — same
+           silhouette as Features would give the page two identical beats
+           in a row, so this one moves instead. */
+        #verticals .vertical-grid {
+            display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity;
+            margin: 0 -24px; padding: 4px 24px 12px; scrollbar-width: none;
         }
-        @media (max-width: 600px) {
-            .integrations-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .integration-item { max-width: 120px; padding: 8px; }
+        #verticals .vertical-grid::-webkit-scrollbar { display: none; }
+        .vertical-card {
+            flex: 0 0 208px; scroll-snap-align: start;
+            background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+            padding: 24px 18px; text-align: center;
+            box-shadow: 0 2px 6px -2px rgba(42,39,35,0.06), 0 14px 26px -16px rgba(42,39,35,0.12);
+            transition: border-color 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        #testimonial .section-header p {
-            color: var(--text-light);
-            font-size: 16px;
-        }
-        
-        /* Contenedor del carrusel */
-        .logo-carousel-wrapper {
-            position: relative;
-            overflow: hidden;
-            padding: 20px 0;
-        }
-        
-        .logo-carousel {
-            display: flex;
-            gap: 60px;
-            animation: scroll-logos 30s linear infinite;
-            width: max-content;
-        }
-        
-        .logo-carousel:hover {
-            animation-play-state: paused;
-        }
-        
-        @keyframes scroll-logos {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        /* Item individual del logo */
-        .logo-item {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100px;
-            padding: 0 20px;
-            opacity: 0.6;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            filter: grayscale(100%);
-        }
-        
-        .logo-item:hover {
-            opacity: 1;
-            transform: scale(1.05);
-            filter: grayscale(0%);
-        }
-        
-        .logo-item img {
-            max-height: 80px;
-            max-width: 180px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
+        .vertical-card:hover { border-color: var(--brand); transform: translateY(-4px); box-shadow: 0 4px 10px -2px rgba(42,39,35,0.08), 0 20px 36px -16px rgba(42,39,35,0.16); }
+        .vertical-card .icon { width: 60px; height: 60px; border-radius: 999px; background: var(--brand); color: #fff; display: grid; place-items: center; margin: 0 auto 14px; font-size: 1.5rem; box-shadow: 0 6px 14px -6px rgba(58,95,219,0.5); }
+        .vertical-card h3 { font-size: 0.9375rem; margin-bottom: 4px; }
+        .vertical-card p { font-size: 0.8125rem; color: var(--ink-faint); }
 
-        /* --- 7. NUEVA Sección de Precios (con Carrusel) --- */
-        #pricing {
-            background: transparent;
-            position: relative;
-            overflow: hidden;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
+        /* ============================================================
+           INBOX PREVIEW (product screenshot mockup)
+           ============================================================ */
+        /* Authored recreation of the real Chatwoot inbox, not a stock
+           screenshot — every name, message and count below is invented,
+           no real customer data. It intentionally breaks from the warm
+           -paper palette above: this is the one place on the page meant
+           to look like a *different* piece of software (the tool a buyer
+           will actually use daily), the same "borrowed identity, not
+           brand accent" logic already covering the WhatsApp/Instagram
+           channel icons elsewhere on this page. Tokens are scoped to
+           .inbox-mockup only and never leak into the rest of the site. */
+        #inbox-preview { background: var(--paper-tint); }
+        #inbox-preview .section-head { margin-left: auto; margin-right: auto; text-align: center; max-width: 640px; }
+        .inbox-mockup {
+            --iv-bg: #18191b; --iv-surface: #212225; --iv-surface-hover: #272a2d;
+            --iv-border: #2f3237; --iv-text: #edeef0; --iv-text-muted: #9199a3;
+            --iv-text-faint: #696e77; --iv-brand: #2781f6;
+            margin-top: 56px; max-width: 1040px; margin-left: auto; margin-right: auto;
+            background: var(--iv-bg); border-radius: var(--radius-lg); overflow: hidden;
+            box-shadow: 0 10px 20px -8px rgba(42,39,35,0.35), 0 40px 72px -24px rgba(42,39,35,0.5);
+            display: grid; grid-template-columns: 68px 296px 1fr; height: 540px;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
-        
-        /* Pricing patterns moved into container */
-        #pricing::before, #pricing::after { content: none !important; }
-        #pricing .container { position: relative; z-index: 2; }
-        #pricing .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            left: 15%;
-            background-size: 70px auto;
-            width: 105px;
-            height: 105px;
-            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(270deg) saturate(1.6);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) - 8deg));
-            will-change: transform;
+        .inbox-mockup__nav {
+            background: var(--iv-bg); border-right: 1px solid var(--iv-border);
+            display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 8px;
         }
-        #pricing .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            right: 20%;
-            background-size: 60px auto;
-            width: 75px;
-            height: 75px;
-            background: url("{% static 'img/patterns/whatsapp.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(120deg) saturate(1.4);
-            transform: translateY(calc(var(--shape-y) * -0.85)) translateX(calc(var(--shape-x) * -0.75)) rotate(calc(var(--shape-rotate) * 1.5 + 32deg));
-            will-change: transform;
+        .inbox-mockup__nav img { width: 26px; height: 26px; object-fit: contain; margin-bottom: 22px; }
+        .inbox-mockup__nav-item {
+            width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+            color: var(--iv-text-faint); font-size: 1rem; position: relative;
         }
-        
-        #pricing .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px; /* Contenedor más ancho para pricing */
+        .inbox-mockup__nav-item.active { background: rgba(39,129,246,0.16); color: var(--iv-brand); }
+        .inbox-mockup__nav-item .badge {
+            position: absolute; top: -2px; right: -2px; background: var(--iv-brand); color: #fff;
+            font-size: 0.5625rem; font-weight: 700; min-width: 15px; height: 15px; border-radius: 999px;
+            display: grid; place-items: center; padding: 0 3px;
         }
-        
-        /* Contenedor que rompe el límite del container para carrusel */
-        .pricing-slider-container {
-            position: relative;
-            padding: 0 60px;
+        .inbox-mockup__list { background: var(--iv-bg); border-right: 1px solid var(--iv-border); overflow: hidden; display: flex; flex-direction: column; }
+        .inbox-mockup__list-head { display: flex; align-items: center; gap: 8px; padding: 18px 16px 14px; }
+        .inbox-mockup__list-head strong { color: var(--iv-text); font-size: 0.9375rem; font-weight: 700; }
+        .inbox-mockup__list-head span { background: var(--iv-surface-hover); color: var(--iv-text-muted); font-size: 0.6875rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+        .inbox-mockup__row { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--iv-border); cursor: default; }
+        .inbox-mockup__row.active { background: var(--iv-surface); }
+        .inbox-mockup__avatar {
+            width: 36px; height: 36px; border-radius: 999px; background: var(--iv-surface-hover);
+            color: var(--iv-text-muted); font-size: 0.75rem; font-weight: 700; display: grid; place-items: center;
+            flex-shrink: 0; position: relative;
         }
-        
-        .pricing-slider-container.has-carousel {
-            margin-left: calc(-50vw + 50%);
-            margin-right: calc(-50vw + 50%);
-            padding: 0 max(60px, calc((100vw - 1400px) / 2));
-            overflow: hidden;
-        }
-        
-        .pricing-slider-container.has-carousel .pricing-grid {
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            padding: 0 40px;
-        }
-        
-        .pricing-slider-container.has-carousel .pricing-grid::-webkit-scrollbar {
-            display: none;
-        }
-        
-        /* Gradientes laterales con blur para efecto de desvanecimiento */
-        .pricing-slider-container.has-carousel::before,
-        .pricing-slider-container.has-carousel::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 120px;
-            z-index: 10;
-            pointer-events: none;
-            backdrop-filter: blur(2px);
-        }
-        
-        .pricing-slider-container.has-carousel::before {
-            left: 0;
-            background: linear-gradient(to right, 
-                rgba(248, 250, 252, 0.95) 0%, 
-                rgba(248, 250, 252, 0.7) 40%,
-                rgba(248, 250, 252, 0) 100%);
-        }
-        
-        .pricing-slider-container.has-carousel::after {
-            right: 0;
-            background: linear-gradient(to left, 
-                rgba(248, 250, 252, 0.95) 0%, 
-                rgba(248, 250, 252, 0.7) 40%,
-                rgba(248, 250, 252, 0) 100%);
-        }
-        
-        .pricing-grid {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            gap: 28px;
-            flex-wrap: wrap;
-            max-width: 100%;
-            padding: 0 20px;
-        }
-        
-        .pricing-slider-container.has-carousel .pricing-grid {
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-        }
-        
-        @media (min-width: 768px) {
-            .pricing-grid {
-                flex-wrap: nowrap;
-            }
-        }
-        
-        .pricing-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 35px 30px;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            transition: all 0.3s ease;
-            border-top: 4px solid transparent;
-            position: relative;
-            overflow: hidden;
-            flex: 1 1 300px;
-            max-width: 360px;
-            min-width: 300px;
-        }
-        
-        .pricing-slider-container.has-carousel .pricing-card {
-            flex: 0 0 320px;
-        }
-        
-        /* Pequeña forma decorativa en esquina */
-        .pricing-card::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 80px;
-            height: 80px;
-            background: rgba(110, 142, 251, 0.03);
-            border-radius: 50%;
-            z-index: 0;
-        }
-        
-        .pricing-card > * {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-color);
-            border-color: rgba(110, 142, 251, 0.2);
-        }
-        .pricing-card .plan-name { font-size: 22px; font-weight: 600; color: var(--text-dark); margin-bottom: 10px; }
-        .pricing-card .price { 
-            font-size: 40px; 
-            font-weight: 700; 
-            color: var(--text-dark); 
-            margin-bottom: 5px; 
-            line-height: 1.1;
-            white-space: nowrap;
-        }
-        .pricing-card .price span { font-size: 18px; color: var(--text-light); font-weight: 400; }
-        .pricing-card .price-yearly { font-size: 14px; color: var(--text-light); margin-bottom: 15px; display: block; }
-        .pricing-card .description { margin-bottom: 10px; min-height: 60px; line-height: 1.5; }
-        .pricing-card .features { list-style: none; margin: 25px 0; padding-top: 25px; border-top: 1px solid var(--border-color); flex-grow: 1;}
-        .pricing-card .features li { margin-bottom: 10px; display: flex; align-items: flex-start; }
-        .pricing-card .features i { margin-right: 10px; color: var(--primary-color); margin-top: 5px; }
-        .pricing-card .btn { width: 100%; text-align: center; }
+        .inbox-mockup__avatar i { position: absolute; bottom: -3px; right: -3px; width: 15px; height: 15px; border-radius: 999px; background: var(--iv-bg); display: grid; place-items: center; font-size: 0.5625rem; }
+        .inbox-mockup__avatar i.fa-whatsapp { color: #25D366; }
+        .inbox-mockup__avatar i.fa-instagram { color: #E4405F; }
+        .inbox-mockup__avatar i.fa-facebook-messenger { color: #0084FF; }
+        .inbox-mockup__row-body { min-width: 0; flex: 1; }
+        .inbox-mockup__row-top { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
+        .inbox-mockup__row-top strong { color: var(--iv-text); font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-mockup__row-top time { color: var(--iv-text-muted); font-size: 0.6875rem; flex-shrink: 0; }
+        .inbox-mockup__row-snippet { color: var(--iv-text-muted); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-mockup__row.unread .inbox-mockup__row-snippet { color: var(--iv-text); }
+        .inbox-mockup__row-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--iv-brand); flex-shrink: 0; margin-top: 4px; }
+        .inbox-mockup__thread { display: flex; flex-direction: column; min-width: 0; }
+        .inbox-mockup__thread-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--iv-border); }
+        .inbox-mockup__thread-head strong { color: var(--iv-text); font-size: 0.9375rem; display: block; }
+        .inbox-mockup__thread-head span { color: var(--iv-text-muted); font-size: 0.75rem; }
+        .inbox-mockup__status { background: rgba(39,129,246,0.16); color: var(--iv-brand); font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; }
+        .inbox-mockup__messages { flex: 1; padding: 22px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+        .inbox-mockup__note { align-self: center; background: var(--iv-surface); color: var(--iv-text-faint); font-size: 0.6875rem; padding: 6px 14px; border-radius: 999px; }
+        .inbox-mockup__msg { max-width: 62%; padding: 10px 14px; border-radius: 14px; font-size: 0.8125rem; line-height: 1.5; }
+        .inbox-mockup__msg.in { align-self: flex-start; background: var(--iv-surface); color: var(--iv-text); border-bottom-left-radius: 4px; }
+        .inbox-mockup__msg.out { align-self: flex-end; background: var(--iv-brand); color: #fff; border-bottom-right-radius: 4px; }
+        .inbox-mockup__msg time { display: block; margin-top: 4px; font-size: 0.625rem; opacity: 0.7; }
+        .inbox-mockup__composer { margin: 0 22px 20px; padding: 12px 16px; background: var(--iv-surface); border: 1px solid var(--iv-border); border-radius: 10px; display: flex; align-items: center; gap: 12px; color: var(--iv-text-faint); font-size: 0.8125rem; }
+        .inbox-mockup__composer span.tab { color: var(--iv-text-muted); font-weight: 600; }
+        .inbox-mockup__composer span.tab.active { color: var(--iv-text); }
+        .inbox-mockup__composer .fill { flex: 1; }
+        .inbox-mockup__composer .send { width: 30px; height: 30px; border-radius: 8px; background: var(--iv-brand); color: #fff; display: grid; place-items: center; font-size: 0.75rem; flex-shrink: 0; }
 
-        .pricing-card.highlight {
-            border-top: 4px solid var(--primary-color);
-            position: relative;
-            background: linear-gradient(to bottom, var(--white), rgba(249, 250, 251, 0.3));
-            box-shadow: var(--shadow-color);
-            border: 1px solid rgba(110, 142, 251, 0.2);
+        /* ============================================================
+           DIAN DIFFERENTIATOR
+           ============================================================ */
+        #dian { background: var(--ink); color: #fff; }
+        #dian .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        #dian h2 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.025em; margin-bottom: 18px; }
+        #dian p { color: rgba(255,255,255,0.72); font-size: 1.0625rem; max-width: var(--measure); margin-bottom: 14px; }
+        #dian .tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(142,187,254,0.16); color: var(--brand-soft); border: 1px solid rgba(142,187,254,0.35); padding: 6px 14px; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; margin-bottom: 18px; }
+        .dian-receipt {
+            background: #fff; border-radius: var(--radius); padding: 32px; color: var(--ink);
+            box-shadow: 0 10px 20px -8px rgba(42,39,35,0.4), 0 36px 64px -20px rgba(42,39,35,0.55);
+            transform: rotate(-1deg); transition: transform 0.3s ease;
         }
-        
-        .pricing-card.highlight::before {
-            background: rgba(110, 142, 251, 0.05);
-        }
-        .highlight .btn {
-            background: var(--primary-gradient);
-            color: var(--white);
-            box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
-        }
-        .popular-badge {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            background: var(--primary-gradient);
-            color: var(--white);
-            padding: 8px 40px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transform: rotate(45deg) translate(30%, -50%);
-            transform-origin: top right;
-            box-shadow: 0 2px 8px rgba(110, 142, 251, 0.4);
-            z-index: 5;
-        }
+        .dian-receipt:hover { transform: rotate(0deg) translateY(-2px); }
+        .dian-receipt__head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dashed var(--line); padding-bottom: 14px; margin-bottom: 14px; }
+        .dian-receipt__head strong { font-size: 1rem; }
+        .dian-receipt__head span { font-size: 0.75rem; color: var(--ink-faint); }
+        .dian-receipt__row { display: flex; justify-content: space-between; font-size: 0.875rem; padding: 6px 0; font-variant-numeric: tabular-nums; }
+        .dian-receipt__row.total { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 12px; font-weight: 700; font-size: 1rem; }
+        .dian-receipt__stamp { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; color: var(--ok); border: 2px solid var(--ok); padding: 7px 16px; border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em; transform: rotate(-3deg); }
 
-        .carousel-nav {
-            display: none;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 20;
+        /* ============================================================
+           PRICING
+           ============================================================ */
+        #pricing .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; align-items: stretch; }
+        .plan-card {
+            border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px 28px;
+            display: flex; flex-direction: column; background: var(--paper); position: relative;
+            box-shadow: 0 2px 6px -2px rgba(42,39,35,0.08), 0 12px 24px -12px rgba(42,39,35,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        .pricing-slider-container.has-carousel .carousel-nav {
-            display: flex;
+        .plan-card:hover { transform: translateY(-4px); box-shadow: 0 4px 10px -2px rgba(42,39,35,0.1), 0 20px 36px -14px rgba(42,39,35,0.18); }
+        /* The recommended plan is a real color block, not a thin blue border
+           — the same "commit, don't hint" logic as the hero/CTA bookends,
+           scoped to exactly one card. */
+        .plan-card.featured {
+            background: var(--brand); border: none; transform: scale(1.03);
+            box-shadow: 0 8px 16px -6px rgba(27,44,122,0.35), 0 32px 56px -20px rgba(27,44,122,0.4);
         }
-        
-        .carousel-nav.prev {
-            left: 10px;
-        }
-        
-        .carousel-nav.next {
-            right: 10px;
-        }
-        
-        .carousel-nav button {
-            background: white;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .carousel-nav button:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-        }
-        
-        .carousel-nav button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .carousel-nav button:disabled:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: scale(1);
-        }
+        .plan-card.featured:hover { transform: scale(1.03) translateY(-4px); }
+        .plan-card.featured .plan-name,
+        .plan-card.featured .plan-price { color: #fff; }
+        .plan-card.featured .plan-price span,
+        .plan-card.featured .plan-yearly { color: rgba(255,255,255,0.92); }
+        .plan-card.featured .plan-desc { color: rgba(255,255,255,0.92); }
+        .plan-card.featured li { color: rgba(255,255,255,0.92); }
+        .plan-card.featured li i { color: var(--brand-soft); }
+        .plan-badge { position: absolute; top: -13px; left: 28px; background: #fff; color: var(--brand-deep); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.04em; padding: 4px 12px; border-radius: 999px; box-shadow: 0 4px 10px -2px rgba(27,44,122,0.3); }
+        .plan-card .plan-name { font-size: 1.0625rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+        .plan-card .plan-price { font-size: 2.5rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 4px; }
+        .plan-card .plan-price span { font-size: 1rem; font-weight: 500; color: var(--ink-faint); }
+        .plan-card .plan-yearly { font-size: 0.8125rem; color: var(--ink-faint); margin-bottom: 18px; font-variant-numeric: tabular-nums; }
+        .plan-card .plan-desc { font-size: 0.875rem; color: var(--ink-soft); margin-bottom: 18px; min-height: 40px; }
+        .plan-card ul { list-style: none; margin: 0 0 26px; flex-grow: 1; }
+        .plan-card li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.875rem; color: var(--ink-soft); padding: 6px 0; }
+        .plan-card li i { color: var(--ok); margin-top: 3px; font-size: 0.8125rem; }
+        .plans-empty { text-align: center; padding: 64px 24px; background: var(--paper-tint); border-radius: var(--radius-lg); border: 1px solid var(--line); }
+        .plans-empty i { font-size: 2.5rem; color: var(--ink-faint); margin-bottom: 16px; }
 
-        .slider-nav {
-            display: none;
-            justify-content: center;
-            margin-top: 40px;
-            gap: 15px;
-        }
-        .slider-nav button {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            color: var(--text-dark);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-        .slider-nav button:hover {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-        }
-        @media (min-width: 1100px) {
-            .slider-nav {
-                display: flex;
-            }
-        }
+        .compare-wrapper { margin-top: 80px; }
+        .compare-wrapper h3 { font-size: 1.375rem; text-align: center; margin-bottom: 28px; }
+        .compare-table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+        table.compare { width: 100%; border-collapse: collapse; min-width: 720px; }
+        table.compare th, table.compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); font-size: 0.8125rem; }
+        table.compare thead th { background: var(--paper-tint); font-weight: 600; color: var(--ink); text-transform: uppercase; font-size: 0.6875rem; letter-spacing: 0.04em; }
+        table.compare thead th.plan-col { text-align: center; color: var(--brand-strong); }
+        table.compare tbody tr.group td { background: var(--paper-tint); font-weight: 700; text-transform: uppercase; font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--ink); }
+        table.compare td.val, table.compare td.yes, table.compare td.no { text-align: center; font-variant-numeric: tabular-nums; }
+        table.compare td.yes i { color: var(--ok); }
+        table.compare td.no { color: var(--line); }
+        table.compare tbody tr:last-child td { border-bottom: none; }
 
+        /* ============================================================
+           FINAL CTA
+           ============================================================ */
+        #final-cta { text-align: center; background: var(--brand-deep); padding: 110px 0; }
+        #final-cta h2 { color: #fff; font-size: clamp(2rem, 4.5vw, 3.25rem); letter-spacing: -0.02em; margin-bottom: 16px; }
+        #final-cta p { color: rgba(255,255,255,0.8); font-size: 1.1875rem; margin-bottom: 34px; }
+        .btn-on-dark { background: #fff; color: var(--brand-deep); box-shadow: 0 8px 16px -6px rgba(42,39,35,0.35), 0 24px 48px -18px rgba(42,39,35,0.5); }
+        .btn-on-dark:hover { background: var(--brand-soft); transform: translateY(-1px); }
 
-        /* Tabla Comparativa */
-        .comparison-table-wrapper { 
-            margin-top: 80px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .comparison-title { 
-            font-size: 28px; 
-            text-align: center; 
-            margin-bottom: 30px;
-            font-weight: 700;
-        }
-        .table-container {
-            overflow-x: auto;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            min-width: 900px; 
-        }
-        th, td { 
-            padding: 12px 16px; 
-            text-align: left; 
-            border-bottom: 1px solid #F3F4F6; 
-            vertical-align: middle;
-            font-size: 14px;
-        }
-        th { 
-            color: var(--text-dark); 
-            font-weight: 600; 
-            font-size: 13px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.3px;
-            background-color: #FAFBFC;
-        }
-        td { 
-            color: var(--text-light); 
-            font-size: 13px;
-        }
-        thead th:first-child { 
-            text-align: left; 
-            width: 35%;
-        }
-        tbody tr:last-child td { border-bottom: none; }
-        .feature-name { 
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-        .feature-group { 
-            font-weight: 600; 
-            color: var(--text-dark); 
-            background-color: #F9FAFB;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 10px 16px;
-        }
-        .check-icon, .dash-icon { 
-            text-align: center;
-            font-size: 16px;
-        }
-        .check-icon { 
-            color: #10B981;
-        }
-        .check-icon i {
-            font-size: 18px;
-        }
-        .dash-icon { 
-            color: #D1D5DB;
-            font-size: 18px;
-        }
-        .value-cell {
-            text-align: center;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-        th.plan-col { 
-            text-align: center;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-        
-        /* --- 8. Sección Diferenciador (DIAN) --- */
-        #differentiator {
-            background: transparent;
-            position: relative;
-            overflow: visible;
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        /* Differentiator patterns inside container */
-        #differentiator::before, #differentiator::after { content: none !important; }
-        #differentiator .container { position: relative; z-index: 2; }
-        #differentiator .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            background-size: 70px auto;
-            width: 85px;
-            height: 85px;
-            background: url("{% static 'img/patterns/bot.png' %}") center/contain no-repeat;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(180deg) saturate(1.5);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) - 18deg));
-            will-change: transform;
-        }
-        #differentiator .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            left: 15%;
-            background-size: 60px auto, 55px auto;
-            background-image:
-                url("{% static 'img/patterns/instagram.png' %}"),
-                url("{% static 'img/patterns/whatsapp.png' %}");
-            background-position:
-                30% 80%, 80% 95%;
-            width: 95px;
-            height: 95px;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            filter: hue-rotate(25deg) saturate(1.6);
-            transform: translateY(calc(var(--shape-y) * -1.1)) translateX(calc(var(--shape-x) * -0.9)) rotate(calc(var(--shape-rotate) * 1.8 + 18deg));
-            will-change: transform;
-        }
-        
-        #differentiator .container { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            align-items: center; 
-            gap: 60px;
-            position: relative;
-            z-index: 1;
-        }
-        .differentiator-text .tag { 
-            display: inline-block; 
-            background-image: var(--primary-gradient); 
-            color: var(--white); 
-            padding: 6px 14px; 
-            border-radius: 8px; 
-            font-size: 14px; 
-            font-weight: 600; 
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
-        }
-        .differentiator-text h2 { font-size: 42px; margin-bottom: 20px; }
-        .differentiator-visual { 
-            background: var(--white);
-            border-radius: var(--border-radius); 
-            padding: 40px; 
-            box-shadow: var(--shadow); 
-            border: 1px solid rgba(110, 142, 251, 0.1); 
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Círculo decorativo dentro del visual */
-        .differentiator-visual::before {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            right: -30px;
-            width: 120px;
-            height: 120px;
-            background: rgba(167, 119, 227, 0.04);
-            border-radius: 50%;
-            z-index: 0;
-        }
-        
-        .differentiator-visual img {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* --- 9. CTA Final --- */
-        /* CTA as a full-width banner */
-        #cta {
-            background: linear-gradient(135deg, #FF6B91 0%, #7F3EB8 100%);
-            color: var(--white);
-            text-align: center;
-            width: 100%;
-            padding: 60px 0; /* vertical padding for the banner */
-            position: relative;
-            overflow: visible;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --shape-y: 0px;
-            --shape-x: 0px;
-            --shape-rotate: 0deg;
-        }
-        
-        /* CTA patterns moved into container */
-        #cta::before, #cta::after { content: none !important; }
-        #cta { overflow: visible; }
-        #cta::before { content: none !important; }
-    /* keep content centered inside a constrained container */
-    #cta .container { position: relative; z-index: 2; max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-        #cta .container::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            background-size: 70px auto;
-            width: 80px;
-            height: 80px;
-            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
-            opacity: 0.12;
-            z-index: 0;
-            pointer-events: none;
-            /* tone down extreme brightness/saturation */
-            filter: saturate(0.7) brightness(0.95);
-            transform: translateY(var(--shape-y)) translateX(var(--shape-x)) rotate(calc(var(--shape-rotate) + 28deg));
-            will-change: transform;
-        }
-        #cta .container::after {
-            content: '';
-            position: absolute;
-            bottom: 30%;
-            left: 20%;
-            background-size: 60px auto, 55px auto;
-            background-image:
-                url("{% static 'img/patterns/bot.png' %}"),
-                url("{% static 'img/patterns/gmail.png' %}");
-            background-position:
-                20% 90%, 75% 95%;
-            width: 90px;
-            height: 90px;
-            opacity: 0.12;
-            z-index: 0;
-            pointer-events: none;
-            filter: saturate(0.7) brightness(0.95);
-            transform: translateY(calc(var(--shape-y) * -0.95)) translateX(calc(var(--shape-x) * -0.85)) rotate(calc(var(--shape-rotate) * -1.5 + 42deg));
-            will-change: transform;
-        }
-        
-    #cta h2, #cta p, #cta .btn { position: relative; z-index: 1; }
-    #cta h2 { color: var(--white); font-size: 42px; margin-bottom: 15px; }
-        #cta p { font-size: 18px; margin-bottom: 30px; opacity: 0.95; max-width: 500px; margin-left: auto; margin-right: auto; }
-        
-        /* --- 10. Footer --- */
-    footer { padding-top: 100px; padding-bottom: 40px; position: relative; overflow: visible; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
-        .footer-col h4 { color: var(--text-dark); font-size: 16px; margin-bottom: 15px; font-weight: 600; }
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        footer { border-top: 1px solid var(--line); padding: 72px 0 32px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 48px; }
+        .footer-col .logo { height: 30px; width: auto; margin-bottom: 14px; }
+        .footer-col p { font-size: 0.875rem; }
+        .footer-col h3 { font-size: 0.875rem; color: var(--ink); margin-bottom: 14px; }
         .footer-col ul { list-style: none; }
         .footer-col li { margin-bottom: 10px; }
-        .footer-col a { text-decoration: none; color: var(--text-light); transition: color 0.3s ease; }
-        .footer-col a:hover { color: var(--primary-color); }
-        .social-icons { display: flex; gap: 15px; }
-        .social-icons a { font-size: 20px; color: var(--text-light); }
-        .footer-bottom { border-top: 1px solid var(--border-color); padding-top: 30px; text-align: center; font-size: 14px; position: relative; }
-        /* Footer: move decorative patterns into the inner container so content stacks above */
-        footer::before, footer::after { content: none !important; }
-        footer { padding-top: 100px; padding-bottom: 40px; position: relative; overflow: visible; }
-        footer .container { position: relative; z-index: 2; }
-        footer .container::before {
-            content: '';
-            position: absolute;
-            left: 10%;
-            bottom: 10px;
-            width: 55px;
-            height: 55px;
-            background: url("{% static 'img/patterns/avion.png' %}") center/contain no-repeat;
-            opacity: 0.18;
-            z-index: 0;
-            pointer-events: none;
+        .footer-col a { color: var(--ink-soft); text-decoration: none; font-size: 0.875rem; }
+        .footer-col a:hover { color: var(--brand-strong); }
+        .footer-bottom { border-top: 1px solid var(--line); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.8125rem; color: var(--ink-faint); }
+        .footer-social { display: flex; gap: 16px; }
+        .footer-social a { color: var(--ink-faint); font-size: 1.05rem; }
+        .footer-social a:hover { color: var(--brand); }
+
+        /* ============================================================
+           WHATSAPP FLOATING BUTTON
+           ============================================================ */
+        .whatsapp-fab {
+            position: fixed; right: 22px; bottom: 22px; width: 56px; height: 56px; border-radius: 999px;
+            background: #25D366; display: grid; place-items: center; box-shadow: 0 10px 24px -6px rgba(37,211,102,0.55);
+            z-index: 2000; text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        footer .container::after {
-            content: '';
-            position: absolute;
-            right: 8%;
-            bottom: 20px;
-            width: 50px;
-            height: 50px;
-            background: url("{% static 'img/patterns/burbuja_chat.png' %}") center/contain no-repeat;
-            opacity: 0.18;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        /* --- 11. Responsividad --- */
-        @media (max-width: 1100px) {
-            /* .pricing-grid no longer needs changes here, it's handled by auto-columns */
+        .whatsapp-fab:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -6px rgba(37,211,102,0.6); }
+        .whatsapp-fab i { color: #fff; font-size: 24px; }
+
+        /* ============================================================
+           SCROLL REVEAL — the one authored motion moment
+           ============================================================ */
+        /* Visible by default: JS only ever ADDS a hidden starting state to
+           elements confirmed below the fold, then reveals them. A page with
+           no JS, or where IntersectionObserver never fires, still shows
+           every section — motion is progressive enhancement, never a gate. */
+        .reveal { transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.reveal-pending { opacity: 0; transform: translateY(18px); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        /* Siblings in a row cascade instead of popping in together — still
+           the one reveal moment, just with a pulse of life across it. */
+        .feature-grid .feature:nth-child(1) { transition-delay: 0s; }
+        .feature-grid .feature:nth-child(2) { transition-delay: 0.08s; }
+        .feature-grid .feature:nth-child(3) { transition-delay: 0.16s; }
+        .vertical-grid .vertical-card:nth-child(1) { transition-delay: 0s; }
+        .vertical-grid .vertical-card:nth-child(2) { transition-delay: 0.06s; }
+        .vertical-grid .vertical-card:nth-child(3) { transition-delay: 0.12s; }
+        .vertical-grid .vertical-card:nth-child(4) { transition-delay: 0.18s; }
+        .vertical-grid .vertical-card:nth-child(5) { transition-delay: 0.24s; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal.reveal-pending { opacity: 1; transform: none; }
+            .reveal { transition: none; }
+            .bubble.typing span { animation: none; }
         }
 
-        @media (max-width: 992px) {
-            .features-grid { grid-template-columns: 1fr 1fr; }
-            #differentiator .container { grid-template-columns: 1fr; }
-            .differentiator-visual { margin-top: 40px; }
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .feature-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+            .feature:first-child { grid-row: 1 / 2; grid-column: 1 / -1; }
+            #dian .grid { grid-template-columns: 1fr; gap: 40px; }
             .footer-grid { grid-template-columns: 1fr 1fr; }
-            
-            /* Hero en tablets: mantener 2 columnas pero más compacto */
-            #hero .container {
-                gap: 40px;
-            }
-            
-            .hero-text h1 { font-size: 42px; }
-            .hero-animation img { max-width: 400px; }
         }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 81px; left: 0; width: 100%; background: var(--bg-light); padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; border-bottom: 1px solid var(--border-color); }
-            .nav-links.active { display: flex; }
-            .nav-buttons .btn-primary { display: none; }
-            .mobile-menu-toggle { display: block; }
-            
-            /* Hero responsive: columna única */
-            #hero .container {
-                grid-template-columns: 1fr;
-                gap: 40px;
+        @media (max-width: 860px) {
+            nav.primary-nav {
+                display: none;
+                position: absolute;
+                top: 76px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                gap: 0;
+                background: var(--paper);
+                border-bottom: 1px solid var(--line);
+                box-shadow: var(--shadow);
+                padding: 4px 24px 12px;
             }
-            
-            .hero-text {
-                order: 2; /* Texto abajo en móvil */
-                text-align: center;
-            }
-            
-            .hero-animation {
-                order: 1;
-            }
-            
-            .hero-animation img {
-                max-width: 350px;
-                margin: 0 auto;
-            }
-            
-            .hero-buttons {
-                justify-content: center;
-            }
-            
-            .hero-text h1 { font-size: 36px; }
-            .hero-text p { font-size: 16px; }
-            .section-header h2, #differentiator h2, #cta h2, #pricing .section-header h2 { font-size: 32px; }
-            section { padding: 60px 0; }
-            
-            .features-grid { grid-template-columns: 1fr; }
-            
-            /* AI Assistant responsive */
-            #ai-assistant .container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            
-            .ai-content {
-                order: 2;
-            }
-            
-            .ai-visual {
-                order: 1;
-            }
-            
-            .ai-content h2 {
-                font-size: 32px;
-                text-align: center;
-            }
-            
-            .ai-content .subtitle {
-                font-size: 17px;
-                text-align: center;
-            }
-            
+            nav.primary-nav.active { display: flex; }
+            nav.primary-nav a { padding: 12px 0; border-bottom: 1px solid var(--line); }
+            nav.primary-nav a:last-child { border-bottom: none; }
+            nav.primary-nav a.nav-mobile-only { display: block; }
+            .mobile-menu-toggle { display: flex; }
+            .header-actions .btn-ghost { display: none; }
+            #hero .grid { grid-template-columns: 1fr; gap: 48px; }
+            .hero-copy { text-align: center; }
+            .hero-copy .lede { margin-left: auto; margin-right: auto; }
+            .hero-actions { justify-content: center; flex-direction: column; align-items: stretch; }
+            .hero-actions .btn { width: 100%; }
+            .trust-line { justify-content: center; }
+            .chat-demo { margin: 0 auto; }
+            .hero-copy h1 { font-size: 2.5rem; }
+            section { padding: 64px 0; }
+            .inbox-mockup { grid-template-columns: 1fr; height: auto; margin-top: 40px; }
+            .inbox-mockup__nav, .inbox-mockup__list { display: none; }
+            .inbox-mockup__messages { min-height: 260px; }
+        }
+        @media (max-width: 640px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .feature:first-child { grid-column: auto; padding: 32px 28px; }
+            .feature:first-child h3 { font-size: 1.125rem; }
+            .feature:first-child p { font-size: 0.9375rem; max-width: none; }
+            .logo-row { gap: 32px; }
             .footer-grid { grid-template-columns: 1fr; text-align: center; }
-            .social-icons, .footer-col ul { justify-content: center; }
+            .footer-social { justify-content: center; }
+            header .container { padding: 0 16px; }
+            .header-actions { gap: 10px; }
+            .btn-primary.btn { padding: 12px 16px; font-size: 0.875rem; }
+            .btn-lg { padding: 14px 20px; font-size: 0.9375rem; }
+            .hero-copy h1 { font-size: 2.125rem; }
         }
-
     </style>
 </head>
 <body>
+<!--
+  THESIS: Ejecutar el estándar de categoría de landings de WhatsApp-business /
+  chatbot (Wati, ManyChat, Chatwoot.com) a calidad plena, sin ironía ni
+  excentricidad — Lyvio gana confianza por ejecución impecable de lo esperado,
+  se abandona el gradiente morado/neón genérico anterior.
+  OWN-WORLD: papel cálido #FBF8F2, tinta cálida #2A2723, un azul derivado por
+  muestreo real del logo de Lyvio (rgb(142,187,254) → --brand-soft claro,
+  --brand #3A5FDB saturado, --brand-deep #1B2C7A profundo — mismo matiz, tres
+  pasos). Estrategia de color de dos velocidades (revisada 2026-08-26 tras
+  feedback de "se siente genérico"): Restrained en el cuerpo (azul solo en
+  CTAs/hitos sobre papel cálido) pero Committed en los dos extremos de la
+  página — hero y CTA final se pintan --brand-deep de pared a pared, tipografía
+  gigante (clamp hasta 5rem), profundidad real (la tarjeta de chat flota con
+  sombra dramática + leve rotación). Cero degradados en todo el sitio — la
+  audacia viene de escala/color-block/profundidad, nunca de gradientes.
+  Inter como tipografía única, mockup de chat real, franja de 4 logos reales.
+  STORY: el dueño de PYME entiende en segundos que Lyvio conecta WhatsApp/IG/
+  Messenger/Telegram/Email a un bot de IA sin código, lo ve responder en vivo,
+  reconoce su rubro entre las plantillas, confía por los logos reales y la
+  facturación DIAN automática, y empieza su prueba de 14 días.
+  FIRST VIEWPORT: pared azul profunda de punta a punta; headline blanco
+  gigante + CTA azul brillante + línea de confianza a la izquierda; tarjeta
+  de chat flotando con sombra dramática y rotación sutil a la derecha.
+  FORM: estándar de categoría como base (salida permanente/canon; seed key
+  a5d85652, registro "safer"), luego empujado hacia Committed en los
+  bookends por pedido explícito del usuario ("más vida, novedad, sin perder
+  elegancia") — no un cambio de mundo, la misma paleta con más compromiso.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the
+  finish review, the verdict, DESIGN.md, and every shipping raster carrying
+  its provenance.
+-->
 
-    <!-- WhatsApp Floating Button -->
-    <style>
-        .whatsapp-fab {
-            position: fixed;
-            right: 22px;
-            bottom: 82px;
-            width: 56px;
-            height: 56px;
-            border-radius: 999px;
-            background: #25D366;
-            display: grid;
-            place-items: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            z-index: 2000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            /* prevent link underline or any decoration */
-            text-decoration: none !important;
-            -webkit-text-decoration: none !important;
-            outline: none;
-            border: none;
-            background-clip: padding-box;
-        }
-        .whatsapp-fab:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.18); }
-        .whatsapp-fab, .whatsapp-fab * { text-decoration: none !important; text-decoration-color: transparent !important; }
-        .whatsapp-fab .fab-icon { color: white; font-size: 22px; display: block; line-height: 1; }
-        @media (max-width: 520px) { .whatsapp-fab { right: 14px; bottom: 14px; width: 48px; height: 48px; } }
-    </style>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WFDZLSRG"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WFDZLSRG"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+<header>
+    <div class="container">
+        <a href="{% url 'landing:home' %}">
+            <img src="{% static 'img/logo_long.png' %}" alt="Lyvio" class="logo logo--scaled" width="1024" height="579" onerror="this.onerror=null;this.src='{% static 'img/logo.png' %}';">
+        </a>
+                        <nav class="primary-nav" id="primary-nav">
+                            <a href="#features">Beneficios</a>
+                            <a href="#verticals">Para tu rubro</a>
+                            <a href="#pricing">Precios</a>
+                            <a href="https://app.lyvio.io/hc/help/es_CO" target="_blank" rel="noopener">Ayuda</a>
+                            <a href="https://app.lyvio.io" class="nav-mobile-only">Ingresar</a>
+                        </nav>
+                        <div class="header-actions">
+                            <a href="https://app.lyvio.io" class="btn-ghost">Ingresar</a>
+                            <a href="{% url 'onboarding:company-registration' %}" class="btn btn-primary">Prueba gratis</a>
+                            <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="primary-nav"><i class="fas fa-bars"></i></button>
+                        </div>
+                    </div>
+                </header>
 
-    <header>
+                <main>
+
+                    <section id="hero">
+                        <div class="container grid">
+                            <div class="hero-copy reveal">
+                                <h1><em>Nunca más</em> dejes esperando a un cliente.</h1>
+                                <p class="lede">Lyvio conecta WhatsApp, Instagram, Messenger y correo a un bot con IA entrenado en tu negocio. Configúralo tú mismo, sin código: el bot aprende de tu negocio y queda listo para atender en minutos, sin mover un dedo.</p>
+                                <div class="hero-actions">
+                                    <a href="{% url 'onboarding:company-registration' %}" class="btn btn-primary btn-lg">Empieza tu prueba gratis de 14 días</a>
+                                </div>
+                                <div class="trust-line"><i class="fas fa-circle-check"></i> Sin tarjeta de crédito &nbsp;·&nbsp; <i class="fas fa-circle-check"></i> Cancela cuando quieras</div>
+                            </div>
+
+                            <div class="hero-visual reveal">
+                                <div class="chat-demo" aria-hidden="true">
+                                    <div class="chat-demo__bar">
+                                        <span class="dot"></span>
+                                        <div>
+                                            <strong>Ferretería El Tornillo</strong>
+                                            <span>Bot de Lyvio · en línea</span>
+                                        </div>
+                                    </div>
+                                    <div class="chat-demo__body">
+                                        <div class="bubble in">Hola, ¿tienen taladro inalámbrico y hasta qué hora atienden hoy?<div class="meta">2:14 p.m.</div></div>
+                                        <div class="bubble out">¡Hola! Sí, tenemos taladro inalámbrico Bosch 12V disponible. Hoy atendemos hasta las 7:00 p.m.<div class="meta">2:14 p.m. <i class="fas fa-check-double"></i></div></div>
+                                        <div class="bubble out">¿Quieres que te aparte uno o prefieres agendar una visita?<div class="meta">2:14 p.m. <i class="fas fa-check-double"></i></div></div>
+                                        <div class="bubble in">Apártamelo, paso en una hora<div class="meta">2:15 p.m.</div></div>
+                                        <div class="bubble typing"><span></span><span></span><span></span></div>
+                                    </div>
+                                    <div class="chat-demo__foot">Conversación de ejemplo — así responde un bot de Lyvio</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+    <section id="logos" class="reveal">
         <div class="container">
-            <img src="{% static 'img/logo_long.png' %}" alt="Lyvio Logo" class="logo" onerror="this.onerror=null;this.src='https://placehold.co/150x40/000000/FFFFFF?text=Lyvio&font=figtree';">
-            <nav>
-                <ul class="nav-links" id="nav-menu">
-                    <li><a href="#features">Beneficios</a></li>
-                    <li><a href="#pricing">Precios</a></li>
-                    <li><a href="https://app.lyvio.io/hc/help/es_CO" target="_blank
-                        ">Ayuda</a></li>
-                </ul>
-            </nav>
-            <div class="nav-buttons">
-                <a href="https://app.lyvio.io" class="login-btn">Ingresar</a>
-                <a href="/onboarding" class="btn btn-primary">Prueba Gratis</a>
-                <i class="fas fa-bars mobile-menu-toggle" id="mobile-menu-btn"></i>
+            <p class="label">NEGOCIOS QUE YA ATIENDEN CON LYVIO</p>
+            <div class="logo-row">
+                <img src="{% static 'img/marcas-confian/LOGO-MERAKI.png' %}" alt="Meraki" width="1166" height="319" loading="lazy">
+                <img src="{% static 'img/marcas-confian/logo-alttum-collection.png' %}" alt="Alttum Collection" width="1500" height="586" loading="lazy">
+                <img src="{% static 'img/marcas-confian/Andina-Conceptos.png' %}" alt="Andina Conceptos" width="514" height="335" loading="lazy">
+                <img src="{% static 'img/marcas-confian/casas-de-verano450x.png' %}" alt="Casas de Verano" width="450" height="238" loading="lazy">
+            </div>
+            <div class="channel-row">
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--whatsapp"><i class="fab fa-whatsapp"></i></span> WhatsApp</span>
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--instagram"><i class="fab fa-instagram"></i></span> Instagram</span>
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--messenger"><i class="fab fa-facebook-messenger"></i></span> Messenger</span>
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--telegram"><i class="fab fa-telegram"></i></span> Telegram</span>
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--email"><i class="fas fa-envelope"></i></span> Correo</span>
+                <span class="channel-chip"><span class="channel-chip__icon channel-chip__icon--web"><i class="fas fa-globe"></i></span> Chat web</span>
             </div>
         </div>
-    </header>
+    </section>
 
-    <main>
-
-        <section id="hero">
-            <div class="container">
-                <!-- Imagen banner izquierda -->
-                <div class="hero-animation reveal">
-                    <img src="{% static 'img/banner.png' %}" alt="Lyvio - Centraliza tus chats">
+    <section id="features">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>Todo lo que necesitas para no perder un mensaje</h2>
+                <p>Menos pestañas abiertas, menos clientes esperando. Todo tu equipo trabajando desde una sola bandeja.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-inbox"></i></div>
+                    <h3>Una sola bandeja para todo</h3>
+                    <p>WhatsApp, Instagram, Messenger y correo llegan al mismo lugar. Tu equipo responde sin saltar entre apps.</p>
                 </div>
-                
-                <!-- Texto derecha -->
-                <div class="hero-text reveal">
-                    <h1><span class="highlight">La calma</span> de tener todos tus chats en un solo lugar.</h1>
-                    <p>Lyvio centraliza tu WhatsApp, Instagram, Messengery muchos mas para que tu equipo responda más rápido, colabore mejor y nunca deje escapar una oportunidad de venta.</p>
-                    <div class="hero-buttons">
-                        <a href="/onboarding" class="btn btn-primary">Empieza tu prueba gratis de 14 días</a>
+                <div class="feature reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-robot"></i></div>
+                    <h3>Un bot entrenado en tu negocio</h3>
+                    <p>Le enseñas tus productos, horarios y precios con tus propios documentos; el bot responde con esa información, en tu tono.</p>
+                </div>
+                <div class="feature reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-calendar-check"></i></div>
+                    <h3>Agenda citas solo</h3>
+                    <p>Para negocios de servicios, el bot puede agendar directamente en tu calendario mientras conversa con el cliente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="verticals">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>Una plantilla lista para tu tipo de negocio</h2>
+                <p>Elige el punto de partida de tu bot según tu rubro y ajústalo a tu manera desde el primer día.</p>
+            </div>
+            <div class="vertical-grid">
+                <div class="vertical-card reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-stethoscope"></i></div>
+                    <h3>Salud</h3>
+                    <p>Agenda citas con Cal.com</p>
+                </div>
+                <div class="vertical-card reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-house"></i></div>
+                    <h3>Inmobiliario</h3>
+                    <p>Filtra y agenda visitas</p>
+                </div>
+                <div class="vertical-card reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-cart-shopping"></i></div>
+                    <h3>Ventas</h3>
+                    <p>Responde catálogo y precios</p>
+                </div>
+                <div class="vertical-card reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-headset"></i></div>
+                    <h3>Servicio al cliente</h3>
+                    <p>Resuelve lo frecuente 24/7</p>
+                </div>
+                <div class="vertical-card reveal">
+                    <div class="icon" aria-hidden="true"><i class="fas fa-life-ring"></i></div>
+                    <h3>Soporte</h3>
+                    <p>Filtra y escala a tu equipo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="inbox-preview">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>El panel que tu equipo va a abrir todos los días</h2>
+                <p>Cada conversación con su historial completo, lista para que responda tu bot o la tome un agente — nunca las dos cosas por separado.</p>
+            </div>
+            <div class="inbox-mockup reveal" aria-hidden="true">
+                <div class="inbox-mockup__nav">
+                    <img src="{% static 'img/logo.png' %}" alt="">
+                    <div class="inbox-mockup__nav-item active"><i class="fas fa-inbox"></i></div>
+                    <div class="inbox-mockup__nav-item"><i class="fas fa-comment-dots"></i><span class="badge">3</span></div>
+                    <div class="inbox-mockup__nav-item"><i class="fas fa-at"></i></div>
+                    <div class="inbox-mockup__nav-item"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="inbox-mockup__list">
+                    <div class="inbox-mockup__list-head">
+                        <strong>Conversaciones</strong>
+                        <span>18</span>
+                    </div>
+                    <div class="inbox-mockup__row active">
+                        <div class="inbox-mockup__avatar">MF<i class="fab fa-whatsapp"></i></div>
+                        <div class="inbox-mockup__row-body">
+                            <div class="inbox-mockup__row-top"><strong>María Fernanda López</strong><time>2m</time></div>
+                            <div class="inbox-mockup__row-snippet">¿Tienen disponibilidad para mañana a las 3pm?</div>
+                        </div>
+                    </div>
+                    <div class="inbox-mockup__row unread">
+                        <div class="inbox-mockup__avatar">CR<i class="fab fa-instagram"></i></div>
+                        <div class="inbox-mockup__row-body">
+                            <div class="inbox-mockup__row-top"><strong>Carlos Andrés Ruiz</strong><time>18m</time></div>
+                            <div class="inbox-mockup__row-snippet">Perfecto, muchas gracias por la info 🙌</div>
+                        </div>
+                        <div class="inbox-mockup__row-dot"></div>
+                    </div>
+                    <div class="inbox-mockup__row">
+                        <div class="inbox-mockup__avatar">LG<i class="fab fa-whatsapp"></i></div>
+                        <div class="inbox-mockup__row-body">
+                            <div class="inbox-mockup__row-top"><strong>Laura Gómez</strong><time>1h</time></div>
+                            <div class="inbox-mockup__row-snippet">¿Cuál es el costo del plan premium?</div>
+                        </div>
+                    </div>
+                    <div class="inbox-mockup__row">
+                        <div class="inbox-mockup__avatar">DT<i class="fab fa-facebook-messenger"></i></div>
+                        <div class="inbox-mockup__row-body">
+                            <div class="inbox-mockup__row-top"><strong>Daniel Torres</strong><time>3h</time></div>
+                            <div class="inbox-mockup__row-snippet">Listo, ya quedó resuelto. Gracias!</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="inbox-mockup__thread">
+                    <div class="inbox-mockup__thread-head">
+                        <div>
+                            <strong>María Fernanda López</strong>
+                            <span>#1248 · WhatsApp Lyvio</span>
+                        </div>
+                        <span class="inbox-mockup__status">Abierta</span>
+                    </div>
+                    <div class="inbox-mockup__messages">
+                        <div class="inbox-mockup__msg in">¡Hola! ¿Tienen disponibilidad para mañana a las 3pm?<time>10:41 AM</time></div>
+                        <div class="inbox-mockup__msg out">¡Hola María! Sí, tenemos espacio a las 3:00pm. ¿Confirmamos tu cita?<time>10:42 AM ✓✓</time></div>
+                        <div class="inbox-mockup__note">María fue notificada por WhatsApp</div>
+                        <div class="inbox-mockup__msg in">¡Perfecto, confirmado! 👍<time>10:44 AM</time></div>
+                        <div class="inbox-mockup__msg out">Genial, te esperamos. Cualquier cosa, aquí estamos 😊<time>10:44 AM ✓✓</time></div>
+                    </div>
+                    <div class="inbox-mockup__composer">
+                        <span class="tab active">Responder</span>
+                        <span class="tab">Nota privada</span>
+                        <span class="fill"></span>
+                        <div class="send"><i class="fas fa-paper-plane"></i></div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="channels" class="reveal">
-            <div class="container">
-                <div class="channels-title">INTEGRA LAS HERRAMIENTAS QUE YA AMAS Y USAS A DIARIO</div>
-                <div class="channel-icons">
-                    <i class="fab fa-whatsapp" title="WhatsApp"></i>
-                    <i class="fab fa-instagram" title="Instagram"></i>
-                    <i class="fab fa-facebook-messenger" title="Messenger"></i>
-                    <i class="fab fa-telegram" title="Telegram"></i>
-                    <i class="fas fa-globe" title="Chat Web"></i>
+    <section id="dian">
+        <div class="container grid">
+            <div class="dian-copy reveal">
+                <span class="tag"><i class="fas fa-flag"></i> HECHO PARA COLOMBIA</span>
+                <h2>Facturación electrónica DIAN, sin que hagas nada.</h2>
+                <p>Cada vez que se cobra tu suscripción, Lyvio genera y reporta automáticamente tu factura electrónica ante la DIAN. Sin correos de soporte, sin formularios, sin esperas.</p>
+                <p>Atender a tus clientes y mantener tu contabilidad al día es igual de simple.</p>
+            </div>
+            <div class="reveal">
+                <div class="dian-receipt">
+                    <div class="dian-receipt__head">
+                        <strong>Factura Electrónica</strong>
+                        <span>DIAN · Colombia</span>
+                    </div>
+                    <div class="dian-receipt__row"><span>Suscripción Lyvio — Plan mensual</span><span>Automático</span></div>
+                    <div class="dian-receipt__row"><span>Reporte ante la DIAN</span><span>Automático</span></div>
+                    <div class="dian-receipt__row"><span>Envío al cliente</span><span>Automático</span></div>
+                    <div class="dian-receipt__row total"><span>Trabajo manual requerido</span><span>Ninguno</span></div>
+                    <span class="dian-receipt__stamp"><i class="fas fa-check"></i> AL DÍA</span>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="features" class="reveal">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Diseñado para la eficiencia y la colaboración</h2>
-                    <p>Menos caos, más control. Herramientas pensadas para que tu equipo brille y tus clientes se sientan escuchados.</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-card-header">
-                            <div class="icon"><i class="fas fa-inbox"></i></div>
-                            <h3>Tu Centro de Comando</h3>
-                        </div>
-                        <p>Visualiza y responde cada mensaje, sin importar el canal. Todo fluye en una sola pantalla, en tiempo real.</p>
-                        <div class="metric-highlight">
-                            <strong>-60%</strong>
-                            <span>Tiempo de Respuesta</span>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-header">
-                            <div class="icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-                            <h3>Inteligencia que Asiste</h3>
-                        </div>
-                        <p>Ahorra tiempo con respuestas sugeridas por IA, resúmenes automáticos y chatbots que califican leads por ti.</p>
-                        <div class="metric-highlight">
-                            <strong>3X</strong>
-                            <span>Más Conversiones</span>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-header">
-                            <div class="icon"><i class="fas fa-users"></i></div>
-                            <h3>Colaboración sin Fricción</h3>
-                        </div>
-                        <p>Asigna chats, deja notas internas y ve quién responde en tiempo real. Adiós a las respuestas duplicadas.</p>
-                        <div class="metric-highlight">
-                            <strong>+85%</strong>
-                            <span>Satisfacción del Equipo</span>
-                        </div>
-                    </div>
-                </div>
+    <section id="pricing">
+        <div class="container">
+            <div class="section-head center reveal">
+                <h2>Planes para cada etapa de tu negocio</h2>
+                <p>Empieza y escala a medida que creces. Sin contratos largos, cancela cuando quieras.</p>
             </div>
-        </section>
-        
-        <section id="ai-assistant" class="reveal">
-            <div class="container">
-                <!-- Contenido izquierda -->
-                <div class="ai-content">
-                    <h2><span class="highlight">Tu asistente inteligente</span> que nunca descansa</h2>
-                    <p class="subtitle">Como tener un experto disponible 24/7 que conoce cada detalle de tu negocio y atiende a todos tus clientes al mismo tiempo.</p>
-                </div>
-                
-                <!-- Visual derecha con burbujas flotantes -->
-                <div class="ai-visual">
-                    <div class="ai-illustration">
-                        <img src="{% static 'img/chatbot-img.png' %}" alt="Chatbot Inteligente 24/7">
-                    </div>
-                    
-                    <!-- Burbujas flotantes -->
-                    <div class="ai-bubble ai-bubble-1">
-                        <i class="fas fa-clock"></i>
-                        <span>Disponible 24/7</span>
-                    </div>
-                    <div class="ai-bubble ai-bubble-2">
-                        <i class="fas fa-brain"></i>
-                        <span>Aprende tu negocio</span>
-                    </div>
-                    <div class="ai-bubble ai-bubble-3">
-                        <i class="fas fa-infinity"></i>
-                        <span>Escala sin esfuerzo</span>
-                    </div>
-                    <div class="ai-bubble ai-bubble-4">
-                        <i class="fas fa-bolt"></i>
-                        <span>Responde al instante</span>
-                    </div>
-                    <div class="ai-bubble ai-bubble-5">
-                        <i class="fas fa-rocket"></i>
-                        <span>No pierdas oportunidades</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        
-        <section id="testimonial" class="reveal">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Marcas que confían en nosotros</h2>
-                    <p>Empresas líderes que han optimizado su comunicación con Lyvio</p>
-                </div>
-                
-                <div class="logo-carousel-wrapper">
-                    <div class="logo-carousel">
-                        <!-- Primer set de logos -->
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/LOGO-MERAKI.png' %}" alt="Meraki">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/logo-alttum-collection.png' %}" alt="Alttum">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/Andina-Conceptos.png' %}" alt="Andina Conceptos">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/casas-de-verano450x.png' %}" alt="Casas de Verano">
-                        </div>
-                        
-                        <!-- Duplicado para efecto infinito -->
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/LOGO-MERAKI.png' %}" alt="Meraki">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/logo-alttum-collection.png' %}" alt="Alttum">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/Andina-Conceptos.png' %}" alt="Andina Conceptos">
-                        </div>
-                        <div class="logo-item">
-                            <img src="{% static 'img/marcas-confian/casas-de-verano450x.png' %}" alt="Casas de Verano">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <section id="pricing" class="reveal">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Planes para cada etapa de tu negocio</h2>
-                    <p>Comienza y escala a medida que creces. Sin contratos a largo plazo, cancela cuando quieras.</p>
-                </div>
-                <div class="pricing-slider-container {% if plans|length > 3 %}has-carousel{% endif %}" id="pricingContainer">
-                    {% if plans %}
-                    
-                    <!-- Botones de navegación (solo si hay más de 3 planes) -->
-                    {% if plans|length > 3 %}
-                    <div class="carousel-nav prev">
-                        <button id="prevPlanBtn" aria-label="Plan anterior">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                    </div>
-                    <div class="carousel-nav next">
-                        <button id="nextPlanBtn" aria-label="Siguiente plan">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="pricing-grid" id="pricingGrid">
-                        {% for plan in plans %}
-                        <div class="pricing-card {% if forloop.counter == 2 %}highlight{% endif %}">
-                            {% if forloop.counter == 2 %}
-                            <div class="popular-badge">MÁS POPULAR</div>
-                            {% endif %}
-                            <h3 class="plan-name">{{ plan.name }}</h3>
-                            <div class="price">${{ plan.price_monthly|floatformat:0|intcomma }}<span>/mes</span></div>
-                            <span class="price-yearly">o ${{ plan.price_yearly|floatformat:0|intcomma }}/año</span>
-                            <p class="description">{{ plan.description|default:"Plan diseñado para tu negocio" }}</p>
-                            <ul class="features">
-                                <li><i class="fa-solid fa-check"></i> {{ plan.max_users }} Usuario{{ plan.max_users|pluralize }}</li>
-                                <li><i class="fa-solid fa-check"></i> {% if plan.max_inboxes >= 999 %}Bandejas Ilimitadas{% else %}{{ plan.max_inboxes }} Bandeja{{ plan.max_inboxes|pluralize:" de Entrada,s de Entrada" }}{% endif %}</li>
-                                <li><i class="fa-solid fa-check"></i> {{ plan.max_documents }} Documento{{ plan.max_documents|pluralize }} de Conocimiento</li>
-                                {% for feature in plan.summary_features %}
-                                <li><i class="fa-solid fa-check"></i> {{ feature }}</li>
-                                {% endfor %}
-                            </ul>
-                            <a href="{% url 'onboarding:company-registration' %}?plan={{ plan.id }}" class="btn {% if forloop.counter == 2 %}btn-primary{% else %}btn-secondary{% endif %}">
-                                {% if forloop.counter == 2 %}Prueba {{ plan.name }}{% else %}Empieza con {{ plan.name }}{% endif %}
-                            </a>
-                        </div>
+            {% if plans %}
+            <div class="pricing-grid reveal">
+                {% for plan in plans %}
+                <div class="plan-card {% if forloop.counter == 2 %}featured{% endif %}">
+                    {% if forloop.counter == 2 %}<span class="plan-badge">Más elegido</span>{% endif %}
+                    <div class="plan-name">{{ plan.name }}</div>
+                    <div class="plan-price">${{ plan.price_monthly|floatformat:0|intcomma }}<span>/mes</span></div>
+                    <div class="plan-yearly">o ${{ plan.price_yearly|floatformat:0|intcomma }}/año</div>
+                    <p class="plan-desc">{{ plan.description|default:"Plan diseñado para tu negocio" }}</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> {{ plan.max_users }} usuario{{ plan.max_users|pluralize }}</li>
+                        <li><i class="fas fa-check"></i> {% if plan.max_inboxes >= 999 %}Bandejas ilimitadas{% else %}{{ plan.max_inboxes }} bandeja{{ plan.max_inboxes|pluralize:" de entrada,s de entrada" }}{% endif %}</li>
+                        <li><i class="fas fa-check"></i> {{ plan.max_documents }} documento{{ plan.max_documents|pluralize }} de conocimiento</li>
+                        {% for feature in plan.summary_features %}
+                        <li><i class="fas fa-check"></i> {{ feature }}</li>
                         {% endfor %}
-                    </div>
-                    {% else %}
-                    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-                        <i class="fas fa-box-open" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
-                        <h3 style="font-size: 24px; color: #334155; margin-bottom: 12px;">Planes en preparación</h3>
-                        <p style="font-size: 16px; color: #64748b; margin-bottom: 24px;">Estamos configurando nuestros planes. Vuelve pronto para conocer nuestras opciones.</p>
-                        <a href="mailto:contacto@lyvio.com" class="btn btn-primary">
-                            <i class="fas fa-envelope"></i> Contáctanos
-                        </a>
-                    </div>
-                    {% endif %}
+                    </ul>
+                    <a href="{% url 'onboarding:company-registration' %}?plan={{ plan.id }}" class="btn btn-block {% if forloop.counter == 2 %}btn-on-dark{% else %}btn-secondary{% endif %}">
+                        {% if forloop.counter == 2 %}Prueba {{ plan.name }}{% else %}Empieza con {{ plan.name }}{% endif %}
+                    </a>
                 </div>
+                {% endfor %}
+            </div>
 
-                <div class="comparison-table-wrapper reveal">
-                    <h3 class="comparison-title">Comparación de Planes</h3>
-                    <div class="table-container">
-                        {% if plans %}
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Característica</th>
-                                    {% for plan in plans %}
-                                    <th class="plan-col">{{ plan.name }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Límites básicos -->
-                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Capacidad y Límites</td></tr>
-                                <tr>
-                                    <td class="feature-name">Usuarios agentes</td>
-                                    {% for plan in plans %}
-                                    <td class="value-cell">{{ plan.max_users }}</td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Bandejas de entrada</td>
-                                    {% for plan in plans %}
-                                    <td class="value-cell">{{ plan.max_inboxes }}</td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Documentos de conocimiento</td>
-                                    {% for plan in plans %}
-                                    <td class="value-cell">{{ plan.max_documents }}</td>
-                                    {% endfor %}
-                                </tr>
-                                
-                                <!-- Features de Chatwoot -->
-                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Canales de Comunicación</td></tr>
-                                <tr>
-                                    <td class="feature-name">Widget de sitio web</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.website_channel %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.website_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Email</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.email_channel %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.email_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Facebook Messenger</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.facebook_channel %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.facebook_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Instagram</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.instagram_channel %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.instagram_channel %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">WhatsApp</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.channel_whatsapp %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.channel_whatsapp %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                
-                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Automatización e IA</td></tr>
-                                <tr>
-                                    <td class="feature-name">Bots inteligentes</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.agent_bots %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.agent_bots %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Automatizaciones</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.automations %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.automations %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Respuestas predefinidas</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.canned_responses %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.canned_responses %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Macros</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.macros %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.macros %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                
-                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Gestión y Colaboración</td></tr>
-                                <tr>
-                                    <td class="feature-name">Gestión de equipos</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.team_management %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.team_management %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Gestión de agentes</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.agent_management %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.agent_management %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Centro de ayuda</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.help_center %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.help_center %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Reportes</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.reports %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.reports %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                
-                                <tr class="feature-group"><td colspan="{{ plans|length|add:1 }}">Marketing y CRM</td></tr>
-                                <tr>
-                                    <td class="feature-name">Campañas</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.campaigns %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.campaigns %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Campañas de WhatsApp</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.whatsapp_campaign %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.whatsapp_campaign %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">CRM</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.crm %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.crm %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Integraciones</td>
-                                    {% for plan in plans %}
-                                    <td class="{% if plan.features.integrations %}check-icon{% else %}dash-icon{% endif %}">
-                                        {% if plan.features.integrations %}<i class="fas fa-check-circle"></i>{% else %}−{% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="alert alert-info">
-                            <p>No hay planes disponibles en este momento.</p>
-                        </div>
-                        {% endif %}
-                    </div>
+            <div class="compare-wrapper reveal">
+                <h3>Comparación de planes</h3>
+                <div class="compare-table-scroll">
+                    <table class="compare">
+                        <thead>
+                            <tr>
+                                <th>Característica</th>
+                                {% for plan in plans %}<th class="plan-col">{{ plan.name }}</th>{% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="group"><td colspan="{{ plans|length|add:1 }}">Capacidad y límites</td></tr>
+                            <tr><td>Usuarios agentes</td>{% for plan in plans %}<td class="val">{{ plan.max_users }}</td>{% endfor %}</tr>
+                            <tr><td>Bandejas de entrada</td>{% for plan in plans %}<td class="val">{{ plan.max_inboxes }}</td>{% endfor %}</tr>
+                            <tr><td>Documentos de conocimiento</td>{% for plan in plans %}<td class="val">{{ plan.max_documents }}</td>{% endfor %}</tr>
+
+                            <tr class="group"><td colspan="{{ plans|length|add:1 }}">Canales de comunicación</td></tr>
+                            <tr><td>Widget de sitio web</td>{% for plan in plans %}<td class="{% if plan.features.website_channel %}yes{% else %}no{% endif %}">{% if plan.features.website_channel %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Email</td>{% for plan in plans %}<td class="{% if plan.features.email_channel %}yes{% else %}no{% endif %}">{% if plan.features.email_channel %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Facebook Messenger</td>{% for plan in plans %}<td class="{% if plan.features.facebook_channel %}yes{% else %}no{% endif %}">{% if plan.features.facebook_channel %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Instagram</td>{% for plan in plans %}<td class="{% if plan.features.instagram_channel %}yes{% else %}no{% endif %}">{% if plan.features.instagram_channel %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>WhatsApp</td>{% for plan in plans %}<td class="{% if plan.features.channel_whatsapp %}yes{% else %}no{% endif %}">{% if plan.features.channel_whatsapp %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+
+                            <tr class="group"><td colspan="{{ plans|length|add:1 }}">Automatización e IA</td></tr>
+                            <tr><td>Bots inteligentes</td>{% for plan in plans %}<td class="{% if plan.features.agent_bots %}yes{% else %}no{% endif %}">{% if plan.features.agent_bots %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Automatizaciones</td>{% for plan in plans %}<td class="{% if plan.features.automations %}yes{% else %}no{% endif %}">{% if plan.features.automations %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Respuestas predefinidas</td>{% for plan in plans %}<td class="{% if plan.features.canned_responses %}yes{% else %}no{% endif %}">{% if plan.features.canned_responses %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Macros</td>{% for plan in plans %}<td class="{% if plan.features.macros %}yes{% else %}no{% endif %}">{% if plan.features.macros %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+
+                            <tr class="group"><td colspan="{{ plans|length|add:1 }}">Gestión y colaboración</td></tr>
+                            <tr><td>Gestión de equipos</td>{% for plan in plans %}<td class="{% if plan.features.team_management %}yes{% else %}no{% endif %}">{% if plan.features.team_management %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Gestión de agentes</td>{% for plan in plans %}<td class="{% if plan.features.agent_management %}yes{% else %}no{% endif %}">{% if plan.features.agent_management %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Centro de ayuda</td>{% for plan in plans %}<td class="{% if plan.features.help_center %}yes{% else %}no{% endif %}">{% if plan.features.help_center %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Reportes</td>{% for plan in plans %}<td class="{% if plan.features.reports %}yes{% else %}no{% endif %}">{% if plan.features.reports %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+
+                            <tr class="group"><td colspan="{{ plans|length|add:1 }}">Marketing y CRM</td></tr>
+                            <tr><td>Campañas</td>{% for plan in plans %}<td class="{% if plan.features.campaigns %}yes{% else %}no{% endif %}">{% if plan.features.campaigns %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Campañas de WhatsApp</td>{% for plan in plans %}<td class="{% if plan.features.whatsapp_campaign %}yes{% else %}no{% endif %}">{% if plan.features.whatsapp_campaign %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>CRM</td>{% for plan in plans %}<td class="{% if plan.features.crm %}yes{% else %}no{% endif %}">{% if plan.features.crm %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                            <tr><td>Integraciones</td>{% for plan in plans %}<td class="{% if plan.features.integrations %}yes{% else %}no{% endif %}">{% if plan.features.integrations %}<i class="fas fa-check"></i><span class="sr-only">Incluido</span>{% else %}<span class="sr-only">No incluido</span>—{% endif %}</td>{% endfor %}</tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </section>
-        
-        <section id="differentiator" class="reveal">
-            <div class="container">
-                <div class="differentiator-text">
-                    <span class="tag">HECHO PARA COLOMBIA</span>
-                    <h2>Facturación Electrónica DIAN, sin complicaciones.</h2>
-                    <p>En Lyvio entendemos lo importante que es tener tus cuentas claras y al día.
-Por eso, cada vez que realizas una suscripción o pago, generamos automáticamente tu factura electrónica y la reportamos ante la DIAN, sin que tengas que hacer nada más.
-Todo queda en regla, sin correos de soporte, sin formularios ni esperas.<br><br>
-
-Con Lyvio, atender a tus clientes y mantener tu contabilidad al día es igual de fácil.</p>
-                </div>
-                <div class="differentiator-visual">
-                     <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&h=400&fit=crop&q=80" alt="Diagrama de facturación Lyvio a DIAN">
-                </div>
+            {% else %}
+            <div class="plans-empty reveal">
+                <i class="fas fa-box-open"></i>
+                <h3>Planes en preparación</h3>
+                <p>Estamos configurando nuestros planes. Escríbenos y te avisamos apenas estén listos.</p>
+                <a href="mailto:contacto@lyvio.io" class="btn btn-primary"><i class="fas fa-envelope"></i> Contáctanos</a>
             </div>
-        </section>
+            {% endif %}
+        </div>
+    </section>
 
-        <section id="cta" class="reveal">
-            <div class="container">
-                <div>
-                    <h2>Prueba la nueva era de la comunicación con clientes.</h2>
-                    <p>14 días gratis. Todas las funciones. Sin necesidad de tarjeta de crédito.</p>
-                    <a href="/onboarding" class="btn btn-primary">Reclama tu prueba gratuita</a>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer>
+    <section id="final-cta" class="reveal">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <img src="logo.png" alt="Lyvio Logo" class="logo" style="margin-bottom: 15px;" onerror="this.onerror=null;this.src='https://placehold.co/150x40/000000/FFFFFF?text=Lyvio&font=figtree';">
-                    <p>Convierte conversaciones en clientes.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Producto</h4>
-                    <ul>
-                        <li><a href="#features">Beneficios</a></li>
-                        <li><a href="#pricing">Precios</a></li>
-                        <li><a href="#differentiator">Facturación (DIAN)</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Empresa</h4>
-                    <ul>
-                        <li><a href="#">Sobre nosotros</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contacto</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Contáctanos</h4>
-                     <div class="social-icons">
-                        <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
+            <h2>Prueba la nueva forma de atender a tus clientes.</h2>
+            <p>14 días gratis. Todas las funciones. Sin tarjeta de crédito.</p>
+            <a href="{% url 'onboarding:company-registration' %}" class="btn btn-on-dark btn-lg">Reclama tu prueba gratuita</a>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <img src="{% static 'img/logo_long.png' %}" alt="Lyvio" class="logo" width="1024" height="579" onerror="this.onerror=null;this.src='{% static 'img/logo.png' %}';">
+                <p>Convierte conversaciones en clientes.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Lyvio. Hecho con ❤️ en Colombia.</p>
+            <div class="footer-col">
+                <h3>Producto</h3>
+                <ul>
+                    <li><a href="#features">Beneficios</a></li>
+                    <li><a href="#verticals">Para tu rubro</a></li>
+                    <li><a href="#pricing">Precios</a></li>
+                    <li><a href="#dian">Facturación DIAN</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="{% static 'files/terminos_servicio_lyvio.pdf' %}" target="_blank" rel="noopener">Términos de servicio</a></li>
+                    <li><a href="{% static 'files/politica_privacidad_lyvio.pdf' %}" target="_blank" rel="noopener">Política de privacidad</a></li>
+                    <li><a href="{% static 'files/Politica_Eliminacion_Datos_Lyvio_V2.pdf' %}" target="_blank" rel="noopener">Eliminación de datos</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contáctanos</h3>
+                <div class="footer-social">
+                    <a href="https://wa.me/message/ZTGSCYT5ET3KJ1" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/lyvio.io" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
         </div>
-    </footer>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Lyvio. Hecho en Colombia.</span>
+            <span>Powered by 2Asoft</span>
+        </div>
+    </div>
+</footer>
 
-    <script>
-        // --- Script para el menú móvil y animaciones ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const navMenu = document.getElementById('nav-menu');
-            if (menuBtn && navMenu) {
-                menuBtn.addEventListener('click', () => {
-                    navMenu.classList.toggle('active');
-                });
-            }
+<a href="https://wa.me/message/ZTGSCYT5ET3KJ1" class="whatsapp-fab" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
 
-            // --- Script para animación en scroll ---
-            const revealElements = document.querySelectorAll('.reveal');
-            
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                const isOpen = document.querySelector('.primary-nav').classList.toggle('active');
+                menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
+
+        // Elements start fully visible (see .reveal in <style>). Only the
+        // ones confirmed below the fold at load get a pending/hidden state
+        // to animate in on scroll — everything else is never at risk of
+        // staying invisible if IntersectionObserver is slow, blocked, or
+        // simply hasn't fired yet.
+        const revealElements = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            const belowFold = [];
+            revealElements.forEach(el => {
+                if (el.getBoundingClientRect().top > window.innerHeight * 0.92) {
+                    el.classList.add('reveal-pending');
+                    belowFold.push(el);
+                }
+            });
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
+                        entry.target.classList.remove('reveal-pending');
                         observer.unobserve(entry.target);
                     }
                 });
-            }, {
-                threshold: 0.1 // Se activa cuando el 10% del elemento es visible
-            });
-
-            revealElements.forEach(elem => {
-                revealObserver.observe(elem);
-            });
-
-            // --- NUEVO Script para el carrusel de precios ---
-            const slider = document.querySelector('.pricing-grid');
-            const prevButton = document.getElementById('prev-slide');
-            const nextButton = document.getElementById('next-slide');
-
-            if (slider && prevButton && nextButton) {
-                const scrollAmount = () => {
-                    // Desplazarse el ancho de una tarjeta + el gap
-                    const card = slider.querySelector('.pricing-card');
-                    if (card) {
-                        return card.offsetWidth + 20;
-                    }
-                    return 300; // fallback
-                };
-
-                nextButton.addEventListener('click', () => {
-                    slider.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
-                });
-
-                prevButton.addEventListener('click', () => {
-                    slider.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
-                });
-            }
-            
-            // --- Script para efecto parallax en formas con scroll ---
-            let ticking = false;
-            
-            function updateParallax() {
-                const scrolled = window.pageYOffset;
-                const windowHeight = window.innerHeight;
-                
-                // Formas de fondo (body::before y body::after)
-                const bgShapes = document.body;
-                if (bgShapes) {
-                    const bgTranslateY = scrolled * 0.3;
-                    const bgTranslateX = Math.sin(scrolled * 0.001) * 20;
-                    const bgRotate = scrolled * 0.02;
-                    
-                    // Aplicar transformación al body::before usando CSS custom properties
-                    bgShapes.style.setProperty('--bg-shapes-y', `${bgTranslateY}px`);
-                    bgShapes.style.setProperty('--bg-shapes-x', `${bgTranslateX}px`);
-                    bgShapes.style.setProperty('--bg-shapes-rotate', `${bgRotate}deg`);
-                }
-                
-                // Formas de las secciones
-                const sections = [
-                    { id: '#hero', speedY: 0.2, speedX: 0.15, rotate: 0.03 },
-                    { id: '#features', speedY: 0.25, speedX: -0.12, rotate: -0.025 },
-                    { id: '#ai-assistant', speedY: 0.2, speedX: 0.13, rotate: 0.022 },
-                    { id: '#testimonial', speedY: 0.18, speedX: 0.1, rotate: 0.02 },
-                    { id: '#pricing', speedY: 0.22, speedX: -0.15, rotate: -0.03 },
-                    { id: '#differentiator', speedY: 0.28, speedX: 0.18, rotate: 0.025 },
-                    { id: '#cta', speedY: 0.15, speedX: -0.1, rotate: -0.02 }
-                ];
-                
-                sections.forEach(section => {
-                    const element = document.querySelector(section.id);
-                    if (element) {
-                        const rect = element.getBoundingClientRect();
-                        const elementTop = rect.top + scrolled;
-                        const elementCenter = elementTop + (rect.height / 2);
-                        const distanceFromCenter = scrolled + (windowHeight / 2) - elementCenter;
-                        
-                        // Calcular transformaciones basadas en la posición de scroll
-                        const translateY = distanceFromCenter * section.speedY;
-                        const translateX = distanceFromCenter * section.speedX;
-                        const rotate = distanceFromCenter * section.rotate;
-                        
-                        // Aplicar transformaciones usando CSS custom properties
-                        element.style.setProperty('--shape-y', `${translateY}px`);
-                        element.style.setProperty('--shape-x', `${translateX}px`);
-                        element.style.setProperty('--shape-rotate', `${rotate}deg`);
-                    }
-                });
-                
-                ticking = false;
-            }
-            
-            function requestTick() {
-                if (!ticking) {
-                    window.requestAnimationFrame(updateParallax);
-                    ticking = true;
-                }
-            }
-            
-            window.addEventListener('scroll', requestTick, { passive: true });
-            updateParallax(); // Llamar una vez al cargar
-        });
-    </script>
-    
-    <!-- Pricing Carousel Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pricingGrid = document.getElementById('pricingGrid');
-            const prevBtn = document.getElementById('prevPlanBtn');
-            const nextBtn = document.getElementById('nextPlanBtn');
-            const container = document.getElementById('pricingContainer');
-            
-            if (!pricingGrid || !container.classList.contains('has-carousel')) return;
-            
-            let currentScroll = 0;
-            const cardWidth = 320; // Ancho de cada card + gap
-            const scrollAmount = cardWidth + 28; // Card width + gap
-            
-            function updateButtons() {
-                const maxScroll = pricingGrid.scrollWidth - pricingGrid.clientWidth;
-                
-                if (prevBtn) {
-                    prevBtn.disabled = currentScroll <= 0;
-                }
-                
-                if (nextBtn) {
-                    nextBtn.disabled = currentScroll >= maxScroll;
-                }
-            }
-            
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    currentScroll = Math.max(0, currentScroll - scrollAmount);
-                    pricingGrid.scrollTo({
-                        left: currentScroll,
-                        behavior: 'smooth'
-                    });
-                    setTimeout(updateButtons, 300);
-                });
-            }
-            
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    const maxScroll = pricingGrid.scrollWidth - pricingGrid.clientWidth;
-                    currentScroll = Math.min(maxScroll, currentScroll + scrollAmount);
-                    pricingGrid.scrollTo({
-                        left: currentScroll,
-                        behavior: 'smooth'
-                    });
-                    setTimeout(updateButtons, 300);
-                });
-            }
-            
-            // Actualizar botones al hacer scroll manualmente
-            pricingGrid.addEventListener('scroll', function() {
-                currentScroll = pricingGrid.scrollLeft;
-                updateButtons();
-            });
-            
-            // Inicializar estado de botones
-            updateButtons();
-        });
-    </script>
-    
-    <script>
-    window.chatwootSettings = {"position":"right","type":"expanded_bubble","launcherTitle":"Habla con nosotros"};
-    (function(d,t) {
-        var BASE_URL="https://app.lyvio.io";
-        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-        g.src=BASE_URL+"/packs/js/sdk.js";
-        g.async = true;
-        s.parentNode.insertBefore(g,s);
-        g.onload=function(){
-        window.chatwootSDK.run({
-            websiteToken: '6F3iE6tZwzPZxEhSv4bEbMat',
-            baseUrl: BASE_URL
-        })
+            }, { threshold: 0.12 });
+            belowFold.forEach(el => revealObserver.observe(el));
+            // Safety net: if observation somehow never resolves (backgrounded
+            // tab, throttled rAF), force everything visible after 2.5s.
+            setTimeout(() => belowFold.forEach(el => el.classList.add('visible')), 2500);
+        } else {
+            revealElements.forEach(el => el.classList.add('visible'));
         }
-    })(document,"script");
-    </script>
+    });
+</script>
 
-
+<!-- Lenis — inertial smooth scroll. Runs on top of native scroll (never
+     fights position:sticky or IntersectionObserver), off entirely when the
+     visitor asked for reduced motion. -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>
+    if (typeof Lenis !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const lenis = new Lenis({ autoRaf: true });
+        document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                const id = a.getAttribute('href');
+                if (id.length > 1) {
+                    const target = document.querySelector(id);
+                    if (target) {
+                        e.preventDefault();
+                        lenis.scrollTo(target, { offset: -76 });
+                    }
+                }
+            });
+        });
+    }
+</script>
 
 </body>
 </html>
-
-<!-- Floating WhatsApp button -->
-<a href="https://wa.me/message/ZTGSCYT5ET3KJ1" class="whatsapp-fab" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
-    <i class="fab fa-whatsapp fab-icon" aria-hidden="true"></i>
-</a>
-

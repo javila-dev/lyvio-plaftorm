@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T00:00:00Z",
+  "title": "Design System: Lyvio Landing",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "Azul Lyvio",
+        "canonical": "#3A5FDB",
+        "tonalRamp": ["#131E52", "#1B2C7A", "#223B9E", "#2B49C0", "#3A5FDB", "#6483E5", "#9BB1EF", "#D3DCF9"]
+      },
+      "brand-soft": {
+        "role": "secondary",
+        "displayName": "Azul de logo",
+        "canonical": "#8EBBFE",
+        "tonalRamp": ["#0F2E5C", "#1A4685", "#2C63AC", "#4C8AD1", "#8EBBFE", "#AACCFE", "#C7DDFF", "#E6F0FF"]
+      },
+      "ok": {
+        "role": "tertiary",
+        "displayName": "Verde confirmado",
+        "canonical": "#1D9A6C",
+        "tonalRamp": ["#0A3322", "#0F4A31", "#146740", "#187F52", "#1D9A6C", "#4DB98C", "#8DD4B4", "#D2F0E1"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta cálida",
+        "canonical": "#2A2723",
+        "tonalRamp": ["#16130F", "#211C16", "#2A2723", "#4A4438", "#6B6252", "#726B5A", "#C4BCA9", "#EFE8D8"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titular del hero, una sola vez por página." },
+      "headline": { "displayName": "Headline", "purpose": "Título de cada sección (h2)." },
+      "body": { "displayName": "Body", "purpose": "Párrafos, descripciones, medida máxima 62ch." },
+      "label": { "displayName": "Label", "purpose": "Encabezados de tabla, badges, texto en mayúsculas trackeado." }
+    },
+    "shadows": [
+      { "name": "ambient-sm", "value": "0 1px 2px rgba(42,39,35,0.06)", "purpose": "Borde inferior sutil del header sticky." },
+      { "name": "ambient", "value": "0 1px 2px rgba(42,39,35,0.05), 0 12px 28px -10px rgba(42,39,35,0.18)", "purpose": "Tarjetas y elementos elevados en reposo/hover." },
+      { "name": "brand-glow", "value": "0 10px 20px -8px rgba(58,95,219,0.55)", "purpose": "Exclusiva del botón primario." }
+    ],
+    "motion": [
+      { "name": "reveal", "value": "opacity/translateY(18px), 0.6s cubic-bezier(0.16,1,0.3,1)", "purpose": "Único momento de entrada autorizado; visible por defecto, solo lo confirmado bajo el pliegue arranca oculto." },
+      { "name": "hover-lift", "value": "translateY(-1px to -3px), 0.15s ease", "purpose": "Botones y tarjetas al hover." }
+    ],
+    "breakpoints": [
+      { "name": "lg", "value": "1024px" },
+      { "name": "md", "value": "860px" },
+      { "name": "sm", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA principal del sitio (hero, precios, CTA final).",
+      "html": "<button class=\"ds-btn-primary\">Empieza tu prueba gratis</button>",
+      "css": ".ds-btn-primary { background: #3A5FDB; color: #fff; padding: 14px 26px; border-radius: 8px; font-weight: 600; font-size: 0.9375rem; border: none; box-shadow: 0 1px 2px rgba(58,95,219,0.18), 0 10px 20px -8px rgba(58,95,219,0.5); transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease; } .ds-btn-primary:hover { background: #2E4FD1; transform: translateY(-1px); } .ds-btn-primary:focus-visible { outline: 2px solid #3A5FDB; outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acción alternativa junto al CTA primario.",
+      "html": "<button class=\"ds-btn-secondary\">Ver plantillas por rubro</button>",
+      "css": ".ds-btn-secondary { background: #FBF8F2; color: #2A2723; padding: 14px 26px; border-radius: 8px; font-weight: 600; font-size: 0.9375rem; border: 1px solid #E6DECB; transition: border-color 0.15s ease, background-color 0.15s ease; } .ds-btn-secondary:hover { border-color: #726B5A; background: #F3EEE4; }"
+    },
+    {
+      "name": "Plan Card (featured)",
+      "kind": "card",
+      "refersTo": "plan-card-featured",
+      "description": "Tarjeta de plan destacado en la sección de precios.",
+      "html": "<div class=\"ds-plan-card\"><span class=\"ds-plan-badge\">Más elegido</span><div class=\"ds-plan-name\">Profesional</div><div class=\"ds-plan-price\">$189.000<span>/mes</span></div></div>",
+      "css": ".ds-plan-card { border: 2px solid #3A5FDB; border-radius: 20px; padding: 32px 28px; background: #FBF8F2; position: relative; box-shadow: 0 20px 40px -20px rgba(58,95,219,0.35); } .ds-plan-badge { position: absolute; top: -13px; left: 28px; background: #3A5FDB; color: #fff; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.04em; padding: 4px 12px; border-radius: 999px; } .ds-plan-name { font-size: 1.0625rem; font-weight: 700; color: #2A2723; margin-bottom: 6px; } .ds-plan-price { font-size: 2.5rem; font-weight: 800; color: #2A2723; font-variant-numeric: tabular-nums; } .ds-plan-price span { font-size: 1rem; font-weight: 500; color: #726B5A; }"
+    },
+    {
+      "name": "Channel Chip",
+      "kind": "chip",
+      "refersTo": "channel-chip",
+      "description": "Píldora de canal soportado (WhatsApp, Instagram, etc), único lugar donde vive un color de marca ajena.",
+      "html": "<span class=\"ds-channel-chip\"><i class=\"ds-icon\" style=\"color:#25D366\">●</i> WhatsApp</span>",
+      "css": ".ds-channel-chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border: 1px solid #E6DECB; border-radius: 999px; font-size: 0.9rem; font-weight: 500; color: #2A2723; background: #F3EEE4; }"
+    },
+    {
+      "name": "DIAN Receipt",
+      "kind": "custom",
+      "refersTo": "dian-receipt",
+      "description": "Componente insignia: ficha blanca tipo recibo flotando sobre la única sección de fondo oscuro completo del sitio.",
+      "html": "<div class=\"ds-dian-receipt\"><div class=\"ds-dian-head\"><strong>Factura Electrónica</strong><span>DIAN · Colombia</span></div><div class=\"ds-dian-row\"><span>Suscripción Lyvio</span><span>Automático</span></div><span class=\"ds-dian-stamp\">✓ AL DÍA</span></div>",
+      "css": ".ds-dian-receipt { background: #fff; border-radius: 14px; padding: 28px; color: #2A2723; box-shadow: 0 24px 48px -16px rgba(42,39,35,0.5); } .ds-dian-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dashed #E6DECB; padding-bottom: 14px; margin-bottom: 14px; } .ds-dian-row { display: flex; justify-content: space-between; font-size: 0.875rem; padding: 6px 0; font-variant-numeric: tabular-nums; } .ds-dian-stamp { margin-top: 18px; display: inline-flex; align-items: center; gap: 8px; color: #1D9A6C; border: 1.5px solid #1D9A6C; padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; transform: rotate(-2deg); }"
+    },
+    {
+      "name": "Navigation Header",
+      "kind": "nav",
+      "refersTo": "header",
+      "description": "Header sticky translúcido, papel cálido con blur.",
+      "html": "<header class=\"ds-header\"><span class=\"ds-logo\">Lyvio</span><nav><a href=\"#\">Beneficios</a><a href=\"#\">Precios</a></nav></header>",
+      "css": ".ds-header { position: sticky; top: 0; background: rgba(251,248,242,0.86); backdrop-filter: blur(10px); border-bottom: 1px solid #E6DECB; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; } .ds-header nav a { color: #5C5648; text-decoration: none; font-weight: 500; font-size: 0.9375rem; margin-left: 24px; } .ds-header nav a:hover { color: #2A2723; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Papel de Confianza",
+    "overview": "La landing juega la convención de categoría (lo que Wati, ManyChat o Chatwoot.com ya ejecutan bien) sin ironía ni excentricidad, pero se niega a hacerlo en el gris frío y el gradiente morado-neón que tenía antes. Todo el lienzo es un papel cálido — el mismo tono de un recibo o una hoja de cuaderno, nunca blanco de hospital — y encima de ese papel vive un solo azul saturado, muestreado directamente del logo real de Lyvio (no inventado), que se gana su protagonismo en vez de repartirse por decoración. El verde solo aparece donde algo está genuinamente confirmado o resuelto: un check, un sello 'al día'. Nunca es un segundo color de marca. La sensación de los componentes es calmada y directa: sin degradados, sombras suaves con tinte cálido en vez de negro puro, un acento que aparece donde el visitante debe actuar y en ningún otro lugar.",
+    "keyCharacteristics": [
+      "Fondo de papel cálido, nunca gris frío ni blanco puro.",
+      "Un solo azul saturado (del logo real) como acento interactivo.",
+      "Verde reservado estrictamente a estados de éxito/confirmación, cobertura mínima.",
+      "Cero degradados, cero patrones decorativos flotantes, cero iconografía genérica de IA.",
+      "Inter como única tipografía, cifras siempre tabulares."
+    ],
+    "rules": [
+      { "name": "The One Blue Rule", "body": "El azul #3A5FDB es el único color que puede cubrir una superficie con intención de llamar la atención. Todo lo demás vive en detalles puntuales, nunca en campos grandes.", "section": "colors" },
+      { "name": "The Warm Neutral Rule", "body": "Ningún gris de este sistema es un gris frío. Cada neutro lleva un matiz cálido (arena/marrón), incluso en tonos casi negros o casi blancos.", "section": "colors" },
+      { "name": "The Tabular Numerals Rule", "body": "Todo precio, conteo o cifra de comparación de planes lleva font-variant-numeric: tabular-nums.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Nada lleva sombra en reposo salvo el botón primario y la ficha DIAN. Todo lo demás gana sombra solo al hover.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usar --brand (#3A5FDB) para toda acción primaria e interactiva destacada.",
+      "Do mantener todos los neutros cálidos, nunca gris frío puro.",
+      "Do limitar --ok (verde) a checkmarks, estados activo/en línea y el sello DIAN.",
+      "Do usar font-variant-numeric: tabular-nums en cualquier cifra.",
+      "Do dejar que los logos de canal conserven su color oficial."
+    ],
+    "donts": [
+      "Don't introducir un segundo color saturado de marca (morado, coral/naranja).",
+      "Don't usar gradientes en texto, fondos o botones.",
+      "Don't repetir patrones decorativos de íconos flotantes de fondo.",
+      "Don't usar un eyebrow/kicker sobre ningún h2.",
+      "Don't inventar métricas o testimonios sin evidencia real."
+    ]
+  }
+}

@@ -1,352 +1,184 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear cuenta - Lyvio</title>
-    
-    <!-- Favicon -->
+
     <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
-    
-    <!-- Tailwind CSS + DaisyUI -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.57.0/dist/full.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css">
+
+    {% include 'onboarding/_design_system.html' %}
     <style>
-        * { 
-            font-family: 'Inter', system-ui, sans-serif; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 100%);
+        .cr-shell {
             min-height: 100vh;
-        }
-        
-        /* Inputs estilo imagen - limpios y simples */
-        .input-clean,
-        .select-clean {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #ffffff;
-            padding: 0.75rem 1rem;
-            font-size: 0.9375rem;
-            color: #1e293b;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        
-        .input-clean::placeholder {
-            color: #94a3b8;
-        }
-        
-        .input-clean:focus,
-        .select-clean:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .input-clean:hover,
-        .select-clean:hover {
-            border-color: #cbd5e1;
-        }
-        
-        /* Labels limpios */
-        .label-clean {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #475569;
-            margin-bottom: 0.5rem;
-        }
-        
-        .label-clean i {
-            color: #94a3b8;
-            font-size: 0.875rem;
-        }
-        
-        /* Tarjeta simple sin glass */
-        .benefit-card {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.5rem;
-        }
-        
-        /* Badge sin sombra */
-        .badge-trial {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            box-shadow: none;
-        }
-        
-        /* Checkbox */
-        .checkbox-clean {
-            width: 18px;
-            height: 18px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .checkbox-clean:checked {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-        
-        /* Botón principal */
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: white;
-            font-weight: 600;
-            padding: 0.875rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            width: 100%;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            padding: 24px;
         }
-        
-        .btn-primary-custom:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        .cr-grid {
+            width: 100%;
+            max-width: 1080px;
+            display: grid;
+            grid-template-columns: 0.85fr 1fr;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .cr-benefits {
+            background: var(--surface);
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+        }
+        .cr-benefits img { height: 141px; width: auto; align-self: center; margin-bottom: 32px; }
+        .cr-benefits h1 { font-size: 1.625rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.01em; }
+        .cr-benefits .lede { color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 32px; }
+        .cr-benefit { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+        .cr-benefit .icon {
+            flex-shrink: 0; width: 36px; height: 36px; border-radius: var(--radius-sm);
+            background: rgba(39,129,246,0.12); color: var(--brand);
+            display: grid; place-items: center; font-size: 0.9375rem;
+        }
+        .cr-benefit-name { font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px; }
+        .cr-benefit p { font-size: 0.8438rem; color: var(--text-muted); }
+
+        .cr-form { background: var(--surface-raised); padding: 48px 40px; }
+        .cr-form-head { margin-bottom: 24px; }
+        .cr-form-head h2 { font-size: 1.375rem; font-weight: 700; margin-bottom: 4px; }
+        .cr-form-head p { color: var(--text-muted); font-size: 0.875rem; }
+        .cr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .cr-field { margin-bottom: 16px; }
+        .cr-phone { display: flex; gap: 8px; }
+        .cr-phone .lv-select { width: 108px; flex-shrink: 0; }
+        .cr-terms { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 20px; }
+        .cr-terms label { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5; cursor: pointer; }
+        .cr-terms a { text-decoration: underline; }
+        .cr-login { text-align: center; margin-top: 16px; font-size: 0.875rem; color: var(--text-muted); }
+
+        @media (max-width: 860px) {
+            .cr-grid { grid-template-columns: 1fr; }
+            .cr-benefits { border-right: none; border-bottom: 1px solid var(--border); padding: 32px 28px; }
+            .cr-form { padding: 32px 28px; }
+        }
+        @media (max-width: 520px) {
+            .cr-row { grid-template-columns: 1fr; gap: 0; }
         }
     </style>
 </head>
 <body>
-    <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-6xl" style="height: 90vh;">
-            <div class="grid lg:grid-cols-2 gap-0 bg-white rounded-2xl shadow-2xl overflow-hidden h-full">
-                
-                <!-- Panel izquierdo - Beneficios -->
-                <div class="p-8 lg:p-12 text-white relative overflow-hidden flex flex-col justify-center" style="background: linear-gradient(135deg, #5b21b6 0%, #1e40af 100%);">
-                    <!-- Badge de prueba gratuita -->
-                    <div class="flex justify-end mb-4">
-                        <div class="badge-trial text-white flex items-center gap-2 text-sm font-medium">
-                            <i class="fas fa-clock"></i>
-                            14 días gratis
-                        </div>
-                    </div>
+    <div class="cr-shell">
+        <div class="cr-grid">
+            <div class="cr-benefits">
+                <img src="{% static 'img/logo_long.png' %}" alt="Lyvio" width="1024" height="579" style="filter: brightness(0) invert(1);">
+                <h1>Crea tu cuenta gratis</h1>
+                <p class="lede">14 días de prueba. Sin tarjeta, sin líos.</p>
 
-                    <!-- Logo -->
-                    <div class="flex justify-center mb-4">
-                        <img src="{% static 'img/logo.png' %}" alt="Lyvio" width="100px" height="200px" class="brightness-0 invert">
-                    </div>
-
-                    <!-- Título -->
-                    <div class="text-center mb-10">
-                        <h1 class="text-3xl font-bold mb-3">¡Bienvenido a Lyvio!</h1>
-                        <p class="text-white/80 text-base">Crea tu cuenta y disfruta 14 días gratis. Sin tarjeta, sin líos.</p>
-                    </div>
-
-                    <!-- Beneficios -->
-                    <div class="space-y-4">
-                        <div class="benefit-card flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-robot text-lg"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-sm mb-1">Bot IA 24/7</h3>
-                                <p class="text-sm text-white/80">Atiende todo el día, entrenado con tus datos</p>
-                            </div>
-                        </div>
-
-                        <div class="benefit-card flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-comments text-lg"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-sm mb-1">Chat omnicanal</h3>
-                                <p class="text-sm text-white/80">WhatsApp, Instagram, Email en un solo lugar</p>
-                            </div>
-                        </div>
-
-                        <div class="benefit-card flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-users text-lg"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-sm mb-1">Multiagente</h3>
-                                <p class="text-sm text-white/80">Tu equipo siempre sincronizado</p>
-                            </div>
-                        </div>
+                <div class="cr-benefit">
+                    <div class="icon"><i class="fas fa-robot"></i></div>
+                    <div>
+                        <p class="cr-benefit-name">Bot IA 24/7</p>
+                        <p>Atiende todo el día, entrenado con tus datos.</p>
                     </div>
                 </div>
-
-                <!-- Panel derecho - Formulario -->
-                <div class="p-8 lg:p-12 bg-white overflow-y-auto flex flex-col justify-center">
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-slate-900 mb-2">Crea tu cuenta</h2>
-                        <p class="text-indigo-600 font-medium text-base">Comienza tu prueba de 14 días</p>
+                <div class="cr-benefit">
+                    <div class="icon"><i class="fas fa-comments"></i></div>
+                    <div>
+                        <p class="cr-benefit-name">Chat omnicanal</p>
+                        <p>WhatsApp, Instagram y correo en un solo lugar.</p>
                     </div>
+                </div>
+                <div class="cr-benefit">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <div>
+                        <p class="cr-benefit-name">Multiagente</p>
+                        <p>Tu equipo siempre sincronizado.</p>
+                    </div>
+                </div>
+            </div>
 
-                    <form method="post" novalidate class="space-y-4">
-                        {% csrf_token %}
-
-                        <!-- Nombre y Apellido -->
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="label-clean">
-                                    <i class="fas fa-user"></i>
-                                    <span>Nombre</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="first_name" 
-                                    id="id_first_name" 
-                                    placeholder="Tu nombre"
-                                    class="input-clean{% if form.first_name.errors %} border-red-500{% endif %}"
-                                    value="{{ form.first_name.value|default_if_none:'' }}" 
-                                    required>
-                                {% if form.first_name.errors %}
-                                    <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-
-                            <div>
-                                <label class="label-clean">
-                                    <i class="fas fa-user"></i>
-                                    <span>Apellido</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="last_name" 
-                                    id="id_last_name" 
-                                    placeholder="Tu apellido"
-                                    class="input-clean{% if form.last_name.errors %} border-red-500{% endif %}"
-                                    value="{{ form.last_name.value|default_if_none:'' }}" 
-                                    required>
-                                {% if form.last_name.errors %}
-                                    <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div>
-                            <label class="label-clean">
-                                <i class="fas fa-envelope"></i>
-                                <span>Correo electrónico</span>
-                            </label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                id="id_email" 
-                                placeholder="tucorreo@empresa.com"
-                                class="input-clean{% if form.email.errors %} border-red-500{% endif %}"
-                                value="{{ form.email.value|default_if_none:'' }}" 
-                                required>
-                            {% if form.email.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Teléfono -->
-                        <div>
-                            <label class="label-clean">
-                                <i class="fas fa-phone"></i>
-                                <span>Teléfono</span>
-                            </label>
-                            <div class="flex gap-2">
-                                <select name="phone_prefix" id="id_phone_prefix" class="select-clean" style="width: 110px;">
-                                    <option value="+57" {% if form.phone_prefix.value == "+57" or not form.phone_prefix.value %}selected{% endif %}>🇨🇴 +57</option>
-                                    <option value="+1" {% if form.phone_prefix.value == "+1" %}selected{% endif %}>🇺🇸 +1</option>
-                                    <option value="+52" {% if form.phone_prefix.value == "+52" %}selected{% endif %}>🇲🇽 +52</option>
-                                    <option value="+34" {% if form.phone_prefix.value == "+34" %}selected{% endif %}>🇪🇸 +34</option>
-                                </select>
-                                <input 
-                                    type="tel" 
-                                    name="phone" 
-                                    id="id_phone" 
-                                    placeholder="3001234567"
-                                    class="input-clean{% if form.phone.errors %} border-red-500{% endif %}"
-                                    style="flex: 1;"
-                                    value="{{ form.phone.value|default_if_none:'' }}" 
-                                    required>
-                            </div>
-                            {% if form.phone.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Nombre de la empresa -->
-                        <div>
-                            <label class="label-clean">
-                                <i class="fas fa-building"></i>
-                                <span>Nombre de la empresa</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                name="company_name" 
-                                id="id_company_name" 
-                                placeholder="Mi Empresa S.A.S."
-                                class="input-clean{% if form.company_name.errors %} border-red-500{% endif %}"
-                                value="{{ form.company_name.value|default_if_none:'' }}" 
-                                required>
-                            {% if form.company_name.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ form.company_name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Términos y condiciones -->
-                        <div class="flex items-start gap-2 pt-1">
-                            <input 
-                                type="checkbox" 
-                                name="terms" 
-                                id="id_terms" 
-                                class="checkbox-clean mt-0.5"
-                                {% if form.terms.value %}checked{% endif %}
-                                required>
-                            <label for="id_terms" class="text-xs text-slate-600 leading-relaxed cursor-pointer">
-                                Acepto los <a href="#" class="text-blue-600 hover:underline">términos y condiciones</a> y la <a href="#" class="text-blue-600 hover:underline">política de privacidad</a>
-                            </label>
-                        </div>
-                        {% if form.terms.errors %}
-                            <p class="text-red-500 text-xs mt-1">{{ form.terms.errors.0 }}</p>
-                        {% endif %}
-
-                        <!-- Botón de envío -->
-                        <button type="submit" class="btn-primary-custom">
-                            <i class="fas fa-rocket"></i>
-                            Crear cuenta gratis
-                        </button>
-
-                        <!-- Link a login -->
-                        <div class="text-center">
-                            <p class="text-sm text-slate-600">
-                                ¿Ya tienes cuenta? 
-                                <a href="{% url 'dashboard:login' %}" class="text-blue-600 font-semibold hover:underline">Inicia sesión</a>
-                            </p>
-                        </div>
-                    </form>
+            <div class="cr-form">
+                <div class="cr-form-head">
+                    <h2>Crea tu cuenta</h2>
+                    <p>Comienza tu prueba de 14 días</p>
                 </div>
 
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="cr-row">
+                        <div class="cr-field">
+                            <label class="lv-label" for="id_first_name">Nombre</label>
+                            <input type="text" name="first_name" id="id_first_name" placeholder="Tu nombre"
+                                   class="lv-input{% if form.first_name.errors %} lv-error{% endif %}"
+                                   value="{{ form.first_name.value|default_if_none:'' }}" required>
+                            {% if form.first_name.errors %}<p class="lv-error-text">{{ form.first_name.errors.0 }}</p>{% endif %}
+                        </div>
+                        <div class="cr-field">
+                            <label class="lv-label" for="id_last_name">Apellido</label>
+                            <input type="text" name="last_name" id="id_last_name" placeholder="Tu apellido"
+                                   class="lv-input{% if form.last_name.errors %} lv-error{% endif %}"
+                                   value="{{ form.last_name.value|default_if_none:'' }}" required>
+                            {% if form.last_name.errors %}<p class="lv-error-text">{{ form.last_name.errors.0 }}</p>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="cr-field">
+                        <label class="lv-label" for="id_email">Correo electrónico</label>
+                        <input type="email" name="email" id="id_email" placeholder="tucorreo@empresa.com"
+                               class="lv-input{% if form.email.errors %} lv-error{% endif %}"
+                               value="{{ form.email.value|default_if_none:'' }}" required>
+                        {% if form.email.errors %}<p class="lv-error-text">{{ form.email.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <div class="cr-field">
+                        <label class="lv-label" for="id_phone">Teléfono</label>
+                        <div class="cr-phone">
+                            <select name="phone_prefix" id="id_phone_prefix" class="lv-select">
+                                <option value="+57" {% if form.phone_prefix.value == "+57" or not form.phone_prefix.value %}selected{% endif %}>🇨🇴 +57</option>
+                                <option value="+1" {% if form.phone_prefix.value == "+1" %}selected{% endif %}>🇺🇸 +1</option>
+                                <option value="+52" {% if form.phone_prefix.value == "+52" %}selected{% endif %}>🇲🇽 +52</option>
+                                <option value="+34" {% if form.phone_prefix.value == "+34" %}selected{% endif %}>🇪🇸 +34</option>
+                            </select>
+                            <input type="tel" name="phone" id="id_phone" placeholder="3001234567"
+                                   class="lv-input{% if form.phone.errors %} lv-error{% endif %}"
+                                   value="{{ form.phone.value|default_if_none:'' }}" required>
+                        </div>
+                        {% if form.phone.errors %}<p class="lv-error-text">{{ form.phone.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <div class="cr-field">
+                        <label class="lv-label" for="id_company_name">Nombre de la empresa</label>
+                        <input type="text" name="company_name" id="id_company_name" placeholder="Mi Empresa S.A.S."
+                               class="lv-input{% if form.company_name.errors %} lv-error{% endif %}"
+                               value="{{ form.company_name.value|default_if_none:'' }}" required>
+                        {% if form.company_name.errors %}<p class="lv-error-text">{{ form.company_name.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <div class="cr-terms">
+                        <input type="checkbox" name="terms" id="id_terms" class="lv-checkbox"
+                               {% if form.terms.value %}checked{% endif %} required>
+                        <label for="id_terms">
+                            Acepto los <a href="{% static 'files/terminos_servicio_lyvio.pdf' %}" target="_blank" rel="noopener">términos y condiciones</a>
+                            y la <a href="{% static 'files/politica_privacidad_lyvio.pdf' %}" target="_blank" rel="noopener">política de privacidad</a>
+                        </label>
+                    </div>
+                    {% if form.terms.errors %}<p class="lv-error-text">{{ form.terms.errors.0 }}</p>{% endif %}
+
+                    <button type="submit" class="lv-btn lv-btn-primary lv-btn-block">
+                        <i class="fas fa-rocket"></i> Crear cuenta gratis
+                    </button>
+
+                    <div class="cr-login">
+                        ¿Ya tienes cuenta? <a href="{% url 'dashboard:login' %}" style="font-weight: 600;">Inicia sesión</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

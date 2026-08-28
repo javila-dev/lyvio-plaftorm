@@ -109,8 +109,8 @@
         <div class="card-body">
             <div class="flex items-start justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
-                        <i class="fas fa-box text-indigo-600 text-xl"></i>
+                    <div class="w-12 h-12 rounded-lg icon-chip">
+                        <i class="fas fa-box text-xl"></i>
                     </div>
                     <div>
                         <h3 class="font-semibold text-gray-600 text-sm">Plan Actual</h3>
@@ -165,8 +165,8 @@
     <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg icon-chip">
+                    <i class="fas fa-calendar-alt text-xl"></i>
                 </div>
                 <div>
                     <h3 class="font-semibold text-gray-600 text-sm">
@@ -202,8 +202,8 @@
     <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-receipt text-blue-600 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg icon-chip">
+                    <i class="fas fa-receipt text-xl"></i>
                 </div>
                 <div>
                     <h3 class="font-semibold text-gray-600 text-sm">Última Factura</h3>
@@ -280,7 +280,7 @@
             </div>
             {% else %}
             <div class="text-center py-8">
-                <i class="fas fa-credit-card text-gray-300 text-5xl mb-4"></i>
+                <i class="fas fa-credit-card text-gray-600 text-5xl mb-4"></i>
                 <p class="text-gray-500 mb-4">No hay un método de pago configurado.</p>
                 <label for="updateCardDrawer" class="btn btn-primary btn-sm cursor-pointer">
                     Agregar Método de Pago
@@ -342,11 +342,11 @@
     
     {% if subscription.status == 'cancelled' %}
     <!-- Reactivar Suscripción (para suscripciones canceladas) -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-green-200">
+    <div class="card">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center animate-pulse">
-                    <i class="fas fa-play-circle text-white text-2xl"></i>
+                <div class="w-14 h-14 rounded-xl icon-chip">
+                    <i class="fas fa-play-circle text-2xl"></i>
                 </div>
                 <h3 class="card-title text-lg font-bold">Reactivar Plan</h3>
             </div>
@@ -368,11 +368,11 @@
     </div>
     {% else %}
     <!-- Actualizar Plan (para suscripciones activas) -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-green-200">
+    <div class="card">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-                    <i class="fas fa-arrow-up text-white text-2xl"></i>
+                <div class="w-14 h-14 rounded-xl icon-chip">
+                    <i class="fas fa-arrow-up text-2xl"></i>
                 </div>
                 <h3 class="card-title text-lg font-bold">Actualizar Plan</h3>
             </div>
@@ -388,11 +388,11 @@
     {% endif %}
     
     <!-- Historial de Pagos -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-200">
+    <div class="card">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                    <i class="fas fa-history text-white text-2xl"></i>
+                <div class="w-14 h-14 rounded-xl icon-chip">
+                    <i class="fas fa-history text-2xl"></i>
                 </div>
                 <h3 class="card-title text-lg font-bold">Historial de Pagos</h3>
             </div>
@@ -408,11 +408,11 @@
     
     {% if subscription.status != 'cancelled' %}
     <!-- Cancelar Suscripción (solo si NO está cancelada) -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-red-200">
+    <div class="card">
         <div class="card-body">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
-                    <i class="fas fa-times-circle text-white text-2xl"></i>
+                <div class="w-14 h-14 rounded-xl icon-chip">
+                    <i class="fas fa-times-circle text-2xl"></i>
                 </div>
                 <h3 class="card-title text-lg font-bold">Cancelar Suscripción</h3>
             </div>
@@ -454,13 +454,13 @@
 <!-- Sin Suscripción Activa -->
 {% if trial %}
 <!-- Información del Trial - Card Única -->
-<div class="card bg-white shadow-xl mb-8 border-2 {% if trial_expired %}border-red-200{% else %}border-blue-200{% endif %}">
+<div class="card mb-8">
     <div class="card-body">
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <!-- Izquierda: Estado y días -->
             <div class="flex items-start gap-4">
-                <div class="w-16 h-16 rounded-2xl {% if trial_expired %}bg-gradient-to-br from-red-500 to-rose-600{% else %}bg-gradient-to-br from-blue-500 to-cyan-600{% endif %} flex items-center justify-center shadow-lg flex-shrink-0">
-                    <i class="fas fa-{% if trial_expired %}exclamation-triangle{% else %}clock{% endif %} text-white text-3xl"></i>
+                <div class="w-16 h-16 rounded-2xl icon-chip flex-shrink-0">
+                    <i class="fas fa-{% if trial_expired %}exclamation-triangle{% else %}clock{% endif %} text-3xl"></i>
                 </div>
                 <div class="flex-1">
                     <h2 class="text-2xl font-bold text-slate-900 mb-2">
@@ -472,7 +472,7 @@
                     </h2>
                     {% if not trial_expired %}
                     <div class="flex items-center gap-2 mb-3">
-                        <div class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold text-lg">
+                        <div class="px-4 py-2 bg-[#2781f6]/15 text-blue-300 rounded-lg font-bold text-lg">
                             {{ trial_days_remaining }} día{{ trial_days_remaining|pluralize }} restante{{ trial_days_remaining|pluralize }}
                         </div>
                     </div>
@@ -495,8 +495,8 @@
 <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
         <div class="flex items-center gap-3 mb-6">
-            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
-                <i class="fas fa-rocket text-white text-2xl"></i>
+            <div class="w-14 h-14 rounded-xl icon-chip">
+                <i class="fas fa-rocket text-2xl"></i>
             </div>
             <h2 class="card-title text-2xl">
                 {% if trial_expired %}
@@ -517,30 +517,36 @@
         {% endif %}
         
         <!-- Carrusel de Planes -->
+        {% if available_plans %}
         <div class="relative">
-            <!-- Botones de navegación -->
-            <button id="scrollLeft" class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white shadow-xl hover:bg-slate-50 border-2 border-slate-200 flex items-center justify-center transition-all hover:scale-110">
-                <i class="fas fa-chevron-left text-xl text-slate-700"></i>
+            <!-- Botones de navegación: viven fuera del contenedor con scroll
+                 (no dentro de la fila que se desplaza) para no irse con el
+                 contenido; el z-20 los deja flotando sobre el borde de la
+                 primera/última tarjeta. Centrados contra la altura real de
+                 la fila, que ahora siempre existe gracias a la condición
+                 de arriba (available_plans). -->
+            <button id="scrollLeft" class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#212225] shadow-xl hover:bg-[#272a2d] border border-slate-200 flex items-center justify-center transition-all hover:scale-110">
+                <i class="fas fa-chevron-left text-sm text-slate-700"></i>
             </button>
-            <button id="scrollRight" class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white shadow-xl hover:bg-slate-50 border-2 border-slate-200 flex items-center justify-center transition-all hover:scale-110">
-                <i class="fas fa-chevron-right text-xl text-slate-700"></i>
+            <button id="scrollRight" class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#212225] shadow-xl hover:bg-[#272a2d] border border-slate-200 flex items-center justify-center transition-all hover:scale-110">
+                <i class="fas fa-chevron-right text-sm text-slate-700"></i>
             </button>
-            
+
             <!-- Gradiente difuminado a la derecha -->
-            <div class="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
-            
-            <div id="plansCarousel" class="overflow-x-auto pb-6 px-16" style="scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;">
+            <div class="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-[#111113] to-transparent z-10 pointer-events-none"></div>
+
+            <div id="plansCarousel" class="overflow-x-auto pb-6 px-6" style="scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;">
                 <div class="flex gap-6 min-w-max mb-8">
                     {% for plan in available_plans %}
-                    <div class="card bg-white border-2 {% if forloop.first %}border-indigo-500 shadow-xl{% else %}border-slate-200 shadow-lg{% endif %} hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 w-80 flex-shrink-0 {% if forloop.first %}relative overflow-hidden{% endif %}">
+                    <div class="card bg-[#212225] border-2 {% if forloop.first %}border-indigo-500 shadow-xl{% else %}border-slate-200 shadow-lg{% endif %} hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 w-80 flex-shrink-0 {% if forloop.first %}relative overflow-hidden{% endif %}">
                         {% if forloop.first %}
                         <!-- Badge Popular más moderno -->
                         <div class="absolute top-0 right-0">
                             <div class="relative">
-                                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-bl-2xl font-bold text-sm shadow-lg">
+                                <div class="bg-[#2781f6] text-white px-6 py-2 rounded-bl-2xl font-bold text-sm shadow-lg">
                                     ⭐ MÁS POPULAR
                                 </div>
-                                <div class="absolute -bottom-2 right-0 w-0 h-0 border-t-8 border-t-purple-800 border-l-8 border-l-transparent"></div>
+                                <div class="absolute -bottom-2 right-0 w-0 h-0 border-t-8 border-t-[#1a4fa0] border-l-8 border-l-transparent"></div>
                             </div>
                         </div>
                         {% endif %}
@@ -593,16 +599,17 @@
                 </div>
             </div>
         </div>
-        
+        {% endif %}
+
         <!-- Información adicional -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="card bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+            <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title text-green-700 font-bold text-lg">
+                    <h3 class="card-title text-green-400 font-bold text-lg">
                         <i class="fas fa-shield-alt"></i>
                         Garantía de Satisfacción
                     </h3>
-                    <ul class="space-y-2 text-sm text-gray-700">
+                    <ul class="space-y-2 text-sm text-gray-600">
                         <li class="flex items-center gap-2">
                             <i class="fas fa-check text-green-600"></i>
                             Pago 100% seguro con Wompi
@@ -623,13 +630,13 @@
                 </div>
             </div>
             
-            <div class="card bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+            <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title text-blue-700 font-bold text-lg">
+                    <h3 class="card-title text-cyan-400 font-bold text-lg">
                         <i class="fas fa-question-circle"></i>
                         ¿Necesitas ayuda?
                     </h3>
-                    <p class="text-sm text-gray-700 mb-4">Nuestro equipo está aquí para ayudarte a elegir el plan perfecto.</p>
+                    <p class="text-sm text-gray-600 mb-4">Nuestro equipo está aquí para ayudarte a elegir el plan perfecto.</p>
                     <a href="mailto:soporte@lyvio.io" class="btn btn-outline btn-info btn-sm gap-2">
                         <i class="fas fa-envelope"></i>
                         Contactar Soporte
@@ -644,8 +651,8 @@
 </div>
 <!-- End of max-w-7xl container -->
 
-<!-- Drawer para Actualizar Tarjeta (DaisyUI - equivalente al offcanvas) -->
-{% if subscription and subscription.payment_source_id %}
+<!-- Drawer para Actualizar/Agregar Tarjeta (DaisyUI - equivalente al offcanvas) -->
+{% if subscription %}
 <!-- Input checkbox oculto que controla el drawer -->
 <input id="updateCardDrawer" type="checkbox" class="drawer-toggle hidden" />
 
@@ -653,20 +660,20 @@
 <div class="drawer-overlay fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden" id="drawerOverlay"></div>
 
 <!-- Panel del drawer que se desliza desde la derecha -->
-<div class="fixed top-0 right-0 h-full w-[500px] max-w-full bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[110]" id="drawerPanel">
-    <!-- Header con gradiente sticky -->
-    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 sticky top-0 z-10">
+<div class="fixed top-0 right-0 h-full w-[500px] max-w-full bg-[#18191b] shadow-2xl transform translate-x-full transition-transform duration-300 z-[110]" id="drawerPanel">
+    <!-- Header sticky -->
+    <div class="bg-[#18191b] border-b border-[#363a3e] p-6 sticky top-0 z-10">
         <div class="flex justify-between items-start">
             <div>
-                <h3 class="font-bold text-2xl text-white mb-1">Actualizar Método de Pago</h3>
-                <p class="text-white/80 text-sm">🔒 Pago seguro procesado por Wompi</p>
+                <h3 class="font-bold text-2xl mb-1">Actualizar Método de Pago</h3>
+                <p class="text-gray-600 text-sm">🔒 Pago seguro procesado por Wompi</p>
             </div>
-            <label for="updateCardDrawer" class="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20 cursor-pointer">✕</label>
+            <label for="updateCardDrawer" class="btn btn-sm btn-circle btn-ghost cursor-pointer">✕</label>
         </div>
     </div>
     
     <!-- Contenido del drawer con scroll -->
-    <div class="p-6 overflow-y-auto bg-white" style="max-height: calc(100vh - 100px);">
+    <div class="p-6 overflow-y-auto bg-[#18191b]" style="max-height: calc(100vh - 100px);">
 
         
         <!-- Formulario -->
@@ -776,12 +783,12 @@
                 </div>
             </div>
             
-            <div class="flex flex-col gap-3 mt-6">
-                <button type="submit" class="btn btn-primary btn-lg w-full gap-2" id="submitBtn">
+            <div class="flex gap-3 mt-6">
+                <label for="updateCardDrawer" class="btn btn-sm border border-slate-300 text-slate-600 hover:bg-[#272a2d] cursor-pointer flex-1">Cancelar</label>
+                <button type="submit" class="btn btn-primary btn-sm gap-2 flex-1" id="submitBtn">
                     <i class="fas fa-credit-card"></i>
-                    <span id="submitBtnText">Actualizar Método de Pago</span>
+                    <span id="submitBtnText">Guardar</span>
                 </button>
-                <label for="updateCardDrawer" class="btn btn-outline btn-lg w-full cursor-pointer">Cancelar</label>
             </div>
         </form>
         
@@ -790,7 +797,7 @@
 
 <!-- Loading Overlay -->
 <div class="fixed inset-0 hidden items-center justify-center bg-black/75 backdrop-blur-sm z-[9999]" id="loadingOverlay">
-    <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm">
+    <div class="bg-[#212225] p-8 rounded-2xl shadow-2xl text-center max-w-sm">
         <div class="mb-6">
             <span class="loading loading-spinner loading-lg text-primary"></span>
         </div>
@@ -801,7 +808,7 @@
 {% endif %}
 
 <script>
-{% if subscription and subscription.payment_source_id %}
+{% if subscription %}
 // Control del drawer - abrir/cerrar con animación
 document.addEventListener('DOMContentLoaded', function() {
     const drawerCheckbox = document.getElementById('updateCardDrawer');
@@ -963,7 +970,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!this.checked) {
             form.reset();
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-credit-card"></i> <span>Actualizar Método de Pago</span>';
+            submitBtn.innerHTML = '<i class="fas fa-credit-card"></i> <span>Guardar</span>';
             closeDrawer();
         }
     });

@@ -8,6 +8,7 @@ import uuid
 import logging
 
 from accounts.models import Company, User, Trial
+from subscriptions.models import Plan
 from bots.models import BotConfig, Document
 from bots.services import N8NService
 from activation.views import send_activation_email
@@ -47,14 +48,29 @@ def company_registration(request):
                         admin_last_name=form.cleaned_data.get('last_name', '')
                     )
                     
-                    # Crear trial inmediatamente
-                    Trial.objects.create(
-                        company=company,
-                        status='active',
-                        max_messages=1000,
-                        max_conversations=100,
-                        max_documents=10
-                    )
+                    # Obtener el plan marcado como trial plan
+                    trial_plan = Plan.objects.filter(is_trial_plan=True, is_active=True).first()
+                    
+                    # Crear trial con el plan asociado
+                    trial_data = {
+                        'company': company,
+                        'status': 'active',
+                    }
+                    
+                    if trial_plan:
+                        # Usar límites del plan trial
+                        trial_data['plan'] = trial_plan
+                        trial_data['max_documents'] = trial_plan.max_documents
+                        trial_data['max_conversations'] = 100  # Valor fijo por ahora
+                        trial_data['max_messages'] = 1000  # Valor fijo por ahora
+                    else:
+                        # Fallback a valores por defecto si no hay plan trial configurado
+                        logger.warning("No trial plan configured, using default values")
+                        trial_data['max_messages'] = 1000
+                        trial_data['max_conversations'] = 100
+                        trial_data['max_documents'] = 10
+                    
+                    Trial.objects.create(**trial_data)
                     
                     # Enviar email de activación
                     logger.info(f"About to send activation email to {email}")

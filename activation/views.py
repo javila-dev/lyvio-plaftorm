@@ -7,16 +7,11 @@ from datetime import timedelta
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from accounts.models import ActivationToken, User, Company
+from accounts.models import ActivationToken, User, Company, Trial
 from onboarding.forms import OnboardingCompanyForm
 from bots.services import N8NService
 import asyncio
 import logging
-
-try:
-    from subscriptions.models import Trial
-except ImportError:
-    Trial = None
 
 logger = logging.getLogger(__name__)
 
@@ -70,48 +65,51 @@ def activate_account(request, token):
                 full_name = f"{company.admin_first_name} {company.admin_last_name}".strip()
                 
                 # Obtener información del trial
-                trial_info = {}
-                if Trial:  # Si el modelo Trial existe
-                    try:
-                        trial = Trial.objects.get(company=company)
-                        trial_info = {
-                            'plan_name': 'Trial',
-                            'trial_start_date': trial.start_date.isoformat() if trial.start_date else timezone.now().isoformat(),
-                            'trial_end_date': trial.end_date.isoformat() if trial.end_date else (timezone.now() + timedelta(days=30)).isoformat(),
-                            'trial_days_remaining': trial.days_remaining if hasattr(trial, 'days_remaining') else 30,
-                            'max_messages': trial.max_messages,
-                            'max_conversations': trial.max_conversations,
-                            'max_documents': trial.max_documents,
+                try:
+                    trial = Trial.objects.get(company=company)
+                    
+                    # Obtener features del plan si existe
+                    plan_features = {}
+                    plan_limits = {}
+                    
+                    if trial.plan:
+                        # Usar features y limits del plan asociado al trial
+                        plan_features = trial.plan.features if trial.plan.features else {}
+                        plan_limits = {
+                            'max_inboxes': trial.plan.max_inboxes,
+                            'max_users': trial.plan.max_users,
                         }
-                        print(f"🎯 Trial encontrado para {company.name}: {trial.start_date} - {trial.end_date}")
-                    except Trial.DoesNotExist:
-                        # Crear fechas de trial por defecto si no existe
-                        start_date = timezone.now()
-                        end_date = start_date + timedelta(days=30)
-                        trial_info = {
-                            'plan_name': 'Trial Default',
-                            'trial_start_date': start_date.isoformat(),
-                            'trial_end_date': end_date.isoformat(),
-                            'trial_days_remaining': 30,
-                            'max_messages': 1000,
-                            'max_conversations': 100,
-                            'max_documents': 10,
-                        }
-                        print(f"🎯 Trial NO encontrado para {company.name}, usando fechas por defecto")
-                else:  # Si el modelo Trial no existe
-                    # Crear fechas de trial por defecto
+                    
+                    trial_info = {
+                        'plan_name': trial.plan.name if trial.plan else 'Trial',
+                        'trial_start_date': trial.start_date.isoformat() if trial.start_date else timezone.now().isoformat(),
+                        'trial_end_date': trial.end_date.isoformat() if trial.end_date else (timezone.now() + timedelta(days=30)).isoformat(),
+                        'trial_days_remaining': trial.days_remaining if hasattr(trial, 'days_remaining') else 30,
+                        'max_messages': trial.max_messages,
+                        'max_conversations': trial.max_conversations,
+                        'max_documents': trial.max_documents,
+                        'features': plan_features,  # Features del plan
+                        'limits': plan_limits,  # Límites del plan
+                    }
+                    logger.info(f"🎯 Trial encontrado para {company.name}: {trial.start_date} - {trial.end_date}")
+                    if trial.plan:
+                        logger.info(f"🎯 Plan trial: {trial.plan.name} con {len(plan_features)} features")
+                except Trial.DoesNotExist:
+                    # Crear fechas de trial por defecto si no existe
                     start_date = timezone.now()
                     end_date = start_date + timedelta(days=30)
                     trial_info = {
-                        'plan_name': 'Trial Model Missing',
+                        'plan_name': 'Trial (sin plan configurado)',
                         'trial_start_date': start_date.isoformat(),
                         'trial_end_date': end_date.isoformat(),
                         'trial_days_remaining': 30,
                         'max_messages': 1000,
                         'max_conversations': 100,
                         'max_documents': 10,
+                        'features': {},
+                        'limits': {},
                     }
-                    print(f"🎯 Modelo Trial no existe, usando fechas por defecto")
+                    logger.warning(f"🎯 Trial NO encontrado para {company.name}, usando fechas por defecto")
                 
                 # Preparar datos para N8N SIN crear usuario aún
                 activation_data = {

@@ -3,9 +3,10 @@ import secrets
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login, get_user_model
 from django.db import transaction, IntegrityError
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -18,6 +19,45 @@ from subscriptions.models import Subscription
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+
+def dev_login(request):
+    """
+    SOLO DEBUG: entra directo a la plataforma sin pasar por el SSO real de
+    Chatwoot (app.lyvio.io). Sin esto, platform.lyvio.io solo se alcanza vía
+    ese SSO, lo que hace imposible probar la plataforma en local sin una
+    cuenta real de Chatwoot. Crea (o reutiliza) una compañía y usuario de
+    prueba con un trial activo, y loguea con el mismo backend estándar que
+    usa el SSO real — nunca disponible fuera de DEBUG.
+    """
+    if not settings.DEBUG:
+        raise Http404()
+
+    from accounts.models import Trial
+
+    email = request.GET.get('email', 'dev@lyvio.local')
+
+    company, _ = Company.objects.get_or_create(
+        email=email,
+        defaults={
+            'name': request.GET.get('company', 'Empresa de Prueba'),
+            'admin_first_name': 'Dev',
+            'admin_last_name': 'User',
+        }
+    )
+    user, _ = User.objects.get_or_create(
+        email=email,
+        defaults={'username': email, 'first_name': 'Dev', 'last_name': 'User', 'company': company, 'is_active': True}
+    )
+    if user.company_id != company.id:
+        user.company = company
+        user.save(update_fields=['company'])
+
+    Trial.objects.get_or_create(company=company, defaults={'status': 'active'})
+
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    messages.info(request, f'Sesión de desarrollo iniciada como {email} (bypass de SSO, solo DEBUG).')
+    return redirect(request.GET.get('next', '/dashboard/'))
 
 
 @csrf_exempt

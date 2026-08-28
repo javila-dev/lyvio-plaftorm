@@ -7,25 +7,25 @@
 <div class="container mx-auto px-6 py-12">
     <!-- Header -->
     <div class="text-center mb-10">
-        <h1 class="text-4xl font-bold text-base-content mb-4">
+        <h1 class="text-4xl font-bold text-slate-900 mb-4">
             ¿Quieres reactivar tu suscripción?
         </h1>
-        <p class="text-lg text-base-content/70">
+        <p class="text-lg text-slate-600">
             Todavía estás dentro del período de gracia
         </p>
     </div>
 
     <!-- Card Principal -->
     <div class="max-w-2xl mx-auto">
-        <div class="card bg-base-100 shadow-xl">
+        <div class="card">
             <div class="card-body p-8">
                 <!-- Alert Informativo -->
-                <div class="alert alert-info mb-6">
+                <div class="mb-6 p-4 rounded-lg bg-[var(--info-bg)] border border-[var(--info)]/30">
                     <div class="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="shrink-0 w-6 h-6" style="color: var(--info);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <div>
-                            <h3 class="font-bold">¡Buenas noticias!</h3>
-                            <div class="text-sm mt-1">
+                            <h3 class="font-bold" style="color: var(--info);">¡Buenas noticias!</h3>
+                            <div class="text-sm mt-1" style="color: var(--info);">
                                 <p>Tu suscripción fue cancelada pero todavía tienes <span class="font-semibold">{{ days_remaining }} días</span> de acceso restantes.</p>
                                 <p class="mt-1">Puedes reactivarla <strong>sin costo adicional</strong> y seguir disfrutando de tu plan.</p>
                             </div>
@@ -35,13 +35,13 @@
 
                 <!-- Info del Plan -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-base-200 rounded-lg p-4">
-                        <div class="text-sm text-base-content/60 mb-1">Plan Actual</div>
-                        <div class="text-lg font-semibold">{{ subscription.plan.name }}</div>
+                    <div class="bg-[#18191b] border border-slate-200 rounded-lg p-4">
+                        <div class="text-sm text-slate-500 mb-1">Plan Actual</div>
+                        <div class="text-lg font-semibold text-slate-900">{{ subscription.plan.name }}</div>
                     </div>
-                    <div class="bg-base-200 rounded-lg p-4">
-                        <div class="text-sm text-base-content/60 mb-1">Ciclo de Facturación</div>
-                        <div class="text-lg font-semibold">
+                    <div class="bg-[#18191b] border border-slate-200 rounded-lg p-4">
+                        <div class="text-sm text-slate-500 mb-1">Ciclo de Facturación</div>
+                        <div class="text-lg font-semibold text-slate-900">
                             {% if subscription.billing_cycle == 'monthly' %}Mensual{% else %}Anual{% endif %}
                         </div>
                     </div>
@@ -82,11 +82,11 @@
                 <form method="POST" class="space-y-4" id="reactivateForm">
                     {% csrf_token %}
                     
-                    <div class="divider my-6"></div>
-                    
+                    <hr class="my-6 border-slate-200">
+
                     <!-- Botones de Acción -->
                     <div class="flex gap-3 justify-end">
-                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-neutral" id="cancelBtn">
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn border border-slate-300 text-slate-600 hover:bg-[#272a2d]" id="cancelBtn">
                             Cancelar
                         </a>
                         <button type="submit" class="btn btn-success flex items-center gap-2" id="reactivateBtn">
@@ -100,7 +100,7 @@
                 </form>
 
                 <!-- Nota al pie -->
-                <div class="text-sm text-base-content/60 text-center mt-6">
+                <div class="text-sm text-slate-500 text-center mt-6">
                     <p>Tu suscripción se reactivará inmediatamente y continuará hasta {{ subscription.current_period_end|date:"d/m/Y" }}</p>
                 </div>
             </div>

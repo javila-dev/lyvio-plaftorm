@@ -5,25 +5,25 @@
 
 {% block content %}
   <div class="ml-3 mb-4">
-    <h2 class="font-bold mb-1 flex items-center" style="letter-spacing:0.5px; font-size:1.5rem; color:#334155;">
-      <span class="text-blue-600 mr-2" style="font-size:1.5rem;">💳</span> Datos de Facturación
+    <h2 class="font-bold mb-1 flex items-center text-slate-900" style="letter-spacing:0.5px; font-size:1.5rem;">
+      <span class="text-[#2781f6] mr-2" style="font-size:1.5rem;">💳</span> Datos de Facturación
     </h2>
     <p class="text-gray-500 mb-0 text-lg" style="margin-left:0.2rem;">Completa los datos fiscales para emitir facturas y activar suscripciones.</p>
   </div>
 
 
-<div class="mx-auto py-3" style="max-width:900px; background:#f8fafc;max-width:600px">
+<div class="mx-auto py-3" style="max-width:600px;">
 
   <form method="post" novalidate autocomplete="off">
         {% csrf_token %}
         {% if form.non_field_errors %}
-          <div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>
+          <div class="mb-3 p-3 rounded-lg" style="background: var(--danger-bg); border: 1px solid rgba(248, 113, 113, 0.3); color: var(--danger);">{{ form.non_field_errors }}</div>
         {% endif %}
 
   <style>
           .form-label {
             font-weight: 600;
-            color: #475569;
+            color: var(--text-muted);
             margin-bottom: 0.35rem;
             font-size: 0.92rem;
             letter-spacing: 0.02em;
@@ -37,8 +37,9 @@
           .input-group-modern input,
           .input-group-modern select {
             border-radius: 0.9rem;
-            border: 1px solid #e6eef7;
-            background: #ffffff;
+            border: 1px solid var(--border-strong);
+            background: var(--surface);
+            color: var(--text);
             font-size: 0.95rem;
             height: 2.6rem;
             width: 100%;
@@ -47,9 +48,10 @@
           }
           .input-group-modern input:focus,
           .input-group-modern select:focus {
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 0.12rem #0ea5e933;
-            background: #fff;
+            outline: none;
+            border-color: #2781f6;
+            box-shadow: 0 0 0 0.12rem rgba(39, 129, 246, 0.2);
+            background: var(--surface-raised);
           }
           .is-invalid { border-color: #dc3545 !important; box-shadow: 0 0 0 0.12rem #dc354533; }
           .is-valid { border-color: #16a34a !important; box-shadow: 0 0 0 0.12rem #16a34a33; }
@@ -131,7 +133,7 @@
         </div>
 
     <div class="flex justify-end gap-3 mt-6">
-      <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="window.location.href='{% url 'dashboard:dashboard' %}'">Cancelar</button>
+      <button type="button" class="btn btn-sm border border-slate-300 text-slate-600 hover:bg-[#272a2d]" onclick="window.location.href='{% url 'dashboard:dashboard' %}'">Cancelar</button>
       <button id="billing-save" class="btn btn-sm btn-primary" type="submit" style="font-weight:600;letter-spacing:0.3px;">Guardar</button>
     </div>
       </form>

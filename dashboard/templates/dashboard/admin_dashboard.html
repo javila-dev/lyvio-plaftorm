@@ -5,12 +5,12 @@
 
 {% block content %}
 <!-- Header -->
-<div class="bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200">
+<div class="bg-[#18191b] border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
-                    <i class="fas fa-chart-line text-slate-700"></i>
+                    <i class="fas fa-chart-line text-slate-500"></i>
                     Dashboard Administrativo
                 </h1>
                 <p class="text-sm text-slate-600 mt-1">
@@ -25,7 +25,7 @@
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Total Empresas -->
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Total Empresas</p>
@@ -36,7 +36,7 @@
         </div>
         
         <!-- Activas -->
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Cuentas Activas</p>
@@ -47,7 +47,7 @@
         </div>
         
         <!-- Pendientes -->
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Pendientes Activación</p>
@@ -58,7 +58,7 @@
         </div>
         
         <!-- Recientes -->
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Registros (7 días)</p>
@@ -71,7 +71,7 @@
     
     <!-- Secondary Stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Tokens Pendientes</p>
@@ -81,7 +81,7 @@
             </div>
         </div>
         
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Tokens Expirados (24h)</p>
@@ -91,7 +91,7 @@
             </div>
         </div>
         
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Trials Activos</p>
@@ -101,7 +101,7 @@
             </div>
         </div>
         
-        <div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+        <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-slate-500 mb-1">Trials por Expirar</p>
@@ -113,13 +113,13 @@
     </div>
     
     <!-- Filters -->
-    <div class="bg-white border border-slate-200 rounded-lg p-4">
+    <div class="bg-[#212225] border border-slate-200 rounded-lg p-4">
         <form method="get" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             <div class="md:col-span-3">
                 <label class="label">
                     <span class="label-text text-sm font-semibold text-slate-700">Estado</span>
                 </label>
-                <select name="status" class="select select-bordered w-full select-sm bg-white">
+                <select name="status" class="select select-bordered w-full select-sm">
                     <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Todas las empresas</option>
                     <optgroup label="Estado de Cuenta">
                         <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Cuentas activas</option>
@@ -139,15 +139,15 @@
                 <label class="label">
                     <span class="label-text text-sm font-semibold text-slate-700">Buscar</span>
                 </label>
-                <input type="text" 
-                       name="search" 
-                       class="input input-bordered w-full input-sm bg-white" 
+                <input type="text"
+                       name="search"
+                       class="input input-bordered w-full input-sm"
                        placeholder="Nombre de empresa, email..."
                        value="{{ search }}">
             </div>
-            
+
             <div class="md:col-span-2">
-                <button type="submit" class="btn btn-sm btn-neutral w-full">
+                <button type="submit" class="btn btn-sm btn-primary w-full">
                     <i class="fas fa-search mr-2"></i>Filtrar
                 </button>
             </div>
@@ -155,26 +155,26 @@
     </div>
     
     <!-- Resources Info Alert -->
-    <div class="alert bg-blue-50 border border-blue-200">
+    <div class="p-4 rounded-lg" style="background: var(--info-bg); border: 1px solid var(--info); border-color: rgba(34, 211, 238, 0.3);">
         <div class="flex gap-3">
-            <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+            <i class="fas fa-info-circle text-xl" style="color: var(--info);"></i>
             <div class="flex-1">
-                <h3 class="text-sm font-semibold text-blue-900 mb-2">Recursos del Trial</h3>
+                <h3 class="text-sm font-semibold mb-2" style="color: var(--info);">Recursos del Trial</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
                     <div>
-                        <span class="font-semibold text-blue-700">
+                        <span class="font-semibold" style="color: var(--info);">
                             <i class="fas fa-comments mr-1"></i>Mensajes:
                         </span>
                         <span class="text-slate-600">Total procesados por bots IA</span>
                     </div>
                     <div>
-                        <span class="font-semibold text-blue-700">
+                        <span class="font-semibold" style="color: var(--info);">
                             <i class="fas fa-comment-dots mr-1"></i>Conversaciones:
                         </span>
                         <span class="text-slate-600">Conversaciones únicas iniciadas</span>
                     </div>
                     <div>
-                        <span class="font-semibold text-blue-700">
+                        <span class="font-semibold" style="color: var(--info);">
                             <i class="fas fa-file-alt mr-1"></i>Documentos:
                         </span>
                         <span class="text-slate-600">Archivos para entrenar el bot</span>
@@ -189,12 +189,12 @@
     </div>
 
     <!-- Companies List -->
-    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+    <div class="bg-[#212225] border border-slate-200 rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 bg-[#18191b]">
             <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
                 <i class="fas fa-list text-slate-600"></i>
                 Lista de Empresas
-                <span class="badge badge-neutral badge-sm">{{ companies|length }} de {{ companies.paginator.count }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-900">{{ companies|length }} de {{ companies.paginator.count }}</span>
             </h2>
         </div>
         <div class="divide-y divide-slate-200">
@@ -213,11 +213,11 @@
                     <!-- Status & Metadata -->
                     <div class="lg:col-span-2">
                         {% if company.user_count > 0 %}
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold mb-1">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/15 text-emerald-400 rounded-full text-xs font-semibold mb-1">
                                 <i class="fas fa-check-circle text-[10px]"></i>Activa
                             </span>
                         {% else %}
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold mb-1">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/15 text-amber-400 rounded-full text-xs font-semibold mb-1">
                                 <i class="fas fa-clock text-[10px]"></i>Pendiente
                             </span>
                         {% endif %}
@@ -241,18 +241,18 @@
                     <!-- Plan Info -->
                     <div class="lg:col-span-2">
                         {% if company.plan_info.is_trial %}
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/15 text-blue-400 rounded-full text-xs font-semibold">
                                 <i class="fas fa-gift text-[10px]"></i>{{ company.plan_info.plan_name }}
                             </span>
                         {% else %}
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-500/15 text-purple-400 rounded-full text-xs font-semibold">
                                 <i class="fas fa-crown text-[10px]"></i>{{ company.plan_info.plan_name }}
                             </span>
                         {% endif %}
                         {% if company.plan_info.expiry_date %}
                             <div class="text-[11px] mt-1">
                                 {% if company.plan_info.days_remaining <= 7 %}
-                                    <span class="inline-flex items-center gap-0.5 text-red-600 font-bold">
+                                    <span class="inline-flex items-center gap-0.5 text-red-500 font-bold">
                                         <i class="fas fa-exclamation-triangle"></i> {{ company.plan_info.days_remaining }}d
                                     </span>
                                 {% elif company.plan_info.days_remaining <= 30 %}
@@ -271,13 +271,13 @@
                         <p class="text-[10px] text-slate-500 mb-0.5 uppercase tracking-wide">Vencimiento</p>
                         {% if company.plan_info.expiry_date %}
                             {% if company.plan_info.is_expired %}
-                                <p class="text-sm font-bold text-red-600">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold mt-0.5">
+                                <p class="text-sm font-bold text-red-500">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/15 text-red-400 rounded text-[10px] font-semibold mt-0.5">
                                     <i class="fas fa-times-circle"></i>Expirado
                                 </span>
                             {% elif company.plan_info.days_remaining <= 7 %}
-                                <p class="text-sm font-bold text-red-600">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-semibold mt-0.5">
+                                <p class="text-sm font-bold text-red-500">{{ company.plan_info.expiry_date|date:"d/m/Y" }}</p>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/15 text-red-400 rounded text-[10px] font-semibold mt-0.5">
                                     <i class="fas fa-exclamation-triangle"></i>Por vencer
                                 </span>
                             {% elif company.plan_info.days_remaining <= 30 %}
@@ -309,7 +309,7 @@
                                 </div>
                             </div>
                         {% elif company.plan_info.resources and company.plan_info.resources.type == 'subscription' %}
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/15 text-emerald-400 rounded text-xs font-semibold">
                                 <i class="fas fa-infinity"></i>Ilimitados
                             </span>
                         {% else %}
@@ -326,7 +326,7 @@
             </div>
             {% empty %}
             <div class="text-center py-12">
-                <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
+                <i class="fas fa-search text-6xl text-slate-600 mb-4"></i>
                 <h3 class="text-lg font-semibold text-slate-600 mb-2">No se encontraron empresas</h3>
                 <p class="text-sm text-slate-500">Intenta ajustar los filtros de búsqueda</p>
             </div>
@@ -335,28 +335,28 @@
         
         <!-- Pagination -->
         {% if companies.has_other_pages %}
-        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <div class="px-6 py-4 border-t border-slate-200 bg-[#18191b]">
             <div class="flex justify-center">
                 <div class="join">
                     {% if companies.has_previous %}
-                        <a href="?page={{ companies.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
-                           class="join-item btn btn-sm">
+                        <a href="?page={{ companies.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}"
+                           class="join-item btn btn-sm border border-slate-300 text-slate-600 hover:bg-[#272a2d]">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     {% endif %}
-                    
+
                     {% for num in companies.paginator.page_range %}
                         {% if companies.number == num %}
-                            <button class="join-item btn btn-sm btn-active">{{ num }}</button>
+                            <button class="join-item btn btn-sm btn-primary">{{ num }}</button>
                         {% elif num > companies.number|add:'-3' and num < companies.number|add:'3' %}
-                            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
-                               class="join-item btn btn-sm">{{ num }}</a>
+                            <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}"
+                               class="join-item btn btn-sm border border-slate-300 text-slate-600 hover:bg-[#272a2d]">{{ num }}</a>
                         {% endif %}
                     {% endfor %}
-                    
+
                     {% if companies.has_next %}
-                        <a href="?page={{ companies.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" 
-                           class="join-item btn btn-sm">
+                        <a href="?page={{ companies.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}"
+                           class="join-item btn btn-sm border border-slate-300 text-slate-600 hover:bg-[#272a2d]">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     {% endif %}

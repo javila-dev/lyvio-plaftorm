@@ -4,7 +4,7 @@
 {% block title %}Mi Plan - {{ company.name }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4 py-6" style="max-width: 1400px;">
+<div class="mx-auto px-4 py-6" style="max-width: 1400px;">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-slate-800 mb-1">Mi Plan</h1>
@@ -18,7 +18,7 @@
     
     <div class="relative mt-3">
         <!-- Botón Anterior -->
-        <button id="prevBtn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-white border-2 border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-all shadow-lg flex items-center justify-center">
+        <button id="prevBtn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-[#212225] border border-slate-300 hover:border-indigo-500 hover:bg-[#272a2d] text-slate-600 hover:text-indigo-600 transition-all shadow-lg flex items-center justify-center">
             <i class="fas fa-chevron-left"></i>
         </button>
         
@@ -27,8 +27,8 @@
             <div id="plansCarousel" class="flex gap-5 transition-transform duration-500 ease-out px-1">
                 {% for plan in available_plans %}
                 <div class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-                    <div class="relative bg-white rounded-lg border-2 transition-all duration-300 h-full hover:-translate-y-2 hover:shadow-xl overflow-hidden
-                                {% if plan == current_plan %}border-indigo-400 ring-2 ring-indigo-100 shadow-md{% else %}border-slate-300 hover:border-indigo-400{% endif %}">
+                    <div class="relative bg-[#212225] rounded-lg border transition-all duration-300 h-full hover:-translate-y-2 hover:shadow-xl overflow-hidden
+                                {% if plan == current_plan %}border-indigo-400 shadow-md{% else %}border-slate-300 hover:border-indigo-400{% endif %}">
                         
                         {% if plan == current_plan %}
                         <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-bl-lg z-10">
@@ -37,7 +37,7 @@
                         {% endif %}
                         
                         <!-- Header del Plan -->
-                        <div class="pt-6 pb-4 px-5 text-center {% if plan == current_plan %}bg-gradient-to-br from-indigo-50 to-white{% else %}bg-slate-50{% endif %}">
+                        <div class="pt-6 pb-4 px-5 text-center bg-slate-50">
                             <h3 class="text-base font-bold text-slate-800 mb-4 {% if plan == current_plan %}mt-3{% endif %}">{{ plan.name }}</h3>
                             <div class="mb-3">
                                 <span class="text-4xl font-bold text-slate-800">${{ plan.price_monthly|floatformat:0|intcomma }}</span>
@@ -53,9 +53,9 @@
                         </div>
                         
                         <!-- Features -->
-                        <div class="px-5 py-6 space-y-4 bg-white">
+                        <div class="px-5 py-6 space-y-4 bg-[#212225]">
                             <div class="flex items-center gap-3 text-sm">
-                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                <div class="w-9 h-9 rounded-lg icon-chip flex-shrink-0">
                                     <i class="fas fa-inbox"></i>
                                 </div>
                                 <div>
@@ -65,7 +65,7 @@
                             </div>
                             
                             <div class="flex items-center gap-3 text-sm">
-                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                <div class="w-9 h-9 rounded-lg icon-chip flex-shrink-0">
                                     <i class="fas fa-file-alt"></i>
                                 </div>
                                 <div>
@@ -75,7 +75,7 @@
                             </div>
                             
                             <div class="flex items-center gap-3 text-sm">
-                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                <div class="w-9 h-9 rounded-lg icon-chip flex-shrink-0">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div>
@@ -86,7 +86,7 @@
                         </div>
                         
                         <!-- Action Button -->
-                        <div class="px-5 pb-5 bg-white border-t border-slate-100 pt-5">
+                        <div class="px-5 pb-5 bg-[#212225] border-t border-slate-100 pt-5">
                             {% if plan == current_plan %}
                                 <button class="w-full py-2.5 px-4 rounded-lg bg-slate-100 text-slate-500 text-sm font-medium cursor-not-allowed" disabled>
                                     <i class="fas fa-check mr-2"></i>Plan Actual
@@ -109,7 +109,7 @@
         </div>
         
         <!-- Botón Siguiente -->
-        <button id="nextBtn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-white border-2 border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-all shadow-lg flex items-center justify-center">
+        <button id="nextBtn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-[#212225] border border-slate-300 hover:border-indigo-500 hover:bg-[#272a2d] text-slate-600 hover:text-indigo-600 transition-all shadow-lg flex items-center justify-center">
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
@@ -117,28 +117,28 @@
 
 <!-- Información Adicional -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-    <div class="bg-white rounded-lg border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition-all">
+    <div class="bg-[#212225] rounded-lg border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition-all">
         <div class="flex gap-4">
-            <div class="w-11 h-11 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-11 h-11 rounded-lg icon-chip flex-shrink-0">
                 <i class="fas fa-info-circle text-lg"></i>
             </div>
             <div class="flex-1">
                 <h3 class="text-base font-semibold text-slate-800 mb-3">Cambios de Plan</h3>
                 <ul class="space-y-2 text-sm text-slate-600">
                     <li class="flex gap-2">
-                        <i class="fas fa-check text-blue-500 text-xs mt-1"></i>
+                        <i class="fas fa-check text-success text-xs mt-1"></i>
                         <span>Los upgrades son efectivos inmediatamente</span>
                     </li>
                     <li class="flex gap-2">
-                        <i class="fas fa-check text-blue-500 text-xs mt-1"></i>
+                        <i class="fas fa-check text-success text-xs mt-1"></i>
                         <span>Se prorratea el costo según días restantes</span>
                     </li>
                     <li class="flex gap-2">
-                        <i class="fas fa-check text-blue-500 text-xs mt-1"></i>
+                        <i class="fas fa-check text-success text-xs mt-1"></i>
                         <span>Los downgrades requieren contactar soporte</span>
                     </li>
                     <li class="flex gap-2">
-                        <i class="fas fa-check text-blue-500 text-xs mt-1"></i>
+                        <i class="fas fa-check text-success text-xs mt-1"></i>
                         <span>Los límites se actualizan automáticamente</span>
                     </li>
                 </ul>
@@ -146,9 +146,9 @@
         </div>
     </div>
     
-    <div class="bg-white rounded-lg border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition-all">
+    <div class="bg-[#212225] rounded-lg border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition-all">
         <div class="flex gap-4">
-            <div class="w-11 h-11 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-11 h-11 rounded-lg icon-chip flex-shrink-0">
                 <i class="fas fa-rocket text-lg"></i>
             </div>
             <div class="flex-1">
@@ -169,7 +169,7 @@
 <!-- Sin Suscripción -->
 <div class="text-center py-16 bg-slate-50 rounded-lg border border-slate-200">
     <div class="mb-5">
-        <i class="fas fa-box-open text-5xl text-slate-300"></i>
+        <i class="fas fa-box-open text-5xl text-slate-600"></i>
     </div>
     <h3 class="text-xl font-bold text-slate-800 mb-2">No tienes un plan activo</h3>
     <p class="text-sm text-slate-500 mb-6">Contacta con nuestro equipo para activar tu suscripción.</p>

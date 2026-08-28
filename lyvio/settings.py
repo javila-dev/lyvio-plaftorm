@@ -18,7 +18,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 CSRF_TRUSTED_ORIGINS = env.list(
     'CSRF_TRUSTED_ORIGINS',
     default=[
-        'https://lyvio.io',
+        'https://platform.lyvio.io',
         'http://localhost:8000',
         'http://127.0.0.1:8000',
         "https://ibex-daring-molly.ngrok-free.app"

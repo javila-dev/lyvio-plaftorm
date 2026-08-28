@@ -1,0 +1,48 @@
+{
+  "title": "Elige la dirección visual — Landing de Lyvio (registro: más segura)",
+  "question": "Ronda 'más segura': tus 3 candidatas más convencionales, más el estándar de categoría contra competidores reales.",
+  "options": [
+    {
+      "id": "safer-fintech",
+      "label": "Onboarding Fintech Colombiano",
+      "lineage": "apps de billetera móvil colombianas (Nequi, Daviplata, Bancolombia): numerales grandes y redondeados, un acento saturado, micro-ilustraciones cálidas",
+      "thesis": "Lyvio se presenta con el mismo lenguaje visual con el que el dueño de negocio ya confía su dinero todos los días.",
+      "palette": ["#FDFBF6", "#7A2E8A", "#FFB84D", "#1A1A1A"],
+      "materials": ["superficies planas redondeadas", "micro-ilustración cálida", "confeti/éxito animado"],
+      "viewport": "Onboarding de 3 pasos con numerales enormes, un botón grande redondeado, y una micro-animación de 'bot activado' como las de confirmación de pago.",
+      "risk": "Puede leerse como app bancaria en vez de herramienta de atención al cliente si no se ancla al chat/bot desde el primer scroll."
+    },
+    {
+      "id": "safer-rotulo",
+      "label": "El Rótulo Pintado a Mano",
+      "lineage": "letreros de negocio pintados a mano en Bogotá/Medellín: colores planos, tipografía naif gruesa, íconos pintados por rubro",
+      "thesis": "Lyvio se anuncia como el letrero pintado a mano de tu negocio — humano, local, hecho a la medida de tu rubro.",
+      "palette": ["#F2E8D5", "#E8A93B", "#C0392B", "#1B4F72"],
+      "materials": ["línea pintada imperfecta (SVG)", "textura madera/lata sutil", "íconos folk por rubro"],
+      "viewport": "El héroe es un letrero pintado con el nombre del negocio del visitante y un ícono de su rubro (diente, casa, carrito) pintado al lado del bot.",
+      "risk": "Sin precisión tipográfica se lee 'artesanal/casero' en vez de 'tecnología confiable'."
+    },
+    {
+      "id": "safer-mostrador",
+      "label": "El Mostrador de la Tienda de Barrio",
+      "lineage": "el mostrador de vidrio de la tienda de esquina: frascos, lista de precios a mano, el letrero de neón 'ABIERTO'",
+      "thesis": "La landing se siente como entrar a la tienda de la esquina — familiar, de confianza, donde ya te conocen — pero el que atiende ahora es un bot.",
+      "palette": ["#E9DCC3", "#6B4226", "#F2F2F2", "#FF3EA5"],
+      "materials": ["madera cálida", "papel kraft", "acento neón único (letrero ABIERTO)"],
+      "viewport": "Un mostrador ilustrado con frascos convertidos en tarjetas de precio, y el letrero de neón 'ABIERTO' haciendo de CTA principal.",
+      "risk": "Puede caer en nostalgia decorativa si el mostrador se vuelve ilustración en vez de estructura funcional de la página."
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "code" },
+  "canon": true,
+  "canonCard": {
+    "label": "El estándar de la categoría, contra competidores reales",
+    "thesis": "Ejecutado a plena calidad como lo hacen Wati, ManyChat o la propia Chatwoot.com hoy: héroe con captura de producto, franja de logos de clientes, un acento de marca (verde WhatsApp o azul), plantilla SaaS estándar.",
+    "palette": ["#FFFFFF", "#111827", "#25D366"],
+    "materials": ["captura de producto real", "franja de logos", "tipografía de sistema"],
+    "viewport": "Hero con headline + captura del bot funcionando + fila de logos de clientes — la plantilla que cualquier competidor de WhatsApp Business ya ejecuta bien.",
+    "risk": "Correcto y creíble, pero no distingue a Lyvio de Wati o ManyChat en el primer vistazo."
+  },
+  "steer": true
+}

@@ -7,18 +7,18 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="text-center mb-8">
-        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-            <i class="fas fa-rocket text-white text-4xl"></i>
+        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl icon-chip">
+            <i class="fas fa-rocket text-4xl"></i>
         </div>
         <h1 class="text-3xl font-bold text-slate-900 mb-2">Activar Plan {{ plan.name }}</h1>
         <p class="text-slate-600">{{ company.name }}</p>
-        
+
         {% if discount_info %}
-        <div class="alert alert-success shadow-lg mt-6 max-w-2xl mx-auto">
-            <i class="fas fa-gift text-2xl"></i>
+        <div class="mt-6 max-w-2xl mx-auto p-4 rounded-lg bg-[var(--success-bg)] border border-[var(--success)]/30 text-left flex items-start gap-3">
+            <i class="fas fa-gift text-2xl text-[var(--success)]"></i>
             <div>
-                <h3 class="font-bold text-lg">¡{{ discount_info.campaign.name }}!</h3>
-                <p class="text-sm">{{ discount_info.campaign.description }}</p>
+                <h3 class="font-bold text-lg text-[var(--success)]">¡{{ discount_info.campaign.name }}!</h3>
+                <p class="text-sm text-[var(--success)]">{{ discount_info.campaign.description }}</p>
             </div>
         </div>
         {% endif %}
@@ -28,19 +28,19 @@
         {% csrf_token %}
         
         <!-- Ciclo de Facturación -->
-        <div class="card bg-white shadow-xl mb-6">
+        <div class="card mb-6">
             <div class="card-body">
                 <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <i class="fas fa-calendar-alt text-indigo-600"></i>
+                    <i class="fas fa-calendar-alt text-slate-500"></i>
                     Selecciona tu Ciclo de Facturación
                 </h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Plan Mensual -->
                     <label for="monthly" class="cursor-pointer">
-                        <div class="card border-2 border-indigo-200 hover:border-indigo-500 hover:shadow-xl transition-all h-full">
+                        <div class="card billing-card billing-card-primary transition-all h-full">
                             <div class="card-body relative">
-                                <input type="radio" name="billing_cycle" id="monthly" value="monthly" checked 
+                                <input type="radio" name="billing_cycle" id="monthly" value="monthly" checked
                                        class="radio radio-primary absolute top-4 right-4">
                                 
                                 <h3 class="text-xl font-bold text-slate-900 mb-4">Plan Mensual</h3>
@@ -48,7 +48,7 @@
                                 {% if discount_info %}
                                 <div class="mb-3">
                                     <div class="flex items-baseline gap-1">
-                                        <span class="text-4xl font-bold text-indigo-600">${{ discount_info.monthly_final|floatformat:0|intcomma }}</span>
+                                        <span class="text-4xl font-bold text-[#2781f6]">${{ discount_info.monthly_final|floatformat:0|intcomma }}</span>
                                         <span class="text-slate-600 text-lg">/mes</span>
                                     </div>
                                     <div class="flex items-center gap-2 mt-2">
@@ -64,7 +64,7 @@
                                 </div>
                                 {% else %}
                                 <div class="mb-4">
-                                    <span class="text-4xl font-bold text-indigo-600">${{ monthly_price|floatformat:0|intcomma }}</span>
+                                    <span class="text-4xl font-bold text-[#2781f6]">${{ monthly_price|floatformat:0|intcomma }}</span>
                                     <span class="text-slate-600 text-lg">/mes</span>
                                 </div>
                                 {% endif %}
@@ -90,16 +90,16 @@
                     <!-- Plan Anual -->
                     {% if yearly_price %}
                     <label for="yearly" class="cursor-pointer">
-                        <div class="card border-2 border-emerald-200 hover:border-emerald-500 hover:shadow-xl transition-all h-full relative overflow-hidden">
+                        <div class="card billing-card billing-card-success transition-all h-full relative overflow-hidden">
                             <!-- Badge Más Popular -->
                             <div class="absolute top-0 right-0">
-                                <div class="bg-gradient-to-br from-emerald-500 to-green-600 text-white px-6 py-2 rounded-bl-2xl font-bold text-sm shadow-lg">
+                                <div class="bg-emerald-500 text-white px-6 py-2 rounded-bl-2xl font-bold text-sm">
                                     ⭐ MÁS POPULAR
                                 </div>
                             </div>
-                            
+
                             <div class="card-body relative mt-8">
-                                <input type="radio" name="billing_cycle" id="yearly" value="yearly" 
+                                <input type="radio" name="billing_cycle" id="yearly" value="yearly"
                                        class="radio radio-success absolute top-4 right-4">
                                 
                                 <h3 class="text-xl font-bold text-slate-900 mb-4">Plan Anual</h3>
@@ -147,37 +147,37 @@
         <!-- Detalles y Resumen -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Detalles del Plan -->
-            <div class="card bg-white shadow-xl">
+            <div class="card">
                 <div class="card-body">
                     <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-box text-indigo-600"></i>
+                        <i class="fas fa-box text-slate-500"></i>
                         Detalles del Plan
                     </h2>
-                    
+
                     <h3 class="text-lg font-bold text-slate-800 mb-4">{{ plan.name }}</h3>
-                    
+
                     <ul class="space-y-3">
                         <li class="flex items-center gap-3 text-slate-700">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-inbox text-emerald-600"></i>
+                            <div class="w-8 h-8 rounded-lg icon-chip flex-shrink-0">
+                                <i class="fas fa-inbox"></i>
                             </div>
                             <span><strong>{{ plan.max_inboxes }}</strong> inbox{{ plan.max_inboxes|pluralize }}</span>
                         </li>
                         <li class="flex items-center gap-3 text-slate-700">
-                            <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-file text-amber-600"></i>
+                            <div class="w-8 h-8 rounded-lg icon-chip flex-shrink-0">
+                                <i class="fas fa-file"></i>
                             </div>
                             <span><strong>{{ plan.max_documents }}</strong> documento{{ plan.max_documents|pluralize }}</span>
                         </li>
                         <li class="flex items-center gap-3 text-slate-700">
-                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-users text-blue-600"></i>
+                            <div class="w-8 h-8 rounded-lg icon-chip flex-shrink-0">
+                                <i class="fas fa-users"></i>
                             </div>
                             <span><strong>{{ plan.max_users }}</strong> usuario{{ plan.max_users|pluralize }}</span>
                         </li>
                         <li class="flex items-center gap-3 text-slate-700">
-                            <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-headset text-purple-600"></i>
+                            <div class="w-8 h-8 rounded-lg icon-chip flex-shrink-0">
+                                <i class="fas fa-headset"></i>
                             </div>
                             <span>Soporte técnico incluido</span>
                         </li>
@@ -186,10 +186,10 @@
             </div>
 
             <!-- Resumen de Compra -->
-            <div class="card bg-gradient-to-br from-indigo-50 to-purple-50 shadow-xl border-2 border-indigo-200">
+            <div class="card" style="border-color: rgba(39, 129, 246, 0.4);">
                 <div class="card-body">
                     <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <i class="fas fa-receipt text-indigo-600"></i>
+                        <i class="fas fa-receipt text-[#2781f6]"></i>
                         Resumen de Compra
                     </h2>
                     
@@ -230,7 +230,7 @@
                     
                     <div class="flex justify-between items-center">
                         <span class="text-lg font-bold text-slate-900">Total a Pagar:</span>
-                        <span id="totalAmount" class="text-3xl font-bold text-indigo-600">
+                        <span id="totalAmount" class="text-3xl font-bold text-[#2781f6]">
                             {% if discount_info %}
                                 ${{ discount_info.monthly_final|floatformat:0|intcomma }}
                             {% else %}
@@ -243,12 +243,12 @@
         </div>
 
         <!-- Pago Seguro -->
-        <div class="card bg-white shadow-xl mb-6">
+        <div class="card mb-6">
             <div class="card-body">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div class="flex-1">
                         <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
-                            <i class="fas fa-shield-alt text-emerald-600"></i>
+                            <i class="fas fa-shield-alt text-success"></i>
                             Pago 100% Seguro
                         </h3>
                         <p class="text-slate-600">
@@ -256,9 +256,9 @@
                             Serás redirigido a la pasarela de pago para completar la transacción.
                         </p>
                     </div>
-                    <div class="flex-shrink-0">
-                        <img src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.png" 
-                             alt="Wompi" class="h-16 object-contain">
+                    <div class="flex-shrink-0 bg-white rounded-lg px-4 py-2">
+                        <img src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.png"
+                             alt="Wompi" class="h-12 object-contain">
                     </div>
                 </div>
             </div>
@@ -270,13 +270,30 @@
                 <i class="fas fa-credit-card"></i>
                 Proceder al Pago
             </button>
-            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-lg gap-2 w-full sm:w-auto">
+            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-lg gap-2 w-full sm:w-auto border border-slate-300 text-slate-600 hover:bg-[#272a2d]">
                 <i class="fas fa-arrow-left"></i>
                 Volver
             </a>
         </div>
     </form>
 </div>
+
+<style>
+.billing-card {
+    border-width: 2px;
+    border-color: var(--border);
+}
+.billing-card-primary:hover { border-color: #2781f6; }
+.billing-card-primary:has(input:checked) {
+    border-color: #2781f6;
+    box-shadow: 0 0 0 3px rgba(39, 129, 246, 0.15);
+}
+.billing-card-success:hover { border-color: #10b981; }
+.billing-card-success:has(input:checked) {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -310,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Make entire card clickable
-    document.querySelectorAll('.card.border-primary, .card.border-success').forEach(card => {
+    document.querySelectorAll('.billing-card').forEach(card => {
         card.addEventListener('click', function() {
             const radio = this.querySelector('input[type="radio"]');
             if (radio) {

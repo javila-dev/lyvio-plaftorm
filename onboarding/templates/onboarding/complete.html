@@ -1,202 +1,161 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡Listo! - Lyvio</title>
-    
-    <!-- Favicon -->
+
     <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
-    
-    <!-- Tailwind CSS + DaisyUI -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.57.0/dist/full.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css">
+
+    {% include 'onboarding/_design_system.html' %}
     <style>
-        * { font-family: 'Inter', system-ui, sans-serif; }
-        
-        body {
-            min-height: 100vh;
-            background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);
+        @media (prefers-reduced-motion: no-preference) {
+            @keyframes lv-success-pop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+            .lv-success-icon { animation: lv-success-pop 0.4s cubic-bezier(0.16,1,0.3,1); }
         }
-        
-        @keyframes successPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .complete-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .complete-card { width: 100%; max-width: 640px; padding: 48px 40px; text-align: center; }
+        .lv-success-icon {
+            width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%;
+            background: var(--success-bg); color: var(--success);
+            display: grid; place-items: center; font-size: 1.5rem;
         }
-        
-        .success-icon {
-            animation: successPulse 2s ease-in-out infinite;
+        .complete-card h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+        .complete-card > p.lede { color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 28px; }
+
+        .complete-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+        .complete-steps .lv-step-dot { width: 10px; height: 10px; }
+
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; text-align: left; }
+        .summary-card { padding: 16px; }
+        .summary-card .head { display: flex; align-items: center; gap: 8px; color: var(--brand); font-size: 0.8125rem; font-weight: 600; margin-bottom: 8px; }
+        .summary-card .name { font-weight: 600; font-size: 0.9375rem; margin-bottom: 2px; }
+        .summary-card .sub { font-size: 0.8125rem; color: var(--text-muted); }
+
+        .trial-card { text-align: left; padding: 20px; margin-bottom: 24px; }
+        .trial-card .head { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-weight: 700; }
+        .trial-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .trial-metric { text-align: center; }
+        .trial-metric .num { font-size: 1.5rem; font-weight: 700; color: var(--success); font-variant-numeric: tabular-nums; }
+        .trial-metric .label { font-size: 0.75rem; color: var(--text-muted); }
+        .trial-card .end-date { text-align: center; font-size: 0.8125rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 14px; }
+
+        .next-steps { text-align: left; margin-bottom: 28px; }
+        .next-steps .head { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 16px; }
+        .next-step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+        .next-step .num {
+            flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+            background: var(--brand); color: #fff; font-size: 0.8125rem; font-weight: 700;
+            display: grid; place-items: center;
+        }
+        .next-step-name { font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px; }
+        .next-step p { font-size: 0.8438rem; color: var(--text-muted); }
+
+        .complete-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+        .complete-footer { border-top: 1px solid var(--border); padding-top: 20px; }
+        .complete-footer p { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 10px; }
+        .complete-footer .links { display: flex; justify-content: center; gap: 20px; font-size: 0.8125rem; flex-wrap: wrap; }
+        .complete-footer .links a { color: var(--text-muted); text-decoration: none; }
+        .complete-footer .links a:hover { color: var(--brand); }
+
+        @media (max-width: 560px) {
+            .summary-grid, .trial-metrics { grid-template-columns: 1fr; }
+            .complete-card { padding: 32px 24px; }
         }
     </style>
 </head>
-<body class="min-h-screen" style="background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(74, 26, 122, 0.95) 100%);">
-    <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-3xl">
-            <div class="card bg-white shadow-2xl border border-slate-200">
-                <div class="card-body p-8 text-center">
-                    <!-- Success Icon -->
-                    <div class="mb-8">
-                        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center success-icon shadow-lg">
-                            <i class="fas fa-check text-white text-3xl"></i>
-                        </div>
-                        <h1 class="text-3xl font-bold text-slate-800 mb-2">¡Felicidades {{ user.first_name }}!</h1>
-                        <p class="text-slate-600 text-lg">Tu bot de IA está configurado y listo para funcionar</p>
-                    </div>
+<body>
+    <div class="complete-shell">
+        <div class="lv-surface complete-card">
+            <div class="lv-success-icon"><i class="fas fa-check"></i></div>
+            <h1>¡Felicidades{% if user.first_name %} {{ user.first_name }}{% endif %}!</h1>
+            <p class="lede">Tu bot de IA está configurado y listo para funcionar</p>
 
-                    <!-- Progress Steps -->
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="flex-1 flex items-center gap-2">
-                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                                <span class="text-sm font-semibold text-emerald-600">Registro</span>
-                            </div>
-                            <div class="flex-1 h-1 bg-emerald-500 mx-2"></div>
-                            <div class="flex-1 flex items-center gap-2">
-                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                                <span class="text-sm font-semibold text-emerald-600">Configuración</span>
-                            </div>
-                            <div class="flex-1 h-1 bg-emerald-500 mx-2"></div>
-                            <div class="flex-1 flex items-center gap-2">
-                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                                <span class="text-sm font-semibold text-emerald-600">¡Listo!</span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="complete-steps">
+                <span class="lv-step-dot done"></span>
+                <span class="lv-step-line done"></span>
+                <span class="lv-step-dot done"></span>
+                <span class="lv-step-line done"></span>
+                <span class="lv-step-dot current"></span>
+            </div>
 
-                    <!-- Summary Cards -->
-                    <div class="grid md:grid-cols-2 gap-4 mb-8">
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                            <div class="flex items-center gap-2 text-indigo-600 mb-2">
-                                <i class="fas fa-building"></i>
-                                <h3 class="font-semibold">Tu Empresa</h3>
-                            </div>
-                            <p class="font-semibold text-slate-800 mb-1">{{ company.name }}</p>
-                            <p class="text-sm text-slate-500">{{ company.email }}</p>
-                        </div>
-                        
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                            <div class="flex items-center gap-2 text-indigo-600 mb-2">
-                                <i class="fas fa-robot"></i>
-                                <h3 class="font-semibold">Tu Bot</h3>
-                            </div>
-                            <p class="font-semibold text-slate-800 mb-1">{{ bot_config.bot_type.name|default:"Bot IA" }}</p>
-                            <p class="text-sm text-slate-500">{{ bot_config.specialty|default:"Asistente virtual" }}</p>
-                        </div>
-                    </div>
+            <div class="summary-grid">
+                <div class="lv-surface summary-card">
+                    <div class="head"><i class="fas fa-building"></i> Tu Empresa</div>
+                    <div class="name">{{ company.name }}</div>
+                    <div class="sub">{{ company.email }}</div>
+                </div>
+                <div class="lv-surface summary-card">
+                    <div class="head"><i class="fas fa-robot"></i> Tu Bot</div>
+                    <div class="name">{{ bot_config.bot_type.name|default:"Bot IA" }}</div>
+                    <div class="sub">{{ bot_config.specialty|default:"Asistente virtual" }}</div>
+                </div>
+            </div>
 
-                    <!-- Trial Status -->
-                    {% if trial %}
-                    <div class="alert alert-success mb-8 shadow-sm">
-                        <div class="flex items-center gap-2 mb-4">
-                            <i class="fas fa-gift text-xl"></i>
-                            <h3 class="font-bold text-lg">Tu Trial Gratuito</h3>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <div class="text-center">
-                                <div class="text-3xl font-bold text-emerald-600">{{ trial.days_remaining }}</div>
-                                <div class="text-sm text-slate-600">Días restantes</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-3xl font-bold text-emerald-600">{{ trial.max_messages }}</div>
-                                <div class="text-sm text-slate-600">Mensajes/mes</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-3xl font-bold text-emerald-600">{{ documents_count|default:0 }}</div>
-                                <div class="text-sm text-slate-600">Docs subidos</div>
-                            </div>
-                        </div>
-                        
-                        <div class="divider"></div>
-                        
-                        <p class="text-center text-sm">
-                            Trial termina el <strong>{{ trial.end_date|date:"d M Y" }}</strong>
-                        </p>
+            {% if trial %}
+            <div class="lv-surface trial-card">
+                <div class="head"><i class="fas fa-gift" style="color: var(--success);"></i> Tu Trial Gratuito</div>
+                <div class="trial-metrics">
+                    <div class="trial-metric">
+                        <div class="num">{{ trial.days_remaining }}</div>
+                        <div class="label">Días restantes</div>
                     </div>
-                    {% endif %}
+                    <div class="trial-metric">
+                        <div class="num">{{ trial.max_messages }}</div>
+                        <div class="label">Mensajes/mes</div>
+                    </div>
+                    <div class="trial-metric">
+                        <div class="num">{{ documents_count|default:0 }}</div>
+                        <div class="label">Docs subidos</div>
+                    </div>
+                </div>
+                <div class="end-date">Trial termina el <strong style="color: var(--text);">{{ trial.end_date|date:"d M Y" }}</strong></div>
+            </div>
+            {% endif %}
 
-                    <!-- Next Steps -->
-                    <div class="text-left mb-8">
-                        <div class="flex items-center gap-2 text-indigo-600 mb-4">
-                            <i class="fas fa-list-check"></i>
-                            <h3 class="font-semibold text-lg text-slate-800">¿Qué sigue ahora?</h3>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4">
-                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                    1
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-slate-800 mb-1">Configuración de Chatwoot</h4>
-                                    <p class="text-sm text-slate-600">Estamos preparando tu cuenta de chat (puede tomar unos minutos)</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-4">
-                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                    2
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-slate-800 mb-1">Procesamiento de documentos</h4>
-                                    <p class="text-sm text-slate-600">Tu bot está aprendiendo de los {{ documents_count|default:0 }} documentos subidos</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-4">
-                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                    3
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-slate-800 mb-1">Notificación por email</h4>
-                                    <p class="text-sm text-slate-600">Te avisaremos cuando todo esté listo en {{ company.email }}</p>
-                                </div>
-                            </div>
-                        </div>
+            <div class="next-steps">
+                <div class="head"><i class="fas fa-list-check" style="color: var(--brand);"></i> ¿Qué sigue ahora?</div>
+                <div class="next-step">
+                    <div class="num">1</div>
+                    <div>
+                        <p class="next-step-name">Configuración de Chatwoot</p>
+                        <p>Estamos preparando tu cuenta de chat (puede tomar unos minutos)</p>
                     </div>
+                </div>
+                <div class="next-step">
+                    <div class="num">2</div>
+                    <div>
+                        <p class="next-step-name">Procesamiento de documentos</p>
+                        <p>Tu bot está aprendiendo de los {{ documents_count|default:0 }} documentos subidos</p>
+                    </div>
+                </div>
+                <div class="next-step">
+                    <div class="num">3</div>
+                    <div>
+                        <p class="next-step-name">Notificación por email</p>
+                        <p>Te avisaremos cuando todo esté listo en {{ company.email }}</p>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Action Buttons -->
-                    <div class="space-y-3 mb-8">
-                        <a href="/dashboard/" class="btn btn-primary btn-lg w-full gap-2">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Ir al Dashboard
-                        </a>
-                        <a href="mailto:soporte@lyvio.com" class="btn btn-outline btn-lg w-full gap-2">
-                            <i class="fas fa-headset"></i>
-                            Contactar Soporte
-                        </a>
-                    </div>
+            <div class="complete-actions">
+                <a href="{% url 'dashboard:dashboard' %}" class="lv-btn lv-btn-primary lv-btn-block">
+                    <i class="fas fa-gauge-high"></i> Ir al Dashboard
+                </a>
+                <a href="mailto:soporte@lyvio.com" class="lv-btn lv-btn-secondary lv-btn-block">
+                    <i class="fas fa-headset"></i> Contactar Soporte
+                </a>
+            </div>
 
-                    <!-- Footer -->
-                    <div class="text-center">
-                        <p class="text-sm text-slate-600 mb-2">
-                            ¿Necesitas ayuda? Nuestro equipo está disponible 24/7
-                        </p>
-                        <div class="flex flex-wrap justify-center gap-4 text-sm">
-                            <a href="mailto:soporte@lyvio.com" class="link link-primary">
-                                <i class="fas fa-envelope mr-1"></i>
-                                soporte@lyvio.com
-                            </a>
-                            <a href="https://wa.me/573001234567" class="link link-primary">
-                                <i class="fab fa-whatsapp mr-1"></i>
-                                +57 300 123 4567
-                            </a>
-                        </div>
-                    </div>
+            <div class="complete-footer">
+                <p>¿Necesitas ayuda? Nuestro equipo está disponible 24/7</p>
+                <div class="links">
+                    <a href="mailto:soporte@lyvio.com"><i class="fas fa-envelope"></i> soporte@lyvio.com</a>
+                    <a href="https://wa.me/573001234567"><i class="fab fa-whatsapp"></i> +57 300 123 4567</a>
                 </div>
             </div>
         </div>

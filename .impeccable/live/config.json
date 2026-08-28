@@ -1,0 +1,6 @@
+{
+  "files": ["landing/templates/landing/home.html"],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

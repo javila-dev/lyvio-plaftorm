@@ -6,15 +6,15 @@ from .forms import PlanAdminForm
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     form = PlanAdminForm
-    list_display = ['name', 'plan_type', 'price_monthly', 'price_yearly', 'max_inboxes', 'is_active']
-    list_editable = ['is_active']
-    list_filter = ['plan_type', 'is_active']
+    list_display = ['name', 'plan_type', 'price_monthly', 'price_yearly', 'max_inboxes', 'is_trial_plan', 'is_active']
+    list_editable = ['is_active', 'is_trial_plan']
+    list_filter = ['plan_type', 'is_active', 'is_trial_plan']
     search_fields = ['name']
     prepopulated_fields = {'slug': ('name',)}
     
     fieldsets = (
         ('Información Básica', {
-            'fields': ('name', 'slug', 'plan_type', 'description', 'is_active')
+            'fields': ('name', 'slug', 'plan_type', 'description', 'is_active', 'is_trial_plan')
         }),
         ('Precios', {
             'fields': ('price_monthly', 'price_yearly', 'trial_days')

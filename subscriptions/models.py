@@ -100,6 +100,10 @@ class Plan(models.Model):
     
     # Control
     is_active = models.BooleanField(default=True)
+    is_trial_plan = models.BooleanField(
+        default=False, 
+        help_text="Marcar este plan como el plan base para períodos de prueba. Solo uno debe estar activo."
+    )
     trial_days = models.IntegerField(default=7)
     
     # Wompi
@@ -159,7 +163,7 @@ class Subscription(models.Model):
     
     class Meta:
         ordering = ['-created_at']
-    
+
     # Días de gracia tras la fecha de corte antes de que N8N ejecute la
     # suspensión dura. Controla la ventana en la que Chatwoot muestra el
     # banner de "período de gracia" (ver LyvioBillingBanner.vue).
