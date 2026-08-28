@@ -1,8 +1,0 @@
-services:
-  postgres:
-    ports: !override []
-  redis:
-    ports: !override []
-  lyvio-platform:
-    ports: !override
-      - "8010:8000"
