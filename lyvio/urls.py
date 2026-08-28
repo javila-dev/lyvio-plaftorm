@@ -3,6 +3,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
+from django.http import HttpResponse
+
+def health_check(request):
+    """Endpoint liviano para el HEALTHCHECK del Dockerfile/Traefik."""
+    return HttpResponse('ok')
 
 def home_redirect(request):
     """Redirigir a dashboard para usuarios autenticados"""
@@ -12,6 +17,7 @@ def home_redirect(request):
     return redirect('https://app.lyvio.io')
 
 urlpatterns = [
+    path('health/', health_check),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('test-login/', lambda r: __import__('test_views').test_view(r)),
