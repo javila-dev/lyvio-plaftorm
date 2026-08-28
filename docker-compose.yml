@@ -1,6 +1,9 @@
 services:
   lyvio-migrations:
-    image: jorgeavilag/lyvio-platform:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lyvio-platform:local
     restart: "no"
     env_file:
       - .env
@@ -9,7 +12,10 @@ services:
       - shared-services
 
   lyvio-platform:
-    image: jorgeavilag/lyvio-platform:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lyvio-platform:local
     restart: unless-stopped
     env_file:
       - .env
