@@ -19,5 +19,4 @@ urlpatterns = [
     path('api/subscriptions/<int:subscription_id>/charge-payload/', views.api_subscription_charge_payload, name='api_subscription_charge_payload'),
     path('api/subscriptions/<int:subscription_id>/verify-transaction/', views.api_verify_transaction, name='api_verify_transaction'),
     path('api/subscriptions/<int:subscription_id>/suspend/', views.api_suspend_subscription, name='api_suspend_subscription'),
-    path('api/debug/auth/', views.api_debug_auth, name='api_debug_auth'),
 ]

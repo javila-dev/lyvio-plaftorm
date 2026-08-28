@@ -20,8 +20,6 @@ urlpatterns = [
     path('health/', health_check),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('test-login/', lambda r: __import__('test_views').test_view(r)),
-    path('test-no-login/', lambda r: __import__('test_views').test_no_login(r)),
     path('activation/', include('activation.urls')),
     path('onboarding/', include('onboarding.urls')),
     path('bot-builder/', include('bot_builder.urls')),

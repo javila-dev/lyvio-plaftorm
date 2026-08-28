@@ -1529,34 +1529,6 @@ def api_subscription_charge_payload(request, subscription_id):
 
 @csrf_exempt
 @require_http_methods(["GET"])
-def api_debug_auth(request):
-    """Endpoint temporal para debug de autenticación"""
-    api_key_received = request.headers.get('X-API-Key') or request.GET.get('api_key')
-    
-    # Obtener expected_api_key usando la misma lógica que validate_api_key
-    expected_api_key = (
-        getattr(settings, 'CHATWOOT_PLATFORM_TOKEN', None) or
-        os.environ.get('CHATWOOT_PLATFORM_TOKEN', None)
-    )
-    
-    return JsonResponse({
-        'debug_info': {
-            'api_key_received': api_key_received[:10] + "..." if api_key_received else None,
-            'api_key_received_full_length': len(api_key_received) if api_key_received else 0,
-            'expected_api_key': expected_api_key[:10] + "..." if expected_api_key else None,
-            'expected_api_key_full_length': len(expected_api_key) if expected_api_key else 0,
-            'settings_value': getattr(settings, 'CHATWOOT_PLATFORM_TOKEN', 'NOT_IN_SETTINGS')[:10] + "..." if getattr(settings, 'CHATWOOT_PLATFORM_TOKEN', None) else None,
-            'os_environ_value': os.environ.get('CHATWOOT_PLATFORM_TOKEN', 'NOT_IN_OS')[:10] + "..." if os.environ.get('CHATWOOT_PLATFORM_TOKEN', None) else None,
-            'headers_available': list(request.headers.keys()),
-            'get_params': list(request.GET.keys()),
-            'validation_result': api_key_received and expected_api_key and api_key_received == expected_api_key,
-            'keys_match': api_key_received == expected_api_key if api_key_received and expected_api_key else False
-        }
-    })
-
-
-@csrf_exempt
-@require_http_methods(["GET"])
 def api_verify_transaction(request, subscription_id):
     """
     Verifica el estado de una transacción de cobro y retorna si fue procesada exitosamente
